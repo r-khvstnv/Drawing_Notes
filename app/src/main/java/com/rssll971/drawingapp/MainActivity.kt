@@ -1,12 +1,13 @@
 package com.rssll971.drawingapp
 
 import android.app.Dialog
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.SeekBar
-import androidx.core.view.get
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.dialog_brush_size.*
 
@@ -17,14 +18,14 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        //Make brush size by default to 1
         drawing_view.setBrushSize(1.toFloat())
-        //thickness of brush
+        //thickness of brush on button
         btn_brush.setOnClickListener {
-            //Toast.makeText(this, "1", Toast.LENGTH_LONG).show()
             showBrushSizeDialog()
         }
-        //back button
-        btn_back.setOnClickListener {
+        //undo button
+        btn_undo.setOnClickListener {
             drawing_view.removeLastLine()
         }
 
@@ -35,15 +36,26 @@ class MainActivity : AppCompatActivity() {
 
     //DIALOG OF BRUSH SIZE FUNCTION
     private fun showBrushSizeDialog(){
+        //create dialog window
         val brushDialog = Dialog(this)
         //initialize dialog layout
         brushDialog.setContentView(R.layout.dialog_brush_size)
+        //make background color to transparent. it needs for round corners
+        brushDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        //get values from brush dialog to local variables
+            //brush size - next changing
         val brushSize = brushDialog.sb_brush_size
+            //get current brush size to seek bar
+        val currentBrushSize: Int = drawing_view.getBrushSize().toInt()
+        brushSize.progress = 1
+        brushSize.progress = textBrushSize
+        //brushSize.progress = currentBrushSize
+            //text option of brush size
         val displayBrushSize = brushDialog.tv_brush_size_display
+            //button of confirmation
         val confirmationBrushSize = brushDialog.btn_confirm_size
         //upload brush size
         displayBrushSize.text = "Size: $textBrushSize"
-
         //display dialog menu
         brushDialog.show()
         //show current value of size

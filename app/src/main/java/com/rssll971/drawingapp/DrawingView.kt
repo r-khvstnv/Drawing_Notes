@@ -147,6 +147,11 @@ class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
         return true
     }
 
+    //GET CURRENT BRUSH SIZE
+    fun getBrushSize(): Float {
+        return myBrushSize
+    }
+
     //CHANGE BRUSH SIZE FUNCTION WIT PROPORTIONALITY FOR ANY SCREEN
     fun setBrushSize(newSize: Float){
         //adapting size for any screen
@@ -158,7 +163,10 @@ class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
 
     //REMOVE LAST LINE FUNCTION
     fun removeLastLine(){
-        myPaths.removeAt(myPaths.size - 1)
+        if (myPaths.size != 0) {
+            myPaths.removeAt(myPaths.size - 1)
+            invalidate()
+        }else{}
     }
 
     //SELECT COLOR
