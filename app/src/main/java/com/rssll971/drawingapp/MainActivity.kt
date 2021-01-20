@@ -3,12 +3,18 @@ package com.rssll971.drawingapp
 import android.Manifest
 import android.app.Activity
 import android.app.Dialog
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.media.MediaScannerConnection
+import android.os.AsyncTask
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
 import android.view.View
 import android.widget.Button
@@ -16,13 +22,27 @@ import android.widget.SeekBar
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.dialog_brush_size.*
-import java.lang.Exception
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.FileOutputStream
+import java.nio.file.FileSystem
 import java.util.ArrayList
+import kotlin.Exception
+import kotlin.math.absoluteValue
 
 class MainActivity : AppCompatActivity() {
+
+    //TODO FUNCTION FOR GETTING IMAGE FROM CAMERA
+    //TODO COLOR PALETTE
+    //TODO DRAG VIEW
+    //TODO HORIZONTAL MODE
+    //TODO ADS
+    //TODO CLARIFY DRAWABLE VALUES COLORS THEME
+    //TODO REDESIGN OF DIALOGS
 
     //GET ALL PERMISSIONS
     private fun requestStoragePermissions(){
@@ -104,6 +124,105 @@ class MainActivity : AppCompatActivity() {
         else{ }
     }
 
+    //Function which give us final bitmap for sharing
+    private fun getBitmapFromView(view: View): Bitmap{
+        //save our bitmap in object with current width, height and bitmap type
+        val returnedBitmap = Bitmap.createBitmap(
+                view.width, view.height, Bitmap.Config.ARGB_8888)
+        //get canvas from returned object
+        val canvas = Canvas(returnedBitmap)
+
+        //make sandwich with our background image and canvases
+        val backgroundDrawable = view.background
+        if (backgroundDrawable != null){
+            backgroundDrawable.draw(canvas)
+        }
+        else{
+            canvas.drawColor(Color.WHITE)
+        }
+
+        view.draw(canvas)
+
+        //return all
+        return returnedBitmap
+    }
+
+    //Async task function for sharing final image
+    private inner class BitmapAsyncTask(val myBitmap: Bitmap) : AsyncTask<Any, Void, String>(){
+        //Loading dialog block
+        var loadingDialog = Dialog(this@MainActivity)
+        //show
+        fun showProgressDialog(){
+            loadingDialog.setContentView(R.layout.dialog_progress)
+            loadingDialog.show()
+        }
+        //dismiss
+        fun cancelProgressDialog(){
+            loadingDialog.dismiss()
+        }
+
+
+        override fun onPreExecute() {
+            super.onPreExecute()
+            showProgressDialog()
+        }
+
+        override fun doInBackground(vararg params: Any?): String {
+            var result = ""
+            if (myBitmap != null){
+                try {
+                    //variable where we will save our output data
+                    val bytes = ByteArrayOutputStream()
+                    //compress our bitmap to PNG using stream of val bytes
+                    myBitmap.compress(Bitmap.CompressFormat.PNG, 100, bytes)
+                    //make it as single file
+                                //external directory -> as absolute file -> separate ->
+                    val myFile = File(//externalCacheDir!!.absoluteFile.toString() +
+                            "/storage/emulated/0/Download" + File.separator + System.currentTimeMillis()/1000 + ".png")
+                    //stream of our file
+                    val myFileOS = FileOutputStream(myFile)
+                    //start writing
+                    myFileOS.write(bytes.toByteArray())
+                    //close os write operation
+                    myFileOS.close()
+                    //store the result to path
+                    result = myFile.absolutePath
+                }
+                catch (e: Exception){
+                    result = ""
+                    e.printStackTrace()
+                }
+            }
+
+            return result
+        }
+
+        override fun onPostExecute(result: String?) {
+            super.onPostExecute(result)
+            cancelProgressDialog()
+            if (result != null){
+                Toast.makeText(this@MainActivity,
+                        "File saved: $result", Toast.LENGTH_LONG).show()
+            }
+            else{
+                Toast.makeText(this@MainActivity,
+                        "Something went wrong \nPlease try again", Toast.LENGTH_LONG).show()
+            }
+            //share image for another app
+            MediaScannerConnection.scanFile(this@MainActivity, arrayOf(result), null){
+                path, uri -> val sharingIntent = Intent()
+                sharingIntent.action = Intent.ACTION_SEND
+                sharingIntent.putExtra(Intent.EXTRA_STREAM, uri)
+                sharingIntent.type = "image/png"
+                startActivity(
+                        Intent.createChooser( sharingIntent, "Share")
+                )
+            }
+        }
+
+
+    }
+
 
 
     //Permissions variables
@@ -131,8 +250,6 @@ class MainActivity : AppCompatActivity() {
         //thickness of brush on button
         btn_brush.setOnClickListener { view ->
             showBrushSizeDialog()
-            //TODO DELETE BEFORE RELEASE
-            Snackbar.make(view, "Made by Ruslan Khvastunov \nDev version", Snackbar.LENGTH_LONG).show()
         }
 
         //undo button
@@ -160,15 +277,26 @@ class MainActivity : AppCompatActivity() {
                 requestStoragePermissions()
             }
         }
+
+        //button share
+        btn_share.setOnClickListener {
+            if (isPermissionsAreAllowed()){
+                BitmapAsyncTask(getBitmapFromView(fl_image_container)).execute()
+            }
+            else{
+                requestStoragePermissions()
+            }
+        }
+
+
         btn_camera.setOnClickListener {
-            //TODO FUNCTION FOR GETTING IMAGE FROM CAMERA
+
 
         }
 
     }
 
-    //TODO COLOR PALETTE
-    //TODO REST OF PROJECT
+
 
     //DIALOG OF BRUSH SIZE FUNCTION
     private fun showBrushSizeDialog(){
@@ -219,6 +347,9 @@ class MainActivity : AppCompatActivity() {
             brushDialog.dismiss()
         }
     }
+
+
+
 
     //CHANGE COLOR OF LINE USING BUTTONS
     //initialize directly in xml file

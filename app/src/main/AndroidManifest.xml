@@ -24,6 +24,24 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- For having successful access to storage
+                exported -> Deny access to other applications
+                grantUriPermissions -> Temporarily permission to session
+        -->
+        <provider
+            android:authorities="com.rssll971.drawingapp.fileprovider"
+            android:name="androidx.core.content.FileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true"
+            >
+            <!-- Reference to our path in xml-->
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_path"
+                />
+
+        </provider>
     </application>
 
 </manifest>
