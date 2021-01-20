@@ -13,10 +13,9 @@
         android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_brush_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.NoActionBar"
+        android:theme="@style/Theme.NoActionBar.FullScreen"
         >
         <activity android:name=".MainActivity"
-            android:screenOrientation="portrait"
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

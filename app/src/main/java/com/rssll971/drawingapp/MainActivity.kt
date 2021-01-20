@@ -17,6 +17,7 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.view.View
+import android.view.WindowManager
 import android.widget.Button
 import android.widget.SeekBar
 import android.widget.Toast
@@ -241,6 +242,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
 
         //Make brush size by default to 1
         drawing_view.setBrushSize(1.toFloat())
