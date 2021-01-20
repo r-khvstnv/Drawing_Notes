@@ -126,6 +126,8 @@ class MainActivity : AppCompatActivity() {
         //Make brush size by default to 1
         drawing_view.setBrushSize(1.toFloat())
 
+        //*************************************
+        //ALL BUTTONS LISTENERS
         //thickness of brush on button
         btn_brush.setOnClickListener { view ->
             showBrushSizeDialog()
@@ -136,6 +138,11 @@ class MainActivity : AppCompatActivity() {
         //undo button
         btn_undo.setOnClickListener {
             drawing_view.removeLastLine()
+        }
+
+        //trash button
+        btn_trash.setOnClickListener {
+            eraseAll()
         }
 
         //gallery button
@@ -155,7 +162,7 @@ class MainActivity : AppCompatActivity() {
         }
         btn_camera.setOnClickListener {
             //TODO FUNCTION FOR GETTING IMAGE FROM CAMERA
-            //TODO ERASE IMAGE USING SETIMAGERESOURCE()
+
         }
 
     }
@@ -171,6 +178,7 @@ class MainActivity : AppCompatActivity() {
         brushDialog.setContentView(R.layout.dialog_brush_size)
         //make background color to transparent. it needs for round corners
         brushDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        brushDialog.setCanceledOnTouchOutside(false)
         //get values from brush dialog to local variables
             //brush size - next changing
         val brushSize = brushDialog.sb_brush_size
@@ -221,6 +229,15 @@ class MainActivity : AppCompatActivity() {
         //import color using tag of button
         val colorTag = button.tag.toString()
         drawing_view.setColor(colorTag)
+    }
+
+
+    //Erase all function
+    fun eraseAll(){
+        //erase background image
+        iv_users_image.setImageResource(0)
+        //erase lines
+        drawing_view.removeAllLines()
     }
 
 

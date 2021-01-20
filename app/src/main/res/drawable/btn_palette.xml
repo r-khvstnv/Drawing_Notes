@@ -3,7 +3,12 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     >
     <size android:width="22dp" android:height="22dp"/>
-    <solid android:color="@color/myGrey"/>
+    <gradient
+        android:startColor="#4DF09A"
+        android:centerColor="#F05343"
+        android:endColor="#376AF0"
+        android:type="sweep"
+        />
     <corners android:radius="3dp"/>
 
 </shape>

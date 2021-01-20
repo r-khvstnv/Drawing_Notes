@@ -169,6 +169,14 @@ class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
         }else{}
     }
 
+    //REMOVE ALL LINES FUNCTION
+    fun removeAllLines(){
+        if (myPaths.size != 0) {
+            myPaths.clear()
+            invalidate()
+        }else{}
+    }
+
     //SELECT COLOR
     fun setColor(myColor: String){
         //parse needed color
