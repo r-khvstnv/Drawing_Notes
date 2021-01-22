@@ -30,7 +30,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         android:text="Please wait..."
         android:textSize="24sp"
-        android:textColor="@color/myOrange"
+        android:textColor="@color/myGreyDark"
         android:gravity="center"
         />
 

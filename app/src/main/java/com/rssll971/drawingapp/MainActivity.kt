@@ -24,6 +24,7 @@ import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import com.google.android.gms.ads.*
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.dialog_brush_size.*
@@ -37,21 +38,11 @@ import kotlin.math.absoluteValue
 
 class MainActivity : AppCompatActivity() {
 
-    //TODO DELETED -- FUNCTION FOR GETTING IMAGE FROM CAMERA
-    //TODO COLOR PALETTE
-    //TODO CHANGED TO -- SMALL DIALOG DRAG VIEW
-    //TODO NEED UPDATE -- HORIZONTAL MODE
-    //TODO ADS
-    //TODO CLARIFY DRAWABLE VALUES COLORS THEME
-    //TODO REDESIGN OF DIALOGS
-
     //GET ALL PERMISSIONS
     private fun requestStoragePermissions(){
         //Check if it worth to show permissions request
         if(ActivityCompat.shouldShowRequestPermissionRationale(this,
                 PERMISSIONS_REQUIRED.toString())){
-
-
         }
         //request permissions
         else{
@@ -154,7 +145,7 @@ class MainActivity : AppCompatActivity() {
         var loadingDialog = Dialog(this@MainActivity)
         //show
         fun showProgressDialog(){
-            loadingDialog.setContentView(R.layout.dialog_progress)
+            loadingDialog.setContentView(R.layout.dialog_background_progress)
             loadingDialog.show()
         }
         //dismiss
@@ -242,10 +233,29 @@ class MainActivity : AppCompatActivity() {
     private var scaleFactor: Float = 1.0f
     //var to check condition of size btn
     private var zoomButtonPressed: Boolean = false
+    //TODO ADS
+    private lateinit var myInterstitialAd: InterstitialAd
+    private val adInID: String = "ca-app-pub-3940256099942544/1033173712"
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        //TODO ADS
+        MobileAds.initialize(this)
+        myInterstitialAd = InterstitialAd(this)
+        myInterstitialAd.adUnitId = adInID
+        myInterstitialAd.loadAd(AdRequest.Builder().build())
+        myInterstitialAd.adListener = object : AdListener() {
+            override fun onAdClosed() {
+                myInterstitialAd.loadAd(AdRequest.Builder().build())
+            }
+        }
+
+
+        //hide zoom option
+        ll_zoom.visibility = View.GONE
 
 
         //Make brush size by default to 1
@@ -265,11 +275,15 @@ class MainActivity : AppCompatActivity() {
 
         //trash button
         btn_trash.setOnClickListener {
+            //TODO ADS
+            //myInterstitialAd.show()
             eraseAll()
         }
 
         //gallery button
         btn_gallery.setOnClickListener{
+            //TODO ADS
+            //myInterstitialAd.show()
             //check for having permission
             if (isPermissionsAreAllowed()){
                 //pick image from gallery
@@ -286,6 +300,8 @@ class MainActivity : AppCompatActivity() {
 
         //button share
         btn_share.setOnClickListener {
+            //TODO ADS
+            //myInterstitialAd.show()
             if (isPermissionsAreAllowed()){
                 BitmapAsyncTask(getBitmapFromView(fl_image_container)).execute()
             }
@@ -333,7 +349,6 @@ class MainActivity : AppCompatActivity() {
         val currentBrushSize: Int = drawing_view.getBrushSize().toInt()
         brushSize.progress = 1
         brushSize.progress = textBrushSize
-        //brushSize.progress = currentBrushSize
             //text option of brush size
         val displayBrushSize = brushDialog.tv_brush_size_display
             //button of confirmation

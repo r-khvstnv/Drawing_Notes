@@ -23,6 +23,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <!-- TODO CHANGE ID FOR AD-->
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="@string/app_add_ID"/>
 
         <!-- For having successful access to storage
                 exported -> Deny access to other applications

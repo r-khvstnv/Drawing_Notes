@@ -21,6 +21,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerInside"
+            android:foreground="@drawable/ic_closed_beta"
             />
         <com.rssll971.drawingapp.DrawingView
             android:id="@+id/drawing_view"
@@ -121,7 +122,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             android:layout_marginBottom="10dp"
             app:layout_constraintLeft_toRightOf="@id/btn_green"
-            app:layout_constraintRight_toLeftOf="@id/btn_palette"
+            app:layout_constraintRight_toLeftOf="@id/btn_purple"
             android:background="@drawable/btn_blue"
             android:elevation="10dp"
             android:translationZ="10dp"
@@ -129,7 +130,7 @@
             android:tag="@color/myBlue"
             />
         <Button
-            android:id="@+id/btn_palette"
+            android:id="@+id/btn_purple"
             android:layout_width="22dp"
             android:layout_height="22dp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -137,7 +138,7 @@
 
             app:layout_constraintLeft_toRightOf="@id/btn_blue"
             app:layout_constraintRight_toLeftOf="@id/layout_primary"
-            android:background="@drawable/btn_palette"
+            android:background="@drawable/btn_purple"
             android:elevation="10dp"
             android:translationZ="10dp"
             android:onClick="colorClicked"
@@ -153,7 +154,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         android:layout_marginRight="10dp"
-        android:background="@drawable/layout_primary_background"
+        android:background="@drawable/layout_handling_background"
         android:elevation="5dp"
         android:gravity="center_horizontal"
         android:orientation="vertical"
@@ -162,7 +163,7 @@
             android:id="@+id/btn_gallery"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
-            android:background="@drawable/ibtn_primary"
+            android:background="@drawable/ibtn_handling"
             android:elevation="4dp"
             android:layout_marginVertical="10dp"
             android:layout_marginHorizontal="8dp"
@@ -170,21 +171,21 @@
             android:padding="5dp"
             />
         <ImageButton
-            android:id="@+id/btn_zoom"
+            android:id="@+id/btn_share"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/ibtn_primary"
+            android:background="@drawable/ibtn_handling"
             android:elevation="4dp"
             android:layout_marginVertical="10dp"
             android:layout_marginHorizontal="8dp"
-            android:src="@drawable/ic_camera"
+            android:src="@drawable/ic_share"
             android:padding="5dp"
             />
         <ImageButton
             android:id="@+id/btn_undo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/ibtn_primary"
+            android:background="@drawable/ibtn_handling"
             android:elevation="4dp"
             android:layout_marginVertical="10dp"
             android:layout_marginHorizontal="8dp"
@@ -195,7 +196,7 @@
             android:id="@+id/btn_brush"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/ibtn_primary"
+            android:background="@drawable/ibtn_handling"
             android:elevation="4dp"
             android:layout_marginVertical="10dp"
             android:layout_marginHorizontal="8dp"
@@ -206,7 +207,7 @@
             android:id="@+id/btn_trash"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/ibtn_primary"
+            android:background="@drawable/ibtn_handling"
             android:elevation="4dp"
             android:layout_marginVertical="10dp"
             android:layout_marginHorizontal="8dp"
@@ -214,15 +215,57 @@
             android:padding="5dp"
             />
         <ImageButton
-            android:id="@+id/btn_share"
+            android:id="@+id/btn_zoom"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/ibtn_primary"
+            android:background="@drawable/ibtn_handling"
             android:elevation="4dp"
             android:layout_marginVertical="10dp"
             android:layout_marginHorizontal="8dp"
-            android:src="@drawable/ic_share"
+            android:src="@drawable/ic_zoom"
             android:padding="5dp"
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_zoom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintRight_toLeftOf="@id/layout_primary"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginRight="20dp"
+        android:layout_marginBottom="50dp"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:padding="10dp"
+        android:elevation="5dp"
+        android:visibility="visible"
+        android:background="@drawable/layout_handling_background"
+        >
+        <SeekBar
+            android:id="@+id/sb_layout_size"
+            android:layout_width="180dp"
+            android:layout_height="wrap_content"
+            android:min="10"
+            android:max="250"
+            android:theme="@style/MySeekBar"
+            style="?android:attr/progressBarStyleHorizontal"
+            />
+        <TextView
+            android:id="@+id/tv_current_scale"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:text="125%"
+            android:textAlignment="center"
+            android:textColor="@color/myGreyDark"
+            />
+        <TextView
+            android:id="@+id/tv_reset_scale"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:text="Reset"
+            android:textAlignment="center"
+            android:textColor="@color/myGreyDark"
             />
     </LinearLayout>
 

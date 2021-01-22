@@ -20,6 +20,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerInside"
+            android:foreground="@drawable/ic_closed_beta"
             />
         <com.rssll971.drawingapp.DrawingView
             android:id="@+id/drawing_view"
@@ -114,24 +115,24 @@
             app:layout_constraintBottom_toTopOf="@id/layout_primary"
             android:layout_marginBottom="10dp"
             app:layout_constraintLeft_toRightOf="@id/btn_green"
-            app:layout_constraintRight_toLeftOf="@id/btn_palette"
+            app:layout_constraintRight_toLeftOf="@id/btn_purple"
             android:background="@drawable/btn_blue"
             android:elevation="5dp"
             android:onClick="colorClicked"
             android:tag="@color/myBlue"
             />
         <Button
-            android:id="@+id/btn_palette"
+            android:id="@+id/btn_purple"
             android:layout_width="22dp"
             android:layout_height="22dp"
             app:layout_constraintBottom_toTopOf="@id/layout_primary"
             android:layout_marginBottom="10dp"
             app:layout_constraintLeft_toRightOf="@id/btn_blue"
             app:layout_constraintRight_toRightOf="parent"
-            android:background="@drawable/btn_palette"
+            android:background="@drawable/btn_purple"
             android:elevation="5dp"
             android:onClick="colorClicked"
-            android:tag="@color/purple_500"
+            android:tag="@color/myPurple"
             />
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -142,7 +143,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        android:background="@drawable/layout_primary_background"
+        android:background="@drawable/layout_handling_background"
         android:elevation="5dp"
         android:gravity="center_horizontal"
         android:orientation="horizontal"
@@ -152,7 +153,7 @@
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:layout_marginHorizontal="10dp"
-            android:background="@drawable/ibtn_primary"
+            android:background="@drawable/ibtn_handling"
             android:elevation="4dp"
             android:layout_marginVertical="8dp"
             android:src="@drawable/ic_gallery"
@@ -163,7 +164,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="10dp"
-            android:background="@drawable/ibtn_primary"
+            android:background="@drawable/ibtn_handling"
             android:elevation="4dp"
             android:layout_marginVertical="8dp"
             android:src="@drawable/ic_share"
@@ -174,7 +175,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="10dp"
-            android:background="@drawable/ibtn_primary"
+            android:background="@drawable/ibtn_handling"
             android:elevation="4dp"
             android:layout_marginVertical="8dp"
             android:src="@drawable/ic_undo"
@@ -185,7 +186,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="10dp"
-            android:background="@drawable/ibtn_primary"
+            android:background="@drawable/ibtn_handling"
             android:elevation="4dp"
             android:layout_marginVertical="8dp"
             android:src="@drawable/ic_pencil"
@@ -196,7 +197,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="10dp"
-            android:background="@drawable/ibtn_primary"
+            android:background="@drawable/ibtn_handling"
             android:elevation="4dp"
             android:layout_marginVertical="8dp"
             android:src="@drawable/ic_trash"
@@ -207,7 +208,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="10dp"
-            android:background="@drawable/ibtn_primary"
+            android:background="@drawable/ibtn_handling"
             android:elevation="4dp"
             android:layout_marginVertical="8dp"
             android:src="@drawable/ic_zoom"
@@ -227,8 +228,8 @@
         android:gravity="center"
         android:padding="10dp"
         android:elevation="5dp"
-        android:visibility="gone"
-        android:background="@drawable/layout_primary_background"
+        android:visibility="visible"
+        android:background="@drawable/layout_handling_background"
         >
         <SeekBar
             android:id="@+id/sb_layout_size"
@@ -245,7 +246,7 @@
             android:layout_height="wrap_content"
             android:text="125%"
             android:textAlignment="center"
-            android:textColor="@color/myGrey"
+            android:textColor="@color/myGreyDark"
             />
         <TextView
             android:id="@+id/tv_reset_scale"
@@ -253,9 +254,8 @@
             android:layout_height="wrap_content"
             android:text="Reset"
             android:textAlignment="center"
-            android:textColor="@color/myGrey"
+            android:textColor="@color/myGreyDark"
             />
-
     </LinearLayout>
 
 

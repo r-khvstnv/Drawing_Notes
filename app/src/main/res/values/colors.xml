@@ -8,12 +8,15 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
+    <!-- All colors implemented in project -->
     <color name="myBlack">#121212</color>
     <color name="myWhite">#FFFFFFFF</color>
     <color name="myGrey">#A0A0A0</color>
+    <color name="myGreyDark">#797979</color>
     <color name="myRed">#F01010</color>
     <color name="myOrange">#E1800E</color>
     <color name="myGreen">#18D04C</color>
     <color name="myBlue">#56BDE6</color>
+    <color name="myPurple">#702BE0</color>
 
 </resources>
