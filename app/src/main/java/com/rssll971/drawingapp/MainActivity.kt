@@ -37,10 +37,10 @@ import kotlin.math.absoluteValue
 
 class MainActivity : AppCompatActivity() {
 
-    //TODO FUNCTION FOR GETTING IMAGE FROM CAMERA
+    //TODO DELETED -- FUNCTION FOR GETTING IMAGE FROM CAMERA
     //TODO COLOR PALETTE
-    //TODO DRAG VIEW
-    //TODO HORIZONTAL MODE
+    //TODO CHANGED TO -- SMALL DIALOG DRAG VIEW
+    //TODO NEED UPDATE -- HORIZONTAL MODE
     //TODO ADS
     //TODO CLARIFY DRAWABLE VALUES COLORS THEME
     //TODO REDESIGN OF DIALOGS
@@ -238,6 +238,10 @@ class MainActivity : AppCompatActivity() {
 
     //variable to store statically text of brush size
     private var textBrushSize: Int = 1
+    //var to make scaling of layout
+    private var scaleFactor: Float = 1.0f
+    //var to check condition of size btn
+    private var zoomButtonPressed: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -290,11 +294,24 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-
-        btn_camera.setOnClickListener {
+        //button zoom
+        btn_zoom.setOnClickListener {
+            if (!zoomButtonPressed){
+                //make visible layout
+                ll_zoom.visibility = View.VISIBLE
+                zoomButtonPressed = true
+                zoomScaling()
+            }
+            else{
+                ll_zoom.visibility = View.GONE
+                zoomButtonPressed = false
+            }
 
 
         }
+
+
+
 
     }
 
@@ -350,6 +367,39 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    //fun which change size of all frame
+    private fun zoomScaling(){
+        //import current state for sb and text
+        sb_layout_size.progress = (scaleFactor*100.0f).toInt()
+        tv_current_scale.text = "${sb_layout_size.progress}%"
+        //change size in real time
+        sb_layout_size.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                sb_layout_size.progress = progress
+                tv_current_scale.text = "${progress}%"
+                scaleFactor = (progress.toFloat()/100)
+                //implement scaling in real time
+                fl_image_container.scaleX = scaleFactor
+                fl_image_container.scaleY = scaleFactor
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+
+            }
+        })
+        //change scaling by default
+        tv_reset_scale.setOnClickListener {
+            scaleFactor = 1.0f
+            sb_layout_size.progress = 100
+            tv_current_scale.text = "100%"
+            fl_image_container.scaleX = scaleFactor
+            fl_image_container.scaleY = scaleFactor
+        }
+    }
 
 
 

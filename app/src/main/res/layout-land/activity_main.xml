@@ -170,7 +170,7 @@
             android:padding="5dp"
             />
         <ImageButton
-            android:id="@+id/btn_camera"
+            android:id="@+id/btn_zoom"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/ibtn_primary"
