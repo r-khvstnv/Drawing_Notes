@@ -7,10 +7,13 @@ import android.util.TypedValue
 import android.view.MotionEvent
 import android.view.View
 
-
+/**
+ * Next Class responsible for custom drawing view
+ */
 class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) {
-    //VARIABLES FOR DRAWING
-
+    /**
+     * BLOCK with all vars for drawing
+     */
     //path of sth drawing
     private var myDrawPath: CustomPath? = null
     //map of current path
@@ -26,6 +29,7 @@ class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
     private var canvas: Canvas? = null
     //all created paths
     private val myPaths = ArrayList<CustomPath>()
+    /** BLOCK ENDS**/
 
     //SETUP VARIABLES
     //init block where we initialized all of variables
@@ -33,13 +37,16 @@ class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
         //prepare
         setUpDrawing()
     }
-    //*****GENERAL FUNCTIONS
-    //
-    //prepare for drawing function
+
+
+    /**
+     * Next fun prepares for drawing all needed attr vars,
+     *                  such as: color, size, stroke and etc.
+     */
     private fun setUpDrawing(){
-        //create object of paint
+        //object of paint
         myDrawPaint = Paint()
-        //STYLES of drawing implemented inner class
+        //styles of drawing implemented inner class
         myDrawPath = CustomPath(color, myBrushSize)
         //color
         myDrawPath!!.color = color
@@ -53,7 +60,10 @@ class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
         myCanvasPaint = Paint(Paint.DITHER_FLAG)
     }
 
-    //CREATE BITMAP FUNCTION
+
+    /**
+     * Next fun create custom canvas implementing bitmap
+     */
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
         //create bitmap with current width and height, using this config of colors
@@ -62,42 +72,50 @@ class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
         canvas = Canvas(myCanvasBitmap!!)
     }
 
-    //Parametrized constructor of drawing, which extend Path with parameterized variables
+    /**
+     * In next class using parametrized constructor of drawing, which extend my Path
+     */
     internal inner class CustomPath(var color: Int,
-                                    var brushThickness: Float) : Path() {
-
-    }
+                                    var brushThickness: Float) : Path() {       }
 
 
-    //*****USING BY USER FUNCTIONS
-    //
-    //START DRAWING FUNCTION (override existing method)
+    /**
+     * Main role of next fun is create new users line
+     *
+     * More deeply below
+     */
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
         //implement our canvasBitmap, starting on top-left using our canvasPaint
         canvas?.drawBitmap(myCanvasBitmap!!, 0f, 0f, myCanvasPaint)
 
-        //display all previous paths
+        /**
+         * Next loop make visible all previous lines
+         */
         for (path in myPaths){
             //thickness
             myDrawPaint!!.strokeWidth = path.brushThickness
             //color
             myDrawPaint!!.color = path.color
-            //draw them
+            //draw
             canvas?.drawPath(path, myDrawPaint!!)
         }
 
-        //SETUP LINE IMPLEMENTING OBJECT OF INNER CLASS
+        /**
+         * Next line set current values for line and draw it
+         */
         //thickness
         myDrawPaint!!.strokeWidth = myDrawPath!!.brushThickness
         //color
         myDrawPaint!!.color = myDrawPath!!.color
-
-        //draw our path using existing parameters upper
+        //draw path
         canvas?.drawPath(myDrawPath!!, myDrawPaint!!)
     }
 
-    //OVERRIDE onTouchEvent FUNCTION
+    /**
+     * Next fun takes all parameters for drawing line,
+     *         such as path (using x,y), color, thickness and further actions which should execute
+     */
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         //store position onTouch
         val touchX = event?.x
@@ -105,14 +123,16 @@ class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
 
         //what should will be executed onTouch
         when(event?.action){
+
             //press on the screen
             MotionEvent.ACTION_DOWN ->{
-                //SETUP PATH
+                //setup path
                 myDrawPath!!.color = color
                 myDrawPath!!.brushThickness = myBrushSize
 
                 //delete any path
                 myDrawPath!!.reset()
+
                 //start drawing by positions
                 if (touchX != null) {
                     if (touchY != null) {
@@ -143,16 +163,22 @@ class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
             else -> return false
         }
 
+        //update lines list
         invalidate()
+
         return true
     }
 
-    //GET CURRENT BRUSH SIZE
+    /**
+     * Next fun return current brush size
+     */
     fun getBrushSize(): Float {
         return myBrushSize
     }
 
-    //CHANGE BRUSH SIZE FUNCTION WIT PROPORTIONALITY FOR ANY SCREEN
+    /**
+     * Next fun change brush size proportionally for any screen
+     */
     fun setBrushSize(newSize: Float){
         //adapting size for any screen
         myBrushSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
@@ -161,15 +187,17 @@ class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
         myDrawPaint!!.strokeWidth = myBrushSize
     }
 
-    //REMOVE LAST LINE FUNCTION
+    /**
+     * Next two fun remove lines
+     */
+    //Remove last one
     fun removeLastLine(){
         if (myPaths.size != 0) {
             myPaths.removeAt(myPaths.size - 1)
             invalidate()
         }else{}
     }
-
-    //REMOVE ALL LINES FUNCTION
+    //Remove all lines
     fun removeAllLines(){
         if (myPaths.size != 0) {
             myPaths.clear()
@@ -177,14 +205,13 @@ class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
         }else{}
     }
 
-    //SELECT COLOR
+    /**
+     * Next fun change color to selected by user
+     */
     fun setColor(myColor: String){
         //parse needed color
         color = Color.parseColor(myColor)
         //change color
         myDrawPaint!!.color = color
     }
-
-
-
 }

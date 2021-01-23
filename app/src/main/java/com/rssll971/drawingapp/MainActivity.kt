@@ -3,7 +3,6 @@ package com.rssll971.drawingapp
 import android.Manifest
 import android.app.Activity
 import android.app.Dialog
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -14,53 +13,171 @@ import android.media.MediaScannerConnection
 import android.os.AsyncTask
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Environment
 import android.provider.MediaStore
 import android.view.View
-import android.view.WindowManager
 import android.widget.Button
 import android.widget.SeekBar
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.content.FileProvider
 import com.google.android.gms.ads.*
-import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.dialog_brush_size.*
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
-import java.nio.file.FileSystem
-import java.util.ArrayList
 import kotlin.Exception
-import kotlin.math.absoluteValue
 
 class MainActivity : AppCompatActivity() {
+    /**
+     * Permission vars and list of needed permission for app
+     *
+     * Addition info:
+     * The request code used in ActivityCompat.requestPermissions()
+     * and returned in the Activity's onRequestPermissionsResult()
+     */
+    companion object{
+        private const val PERMISSIONS_ALL_CODE: Int = 103
+        private val PERMISSIONS_REQUIRED = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA)
+        private const val GALLERY_CODE = 104
+    }
+    /**
+     * Other vars
+     */
+    //variable to store statically text of brush size
+    private var textBrushSize: Int = 1
+    //var to make scaling of layout
+    private var scaleFactor: Float = 1.0f
+    //var to check condition of size btn
+    private var zoomButtonPressed: Boolean = false
+    //TODO ADS
+    private lateinit var myInterstitialAd: InterstitialAd
+    //id of interstitial ad
+    private val adInterstitialID: String = "ca-app-pub-3940256099942544/1033173712"
 
-    //GET ALL PERMISSIONS
-    private fun requestStoragePermissions(){
-        //Check if it worth to show permissions request
+    /** ACTIVITY STARTS**/
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
+        //Prepare and build Ads
+        //TODO ADS
+        MobileAds.initialize(this)
+        myInterstitialAd = InterstitialAd(this)
+        myInterstitialAd.adUnitId = adInterstitialID
+        myInterstitialAd.loadAd(AdRequest.Builder().build())
+        myInterstitialAd.adListener = object : AdListener() {
+            override fun onAdClosed() {
+                myInterstitialAd.loadAd(AdRequest.Builder().build())
+            }
+        }
+
+        /**
+         * Next line every time hide zoom option layout on first app start
+         */
+        ll_zoom.visibility = View.GONE
+        /**
+         * Next line every time set brush size to 1 on first app start
+         */
+        drawing_view.setBrushSize(1.toFloat())
+
+
+        /**
+         * BLOCK of all listeners for any clickable objects
+         */
+        //brush
+        btn_brush.setOnClickListener { view ->
+            showBrushSizeDialog()
+        }
+        //undo
+        btn_undo.setOnClickListener {
+            drawing_view.removeLastLine()
+        }
+        //trash
+        btn_trash.setOnClickListener {
+            //TODO ADS
+            //myInterstitialAd.show()
+            eraseAll()
+        }
+        //gallery
+        btn_gallery.setOnClickListener{
+            //TODO ADS
+            //myInterstitialAd.show()
+            //check for having permission
+            if (isPermissionsAreAllowed()){
+                //pick image from gallery
+                //create new intent
+                val pickImageIntent = Intent(Intent.ACTION_PICK,
+                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+                startActivityForResult(pickImageIntent, GALLERY_CODE)
+            }
+            //if don't have permission
+            else{
+                requestPermissions()
+            }
+        }
+        // share/save
+        btn_share.setOnClickListener {
+            //TODO ADS
+            //myInterstitialAd.show()
+            if (isPermissionsAreAllowed()){
+                BitmapAsyncTask(getBitmapFromView(fl_image_container)).execute()
+            }
+            else{
+                requestPermissions()
+            }
+        }
+        //zoom
+        btn_zoom.setOnClickListener {
+            /**
+             * Next statements responsible for zoom layout displaying
+             * for checking right option is using state var zoomButtonPressed,
+             * which every time overwritting after success execution
+             */
+            if (!zoomButtonPressed){
+                ll_zoom.visibility = View.VISIBLE
+                zoomButtonPressed = true
+                zoomScaling()
+            }
+            else{
+                ll_zoom.visibility = View.GONE
+                zoomButtonPressed = false
+            }
+        }
+        /** BLOCK ENDS**/
+    }
+
+
+    /**
+     * BLOCK responsible for all operations related with permissions
+     **/
+    /**
+     * Next fun get all needed permissions for app,
+     * such as Storage writing/reading
+     * */
+    private fun requestPermissions(){
+        //Next if/else statement check necessity to show permissions request
         if(ActivityCompat.shouldShowRequestPermissionRationale(this,
-                PERMISSIONS_REQUIRED.toString())){
+                        PERMISSIONS_REQUIRED.toString())){
         }
         //request permissions
         else{
             ActivityCompat.requestPermissions(this, PERMISSIONS_REQUIRED, PERMISSIONS_ALL_CODE)
         }
-
     }
-
-    //actions on user's permission result
+    /**
+     * Next fun change local permission state var,
+     * depending on result of permission request
+     */
     override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
+            requestCode: Int,
+            permissions: Array<out String>,
+            grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == PERMISSIONS_ALL_CODE){
             var allGranted: Boolean = false
-
             //check if all permissions are granted
             for (i in grantResults.indices){
                 if (grantResults[i] == PackageManager.PERMISSION_GRANTED){
@@ -72,23 +189,36 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-    //Check that all permissions are allowed
+    /**
+     * Next fun check permissions availability for app
+     * */
     private fun isPermissionsAreAllowed(): Boolean{
         var result: Boolean = false
         if (
-            ContextCompat.checkSelfPermission(this,
-                Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
-            ContextCompat.checkSelfPermission(this,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
-            ContextCompat.checkSelfPermission(this,
-                Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
-                ){result = true}
+                ContextCompat.checkSelfPermission(this,
+                        Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(this,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(this,
+                        Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
+        ){result = true}
         else{
             //Nothing to do
         }
         return result
     }
+    /** BLOCK ENDS**/
 
+
+    /**
+     * BLOCK Responsible for operations of:
+     *      -image extracting from gallery
+     *      -further implementing in app
+     *      -exporting
+     */
+    /**
+     * Next fun extracts user image from gallery and substitutes data in image view
+     */
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK){
@@ -105,7 +235,7 @@ class MainActivity : AppCompatActivity() {
                     //if something goes wrong
                     else{
                         Toast.makeText(this, "Wrong data type",
-                            Toast.LENGTH_LONG).show()
+                                Toast.LENGTH_LONG).show()
                     }
                 }
                 catch (e: Exception){
@@ -113,17 +243,18 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-        else{ }
     }
-
-    //Function which give us final bitmap for sharing
+    /**
+     * Next fun preparing our bitmap for next compressing with image
+     * and
+     * further sharing already final image
+     */
     private fun getBitmapFromView(view: View): Bitmap{
         //save our bitmap in object with current width, height and bitmap type
         val returnedBitmap = Bitmap.createBitmap(
                 view.width, view.height, Bitmap.Config.ARGB_8888)
-        //get canvas from returned object
+        //get canvas from local bitmap
         val canvas = Canvas(returnedBitmap)
-
         //make sandwich with our background image and canvases
         val backgroundDrawable = view.background
         if (backgroundDrawable != null){
@@ -132,18 +263,17 @@ class MainActivity : AppCompatActivity() {
         else{
             canvas.drawColor(Color.WHITE)
         }
-
         view.draw(canvas)
-
         //return all
         return returnedBitmap
     }
-
-    //Async task function for sharing final image
+    /**
+     * Next Class implements AsyncTask and responsible for all process of image exporting/sharing
+     */
     private inner class BitmapAsyncTask(val myBitmap: Bitmap) : AsyncTask<Any, Void, String>(){
-        //Loading dialog block
+        //Loading simple dialog
         var loadingDialog = Dialog(this@MainActivity)
-        //show
+        //show progress, while image is exporting
         fun showProgressDialog(){
             loadingDialog.setContentView(R.layout.dialog_background_progress)
             loadingDialog.show()
@@ -152,13 +282,14 @@ class MainActivity : AppCompatActivity() {
         fun cancelProgressDialog(){
             loadingDialog.dismiss()
         }
-
-
         override fun onPreExecute() {
             super.onPreExecute()
             showProgressDialog()
         }
-
+        /**
+         * While progress dialog is showing
+         * Next fun saves our prepared image in Folder DOWNLOADS in format PNG
+         */
         override fun doInBackground(vararg params: Any?): String {
             var result = ""
             if (myBitmap != null){
@@ -168,7 +299,7 @@ class MainActivity : AppCompatActivity() {
                     //compress our bitmap to PNG using stream of val bytes
                     myBitmap.compress(Bitmap.CompressFormat.PNG, 100, bytes)
                     //make it as single file
-                                //external directory -> as absolute file -> separate ->
+                    //external directory -> as absolute file -> separate ->
                     val myFile = File(//externalCacheDir!!.absoluteFile.toString() +
                             "/storage/emulated/0/Download" + File.separator + System.currentTimeMillis()/1000 + ".png")
                     //stream of our file
@@ -185,10 +316,13 @@ class MainActivity : AppCompatActivity() {
                     e.printStackTrace()
                 }
             }
-
             return result
         }
-
+        /**
+         * Next fun reports result of image exporting process
+         * and
+         * after offers to share it with another app
+         */
         override fun onPostExecute(result: String?) {
             super.onPostExecute(result)
             cancelProgressDialog()
@@ -211,129 +345,14 @@ class MainActivity : AppCompatActivity() {
                 )
             }
         }
-
-
     }
+    /**BLOCK ENDS**/
 
 
 
-    //Permissions variables
-    // The request code used in ActivityCompat.requestPermissions()
-    // and returned in the Activity's onRequestPermissionsResult()
-    companion object{
-        private const val PERMISSIONS_ALL_CODE: Int = 103
-        private val PERMISSIONS_REQUIRED = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA)
-        private const val GALLERY_CODE = 104
-    }
-
-    //variable to store statically text of brush size
-    private var textBrushSize: Int = 1
-    //var to make scaling of layout
-    private var scaleFactor: Float = 1.0f
-    //var to check condition of size btn
-    private var zoomButtonPressed: Boolean = false
-    //TODO ADS
-    private lateinit var myInterstitialAd: InterstitialAd
-    private val adInID: String = "ca-app-pub-3940256099942544/1033173712"
-
-
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        //TODO ADS
-        MobileAds.initialize(this)
-        myInterstitialAd = InterstitialAd(this)
-        myInterstitialAd.adUnitId = adInID
-        myInterstitialAd.loadAd(AdRequest.Builder().build())
-        myInterstitialAd.adListener = object : AdListener() {
-            override fun onAdClosed() {
-                myInterstitialAd.loadAd(AdRequest.Builder().build())
-            }
-        }
-
-
-        //hide zoom option
-        ll_zoom.visibility = View.GONE
-
-
-        //Make brush size by default to 1
-        drawing_view.setBrushSize(1.toFloat())
-
-        //*************************************
-        //ALL BUTTONS LISTENERS
-        //thickness of brush on button
-        btn_brush.setOnClickListener { view ->
-            showBrushSizeDialog()
-        }
-
-        //undo button
-        btn_undo.setOnClickListener {
-            drawing_view.removeLastLine()
-        }
-
-        //trash button
-        btn_trash.setOnClickListener {
-            //TODO ADS
-            //myInterstitialAd.show()
-            eraseAll()
-        }
-
-        //gallery button
-        btn_gallery.setOnClickListener{
-            //TODO ADS
-            //myInterstitialAd.show()
-            //check for having permission
-            if (isPermissionsAreAllowed()){
-                //pick image from gallery
-                //create new intent
-                val pickImageIntent = Intent(Intent.ACTION_PICK,
-                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-                startActivityForResult(pickImageIntent, GALLERY_CODE)
-            }
-            //if don't have permission
-            else{
-                requestStoragePermissions()
-            }
-        }
-
-        //button share
-        btn_share.setOnClickListener {
-            //TODO ADS
-            //myInterstitialAd.show()
-            if (isPermissionsAreAllowed()){
-                BitmapAsyncTask(getBitmapFromView(fl_image_container)).execute()
-            }
-            else{
-                requestStoragePermissions()
-            }
-        }
-
-        //button zoom
-        btn_zoom.setOnClickListener {
-            if (!zoomButtonPressed){
-                //make visible layout
-                ll_zoom.visibility = View.VISIBLE
-                zoomButtonPressed = true
-                zoomScaling()
-            }
-            else{
-                ll_zoom.visibility = View.GONE
-                zoomButtonPressed = false
-            }
-
-
-        }
-
-
-
-
-    }
-
-
-
-    //DIALOG OF BRUSH SIZE FUNCTION
+    /**
+     * Next fun responsible for dialog menu of Brush size
+     */
     private fun showBrushSizeDialog(){
         //create dialog window
         val brushDialog = Dialog(this)
@@ -342,6 +361,11 @@ class MainActivity : AppCompatActivity() {
         //make background color to transparent. it needs for round corners
         brushDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         brushDialog.setCanceledOnTouchOutside(false)
+
+        /**
+         * Next line using for local saving of current states for brush size
+         * Needed for better user performance
+         */
         //get values from brush dialog to local variables
             //brush size - next changing
         val brushSize = brushDialog.sb_brush_size
@@ -355,25 +379,30 @@ class MainActivity : AppCompatActivity() {
         val confirmationBrushSize = brushDialog.btn_confirm_size
         //upload brush size
         displayBrushSize.text = "Size: $textBrushSize"
+
+
         //display dialog menu
         brushDialog.show()
-        //show current value of size
-        brushSize.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
 
+        /**
+         * Next seek bar listener in real time show user's size changes
+         */
+        brushSize.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, i: Int, b: Boolean) {
                 // Display the current progress of SeekBar
                 textBrushSize = i
                 displayBrushSize.text = "Size: $textBrushSize"
             }
-
             override fun onStartTrackingTouch(seekBar: SeekBar) {
             }
-
             override fun onStopTrackingTouch(seekBar: SeekBar) {
-
             }
         })
-        //change brush size
+        /**
+         * Next listener on OK button implements changes
+         * and
+         * close dialog menu
+         */
         confirmationBrushSize.setOnClickListener {
             //change brush size
             drawing_view.setBrushSize(brushSize.progress.toFloat())
@@ -382,12 +411,21 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    //fun which change size of all frame
+
+    /**
+     * Next fun responsible for frame scaling (image + bitmap) to:
+     *  -custom size
+     *  -default size
+     * Changes are made sb_layout_size and fun calls using btn_zoom
+     */
     private fun zoomScaling(){
-        //import current state for sb and text
+        //import current states for sb and text
         sb_layout_size.progress = (scaleFactor*100.0f).toInt()
         tv_current_scale.text = "${sb_layout_size.progress}%"
-        //change size in real time
+
+        /**
+         * Next seek bar listener in real time shows and implements user's changes
+         */
         sb_layout_size.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 sb_layout_size.progress = progress
@@ -397,16 +435,15 @@ class MainActivity : AppCompatActivity() {
                 fl_image_container.scaleX = scaleFactor
                 fl_image_container.scaleY = scaleFactor
             }
-
             override fun onStartTrackingTouch(seekBar: SeekBar?) {
-
             }
-
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
-
             }
         })
-        //change scaling by default
+
+        /**
+         * Next listener makes frame size by default
+         */
         tv_reset_scale.setOnClickListener {
             scaleFactor = 1.0f
             sb_layout_size.progress = 100
@@ -417,10 +454,10 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-
-    //CHANGE COLOR OF LINE USING BUTTONS
-    //initialize directly in xml file
-    //tag takes information of color
+    /**
+     * Next fun changes line color using tag of every color button
+     * Initialize directly in xml file
+     */
     fun colorClicked(view: View){
         //import button
         val button = view as Button
@@ -430,15 +467,13 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    //Erase all function
-    fun eraseAll(){
+    /**
+     * Next fun make clear all frame
+     */
+    private fun eraseAll(){
         //erase background image
         iv_users_image.setImageResource(0)
         //erase lines
         drawing_view.removeAllLines()
     }
-
-
-
-
 }
