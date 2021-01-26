@@ -2,6 +2,7 @@ package com.rssll971.drawingapp
 
 import android.content.Context
 import android.graphics.*
+import android.os.Parcelable
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.MotionEvent
@@ -168,6 +169,8 @@ class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
 
         return true
     }
+
+
 
     /**
      * Next fun return current brush size

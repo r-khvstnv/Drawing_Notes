@@ -3,6 +3,7 @@ package com.rssll971.drawingapp
 import android.Manifest
 import android.app.Activity
 import android.app.Dialog
+import android.app.usage.UsageEvents
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -14,14 +15,15 @@ import android.os.AsyncTask
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
-import android.view.ActionMode
-import android.view.View
-import android.view.Window
+import android.util.EventLog
+import android.view.*
 import android.widget.Button
 import android.widget.SeekBar
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.MotionEventCompat
+import com.dinuscxj.gesture.MultiTouchGestureDetector
 import com.google.android.gms.ads.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.dialog_brush_size.*
@@ -31,6 +33,7 @@ import java.io.FileOutputStream
 import kotlin.Exception
 
 class MainActivity : AppCompatActivity() {
+
     /**
      * Permission vars and list of needed permission for app
      *
@@ -83,11 +86,16 @@ class MainActivity : AppCompatActivity() {
                 or View.SYSTEM_UI_FLAG_FULLSCREEN)
     }
 
-
+    //TODO SCALE DETECTOR
+    private lateinit var myMultiTouchGestureDetector: MultiTouchGestureDetector
     /** ACTIVITY STARTS**/
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        //TODO SCALING DETECTOR
+        myMultiTouchGestureDetector = MultiTouchGestureDetector(this, MultiTouchGestureDetectorListener())
+
+
 
 
         //Prepare and build Ads
@@ -128,6 +136,7 @@ class MainActivity : AppCompatActivity() {
             //TODO ADS
             //myInterstitialAd.show()
             eraseAll()
+
         }
         //gallery
         btn_gallery.setOnClickListener{
@@ -164,6 +173,7 @@ class MainActivity : AppCompatActivity() {
              * for checking right option is using state var zoomButtonPressed,
              * which every time overwritting after success execution
              */
+            /*
             if (!zoomButtonPressed){
                 ll_zoom.visibility = View.VISIBLE
                 zoomButtonPressed = true
@@ -173,8 +183,37 @@ class MainActivity : AppCompatActivity() {
                 ll_zoom.visibility = View.GONE
                 zoomButtonPressed = false
             }
+            */
+            //TODO SCALING
+            fl_image_container.setOnTouchListener { v, event ->
+                myMultiTouchGestureDetector.onTouchEvent(event)
+            }
         }
+
         /** BLOCK ENDS**/
+    }
+
+    /**
+     * TODO BLOCK WORKS PROPERLY, BUT ONLY WHEN DRAWINGVIEW ONTOUCH IN COMMENT
+     */
+    private inner class MultiTouchGestureDetectorListener :
+        MultiTouchGestureDetector.SimpleOnMultiTouchGestureListener() {
+        //TODO ADD COMMENTS
+        override fun onScale(detector: MultiTouchGestureDetector?) {
+            super.onScale(detector)
+            scaleFactor *= detector?.scale ?: 1.0f
+            scaleFactor = Math.max(1.0f, Math.min(scaleFactor, 5.0f))
+            fl_image_container.scaleX = scaleFactor
+            fl_image_container.scaleY = scaleFactor
+            fl_image_container.invalidate()
+        }
+
+        override fun onMove(detector: MultiTouchGestureDetector?) {
+            super.onMove(detector)
+            fl_image_container.x += detector?.moveX ?: 0.0f
+            fl_image_container.y += detector?.moveY ?: 0.0f
+            fl_image_container.invalidate()
+        }
     }
 
 
