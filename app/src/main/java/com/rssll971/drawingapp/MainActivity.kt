@@ -30,7 +30,6 @@ import java.io.FileOutputStream
 import kotlin.Exception
 
 class MainActivity : AppCompatActivity() {
-
     /**
      * Permission vars and list of needed permission for app
      *
@@ -51,10 +50,15 @@ class MainActivity : AppCompatActivity() {
     private var textBrushSize: Int = 1
     //var to make scaling of layout
     private var scaleFactor: Float = 1.0f
+    //show extra menu or not
+    private var isMenuShown: Boolean = false
     //Scale detector. Declare in onCreate, called by button
     private lateinit var myMultiTouchGestureDetector: MultiTouchGestureDetector
     //TODO ADS
+    //interstitial ad
     private lateinit var myInterstitialAd: InterstitialAd
+    //banner ad
+    private lateinit var myBannerAdView: AdView
     //id of interstitial ad
     private val adInterstitialID: String = "ca-app-pub-3940256099942544/1033173712"
 
@@ -89,24 +93,38 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         //Declare multi-touch detector
-        myMultiTouchGestureDetector = MultiTouchGestureDetector(this, MultiTouchGestureDetectorListener())
+        myMultiTouchGestureDetector = MultiTouchGestureDetector(
+                this, MultiTouchGestureDetectorListener())
 
         //Prepare and build Ads
         //TODO ADS
         MobileAds.initialize(this)
+        //get to local var
         myInterstitialAd = InterstitialAd(this)
         myInterstitialAd.adUnitId = adInterstitialID
+        myBannerAdView = findViewById(R.id.adView_smart_banner)
+        //load
         myInterstitialAd.loadAd(AdRequest.Builder().build())
+        myBannerAdView.loadAd(AdRequest.Builder().build())
+
         myInterstitialAd.adListener = object : AdListener() {
             override fun onAdClosed() {
                 myInterstitialAd.loadAd(AdRequest.Builder().build())
             }
         }
+        myBannerAdView.adListener = object : AdListener(){
+            override fun onAdClosed() {
+                myBannerAdView.loadAd(AdRequest.Builder().build())
+            }
+        }
 
         /**
-         * Next line every time set brush size to 1 on first app start
+         * Next lines every time set brush size to 1 on first app start
+         * and
+         * hide extra menu
          */
         drawing_view.setBrushSize(1.toFloat())
+        hideExtraMenu()
 
 
         /**
@@ -124,15 +142,21 @@ class MainActivity : AppCompatActivity() {
         btn_trash.setOnClickListener {
             //TODO ADS
             //myInterstitialAd.show()
-            //TODO ERASE
-            //eraseAll()
-            drawing_view.setIsTouchAllowed(true)
+            eraseAll()
+            //default scale
+            defaultScale()
 
+            hideExtraMenu()
         }
         //gallery
         btn_gallery.setOnClickListener{
             //TODO ADS
             //myInterstitialAd.show()
+            //default scale
+            defaultScale()
+
+            hideExtraMenu()
+
             //check for having permission
             if (isPermissionsAreAllowed()){
                 //pick image from gallery
@@ -150,6 +174,11 @@ class MainActivity : AppCompatActivity() {
         btn_share.setOnClickListener {
             //TODO ADS
             //myInterstitialAd.show()
+            //default scale
+            defaultScale()
+
+            hideExtraMenu()
+
             if (isPermissionsAreAllowed()){
                 BitmapAsyncTask(getBitmapFromView(fl_image_container)).execute()
             }
@@ -157,29 +186,33 @@ class MainActivity : AppCompatActivity() {
                 requestPermissions()
             }
         }
-        //zoom
-        btn_zoom.setOnClickListener {
+        //default scale
+        btn_fit.setOnClickListener {
+            defaultScale()
+        }
+        //drag and scale
+        btn_transfer.setOnClickListener {
             /**
-             * Next statements responsible for zoom layout displaying
-             * for checking right option is using state var zoomButtonPressed,
-             * which every time overwritting after success execution
+             * Next statements responsible for scaling and dragging.
+             * Firstly disable drag layout
              */
-            /*
-            if (!zoomButtonPressed){
-                ll_zoom.visibility = View.VISIBLE
-                zoomButtonPressed = true
-                zoomScaling()
+            drawing_view.setIsTouchAllowed(false)
+            //
+            fl_image_container.setOnTouchListener { v, event ->
+                myMultiTouchGestureDetector.onTouchEvent(event)
+            }
+        }
+        //active draw functionality
+        btn_active_draw.setOnClickListener {
+            drawing_view.setIsTouchAllowed(true)
+        }
+        //extra menu
+        btn_extra_menu.setOnClickListener {
+            if (isMenuShown){
+                hideExtraMenu()
             }
             else{
-                ll_zoom.visibility = View.GONE
-                zoomButtonPressed = false
-            }
-            */
-            drawing_view.setIsTouchAllowed(false)
-            //TODO SCALING
-            fl_image_container.setOnTouchListener { v, event ->
-
-                myMultiTouchGestureDetector.onTouchEvent(event)
+                showExtraMenu()
             }
         }
 
@@ -199,15 +232,24 @@ class MainActivity : AppCompatActivity() {
             scaleFactor = Math.max(1.0f, Math.min(scaleFactor, 5.0f))
             fl_image_container.scaleX = scaleFactor
             fl_image_container.scaleY = scaleFactor
-            fl_image_container.invalidate()
         }
-
         override fun onMove(detector: MultiTouchGestureDetector?) {
             super.onMove(detector)
             fl_image_container.x += detector?.moveX ?: 0.0f
             fl_image_container.y += detector?.moveY ?: 0.0f
-            fl_image_container.invalidate()
         }
+    }
+    /**
+     * Next fun fit frame to default
+     */
+    private fun defaultScale(){
+        //default size
+        scaleFactor = 1.0f
+        fl_image_container.scaleX = scaleFactor
+        fl_image_container.scaleY = scaleFactor
+        //default placement
+        fl_image_container.x = 0.0f
+        fl_image_container.y = 0.0f
     }
 
 
@@ -362,8 +404,8 @@ class MainActivity : AppCompatActivity() {
                     myBitmap.compress(Bitmap.CompressFormat.PNG, 100, bytes)
                     //make it as single file
                     //external directory -> as absolute file -> separate ->
-                    val myFile = File(//externalCacheDir!!.absoluteFile.toString() +
-                            "/storage/emulated/0/Download" + File.separator + System.currentTimeMillis()/1000 + ".png")
+                    val myFile = File("/storage/emulated/0/Download"
+                            + File.separator + System.currentTimeMillis()/1000 + ".png")
                     //stream of our file
                     val myFileOS = FileOutputStream(myFile)
                     //start writing
@@ -397,7 +439,8 @@ class MainActivity : AppCompatActivity() {
                         "Something went wrong \nPlease try again", Toast.LENGTH_LONG).show()
             }
             //share image for another app
-            MediaScannerConnection.scanFile(this@MainActivity, arrayOf(result), null){
+            MediaScannerConnection.scanFile(this@MainActivity,
+                    arrayOf(result), null){
                 path, uri -> val sharingIntent = Intent()
                 sharingIntent.action = Intent.ACTION_SEND
                 sharingIntent.putExtra(Intent.EXTRA_STREAM, uri)
@@ -410,6 +453,24 @@ class MainActivity : AppCompatActivity() {
     }
     /**BLOCK ENDS**/
 
+
+    /**
+     * Next two fun responsible for extra menu show/hide
+     */
+    private fun showExtraMenu(){
+        btn_rotate.visibility = View.VISIBLE
+        btn_trash.visibility = View.VISIBLE
+        btn_share.visibility = View.VISIBLE
+        btn_gallery.visibility = View.VISIBLE
+        isMenuShown = true
+    }
+    private fun hideExtraMenu(){
+        btn_rotate.visibility = View.GONE
+        btn_trash.visibility = View.GONE
+        btn_share.visibility = View.GONE
+        btn_gallery.visibility = View.GONE
+        isMenuShown = false
+    }
 
 
     /**
@@ -470,48 +531,6 @@ class MainActivity : AppCompatActivity() {
             drawing_view.setBrushSize(brushSize.progress.toFloat())
             //turn off brush dialog
             brushDialog.dismiss()
-        }
-    }
-
-
-    /**
-     * Next fun responsible for frame scaling (image + bitmap) to:
-     *  -custom size
-     *  -default size
-     * Changes are made sb_layout_size and fun calls using btn_zoom
-     */
-    private fun zoomScaling(){
-        //import current states for sb and text
-        sb_layout_size.progress = (scaleFactor*100.0f).toInt()
-        tv_current_scale.text = "${sb_layout_size.progress}%"
-
-        /**
-         * Next seek bar listener in real time shows and implements user's changes
-         */
-        sb_layout_size.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                sb_layout_size.progress = progress
-                tv_current_scale.text = "${progress}%"
-                scaleFactor = (progress.toFloat()/100)
-                //implement scaling in real time
-                fl_image_container.scaleX = scaleFactor
-                fl_image_container.scaleY = scaleFactor
-            }
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {
-            }
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {
-            }
-        })
-
-        /**
-         * Next listener makes frame size by default
-         */
-        tv_reset_scale.setOnClickListener {
-            scaleFactor = 1.0f
-            sb_layout_size.progress = 100
-            tv_current_scale.text = "100%"
-            fl_image_container.scaleX = scaleFactor
-            fl_image_container.scaleY = scaleFactor
         }
     }
 

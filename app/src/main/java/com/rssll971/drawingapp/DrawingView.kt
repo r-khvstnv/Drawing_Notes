@@ -178,6 +178,7 @@ class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
 
 
 
+
     /**
      * Next fun return current brush size
      */
