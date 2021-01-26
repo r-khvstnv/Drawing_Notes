@@ -3,7 +3,6 @@ package com.rssll971.drawingapp
 import android.Manifest
 import android.app.Activity
 import android.app.Dialog
-import android.app.usage.UsageEvents
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -15,14 +14,12 @@ import android.os.AsyncTask
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.EventLog
 import android.view.*
 import android.widget.Button
 import android.widget.SeekBar
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.view.MotionEventCompat
 import com.dinuscxj.gesture.MultiTouchGestureDetector
 import com.google.android.gms.ads.*
 import kotlinx.android.synthetic.main.activity_main.*
@@ -54,8 +51,8 @@ class MainActivity : AppCompatActivity() {
     private var textBrushSize: Int = 1
     //var to make scaling of layout
     private var scaleFactor: Float = 1.0f
-    //var to check condition of size btn
-    private var zoomButtonPressed: Boolean = false
+    //Scale detector. Declare in onCreate, called by button
+    private lateinit var myMultiTouchGestureDetector: MultiTouchGestureDetector
     //TODO ADS
     private lateinit var myInterstitialAd: InterstitialAd
     //id of interstitial ad
@@ -68,7 +65,6 @@ class MainActivity : AppCompatActivity() {
         super.onWindowFocusChanged(hasFocus)
         if (hasFocus) hideSystemUI()
     }
-
     private fun hideSystemUI() {
         /**
          * Enables regular immersive mode.
@@ -86,17 +82,14 @@ class MainActivity : AppCompatActivity() {
                 or View.SYSTEM_UI_FLAG_FULLSCREEN)
     }
 
-    //TODO SCALE DETECTOR
-    private lateinit var myMultiTouchGestureDetector: MultiTouchGestureDetector
+
     /** ACTIVITY STARTS**/
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        //TODO SCALING DETECTOR
+
+        //Declare multi-touch detector
         myMultiTouchGestureDetector = MultiTouchGestureDetector(this, MultiTouchGestureDetectorListener())
-
-
-
 
         //Prepare and build Ads
         //TODO ADS
@@ -110,10 +103,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        /**
-         * Next line every time hide zoom option layout on first app start
-         */
-        ll_zoom.visibility = View.GONE
         /**
          * Next line every time set brush size to 1 on first app start
          */
@@ -135,7 +124,9 @@ class MainActivity : AppCompatActivity() {
         btn_trash.setOnClickListener {
             //TODO ADS
             //myInterstitialAd.show()
-            eraseAll()
+            //TODO ERASE
+            //eraseAll()
+            drawing_view.setIsTouchAllowed(true)
 
         }
         //gallery
@@ -184,8 +175,10 @@ class MainActivity : AppCompatActivity() {
                 zoomButtonPressed = false
             }
             */
+            drawing_view.setIsTouchAllowed(false)
             //TODO SCALING
             fl_image_container.setOnTouchListener { v, event ->
+
                 myMultiTouchGestureDetector.onTouchEvent(event)
             }
         }
@@ -194,7 +187,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * TODO BLOCK WORKS PROPERLY, BUT ONLY WHEN DRAWINGVIEW ONTOUCH IN COMMENT
+     * Next inner class implement multi-touch functionality
+     *  Takes opportunity to scale and drag frame layout
      */
     private inner class MultiTouchGestureDetectorListener :
         MultiTouchGestureDetector.SimpleOnMultiTouchGestureListener() {

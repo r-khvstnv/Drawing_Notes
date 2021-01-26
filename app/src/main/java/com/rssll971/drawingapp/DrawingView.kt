@@ -2,7 +2,6 @@ package com.rssll971.drawingapp
 
 import android.content.Context
 import android.graphics.*
-import android.os.Parcelable
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.MotionEvent
@@ -31,6 +30,7 @@ class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
     //all created paths
     private val myPaths = ArrayList<CustomPath>()
     /** BLOCK ENDS**/
+    private var isTouchAllowed: Boolean = true
 
     //SETUP VARIABLES
     //init block where we initialized all of variables
@@ -39,7 +39,9 @@ class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
         setUpDrawing()
     }
 
-
+    fun setIsTouchAllowed(boolean: Boolean){
+        isTouchAllowed = boolean
+    }
     /**
      * Next fun prepares for drawing all needed attr vars,
      *                  such as: color, size, stroke and etc.
@@ -118,56 +120,60 @@ class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
      *         such as path (using x,y), color, thickness and further actions which should execute
      */
     override fun onTouchEvent(event: MotionEvent?): Boolean {
-        //store position onTouch
-        val touchX = event?.x
-        val touchY = event?.y
+        if (isTouchAllowed){
+            //store position onTouch
+            val touchX = event?.x
+            val touchY = event?.y
 
-        //what should will be executed onTouch
-        when(event?.action){
+            //what should will be executed onTouch
+            when(event?.action){
 
-            //press on the screen
-            MotionEvent.ACTION_DOWN ->{
-                //setup path
-                myDrawPath!!.color = color
-                myDrawPath!!.brushThickness = myBrushSize
+                //press on the screen
+                MotionEvent.ACTION_DOWN ->{
+                    //setup path
+                    myDrawPath!!.color = color
+                    myDrawPath!!.brushThickness = myBrushSize
 
-                //delete any path
-                myDrawPath!!.reset()
+                    //delete any path
+                    myDrawPath!!.reset()
 
-                //start drawing by positions
-                if (touchX != null) {
-                    if (touchY != null) {
-                        myDrawPath!!.moveTo(touchX, touchY)
+                    //start drawing by positions
+                    if (touchX != null) {
+                        if (touchY != null) {
+                            myDrawPath!!.moveTo(touchX, touchY)
+                        }
                     }
                 }
-            }
 
-            //drag over the screen
-            MotionEvent.ACTION_MOVE ->{
-                //draw line
-                if (touchX != null) {
-                    if (touchY != null) {
-                        myDrawPath!!.lineTo(touchX, touchY)
+                //drag over the screen
+                MotionEvent.ACTION_MOVE ->{
+                    //draw line
+                    if (touchX != null) {
+                        if (touchY != null) {
+                            myDrawPath!!.lineTo(touchX, touchY)
+                        }
                     }
                 }
+
+                //press gesture
+                MotionEvent.ACTION_UP ->{
+                    //add created path in array
+                    myPaths.add(myDrawPath!!)
+                    //end of line
+                    myDrawPath = CustomPath(color, myBrushSize)
+                }
+
+                //default
+                else -> return false
             }
 
-            //press gesture
-            MotionEvent.ACTION_UP ->{
-                //add created path in array
-                myPaths.add(myDrawPath!!)
-                //end of line
-                myDrawPath = CustomPath(color, myBrushSize)
-            }
+            //update lines list
+            invalidate()
 
-            //default
-            else -> return false
+            return true
         }
+        return false
 
-        //update lines list
-        invalidate()
-
-        return true
     }
 
 
