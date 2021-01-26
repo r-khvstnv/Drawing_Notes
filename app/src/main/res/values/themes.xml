@@ -17,5 +17,6 @@
     <style name="Theme.NoActionBar.FullScreen" parent="Theme.AppCompat.DayNight.NoActionBar">
         <item name="android:statusBarColor">@color/myWhite</item>
         <item name="android:navigationBarColor">@color/myWhite</item>
+
     </style>
 </resources>
