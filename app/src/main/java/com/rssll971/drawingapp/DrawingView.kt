@@ -6,6 +6,7 @@ import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.MotionEvent
 import android.view.View
+import androidx.core.graphics.blue
 
 /**
  * Next Class responsible for custom drawing view
@@ -25,6 +26,7 @@ class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
     private var myBrushSize: Float = 0.toFloat()
     //color of drawing (by default)
     private var color = Color.BLACK
+    private var colorHex: String = "#121212"
     //canvas - холст
     private var canvas: Canvas? = null
     //all created paths
@@ -219,9 +221,17 @@ class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
      * Next fun change color to selected by user
      */
     fun setColor(myColor: String){
+        colorHex = "#" + myColor
         //parse needed color
         color = Color.parseColor(myColor)
         //change color
         myDrawPaint!!.color = color
+
+    }
+    /**
+     * Next fun return current color
+     */
+    fun getCurrentColor(): String{
+        return colorHex
     }
 }

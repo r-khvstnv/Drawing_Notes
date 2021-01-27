@@ -10,7 +10,6 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.icu.util.TimeUnit
 import android.media.MediaScannerConnection
 import android.os.AsyncTask
 import androidx.appcompat.app.AppCompatActivity
@@ -25,15 +24,19 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.dinuscxj.gesture.MultiTouchGestureDetector
 import com.google.android.gms.ads.*
+import com.skydoves.colorpickerview.ColorEnvelope
+import com.skydoves.colorpickerview.listeners.ColorEnvelopeListener
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.dialog_brush_size.*
+import kotlinx.android.synthetic.main.dialog_color_picker.*
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import kotlin.Exception
 
 class MainActivity : AppCompatActivity() {
-    //TODO HIDE EXTRA MENU ALMOST EVERY TIME
+    //TODO CHANGE PALETTE COLORS
+    //TODO ACTIVATE ADS
     /**
      * Permission vars and list of needed permission for app
      *
@@ -250,6 +253,9 @@ class MainActivity : AppCompatActivity() {
             }
         }
         /** BLOCK ENDS**/
+        btn_palette.setOnClickListener {
+            showColorPickerDialog()
+        }
     }
 
     /**
@@ -505,6 +511,54 @@ class MainActivity : AppCompatActivity() {
         isMenuShown = false
     }
 
+
+    /**
+     * Next fun responsible for dialog menu of Color picker
+     */
+    private fun showColorPickerDialog(){
+        //last color
+        var myColor: String = drawing_view.getCurrentColor()
+        //create dialog
+        val colorDialog = Dialog(this)
+        colorDialog.setContentView(R.layout.dialog_color_picker)
+        //make background color to transparent. it needs for round corners
+        colorDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        colorDialog.setCanceledOnTouchOutside(false)
+        //make all touchable object as local
+        val myColorPicker = colorDialog.colorPickerView
+        val myLLCurrentColor = colorDialog.ll_current_color
+        val tvCurrentHex = colorDialog.tv_color_hex
+        //last color as HEX
+        tvCurrentHex.text = myColor
+
+        val myOk = colorDialog.btn_ok_color
+        val myCancel = colorDialog.btn_cancel_color
+        //show
+        colorDialog.show()
+
+        //color listener
+        myColorPicker.setColorListener(object : ColorEnvelopeListener {
+            override fun onColorSelected(envelope: ColorEnvelope?, fromUser: Boolean) {
+                if (envelope != null) {
+                    //show in linear layout current color
+                    myLLCurrentColor.setBackgroundColor(envelope.color)
+                    tvCurrentHex.text = "#" + envelope.hexCode
+                    //save color
+                    myColor = envelope.hexCode
+                }
+            }
+        })
+
+        //finish dialog
+        myOk.setOnClickListener {
+            //implement new color
+            drawing_view.setColor("#" + myColor)
+            colorDialog.dismiss()
+        }
+        myCancel.setOnClickListener {
+            colorDialog.dismiss()
+        }
+    }
 
     /**
      * Next fun responsible for dialog menu of Brush size

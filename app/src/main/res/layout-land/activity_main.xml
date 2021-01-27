@@ -122,7 +122,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             android:layout_marginBottom="10dp"
             app:layout_constraintLeft_toRightOf="@id/btn_green"
-            app:layout_constraintRight_toLeftOf="@id/btn_purple"
+            app:layout_constraintRight_toLeftOf="@id/btn_palette"
             android:background="@drawable/btn_blue"
             android:elevation="10dp"
             android:translationZ="10dp"
@@ -130,17 +130,17 @@
             android:tag="@color/myBlue"
             />
         <Button
-            android:id="@+id/btn_purple"
+            android:id="@+id/btn_palette"
             android:layout_width="22dp"
             android:layout_height="22dp"
             app:layout_constraintBottom_toBottomOf="parent"
             android:layout_marginBottom="10dp"
             app:layout_constraintLeft_toRightOf="@id/btn_blue"
             app:layout_constraintRight_toLeftOf="@id/adView_smart_banner"
-            android:background="@drawable/btn_purple"
+            android:background="@drawable/btn_palette"
             android:elevation="10dp"
             android:translationZ="10dp"
-            android:onClick="colorClicked"
+
             android:tag="@color/purple_500"
             />
     <com.google.android.gms.ads.AdView

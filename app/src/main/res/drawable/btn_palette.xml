@@ -3,7 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     >
     <size android:width="22dp" android:height="22dp"/>
-    <solid android:color="@color/myPurple"/>
+    <gradient android:type="sweep" android:startColor="@color/myGreen"
+        android:centerColor="@color/myOrange" android:endColor="@color/myBlue"/>
     <corners android:radius="3dp"/>
 
 </shape>
