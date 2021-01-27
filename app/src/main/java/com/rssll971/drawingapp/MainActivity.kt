@@ -4,15 +4,18 @@ import android.Manifest
 import android.app.Activity
 import android.app.Dialog
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.icu.util.TimeUnit
 import android.media.MediaScannerConnection
 import android.os.AsyncTask
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
 import android.provider.MediaStore
 import android.view.*
 import android.widget.Button
@@ -30,6 +33,7 @@ import java.io.FileOutputStream
 import kotlin.Exception
 
 class MainActivity : AppCompatActivity() {
+    //TODO HIDE EXTRA MENU ALMOST EVERY TIME
     /**
      * Permission vars and list of needed permission for app
      *
@@ -52,6 +56,8 @@ class MainActivity : AppCompatActivity() {
     private var scaleFactor: Float = 1.0f
     //show extra menu or not
     private var isMenuShown: Boolean = false
+    //portrait orientation active
+    private var isPortraitMode: Boolean = true
     //Scale detector. Declare in onCreate, called by button
     private lateinit var myMultiTouchGestureDetector: MultiTouchGestureDetector
     //TODO ADS
@@ -83,7 +89,8 @@ class MainActivity : AppCompatActivity() {
                 or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                 // Hide the nav bar and status bar
                 or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                or View.SYSTEM_UI_FLAG_FULLSCREEN)
+                or View.SYSTEM_UI_FLAG_FULLSCREEN
+                )
     }
 
 
@@ -92,9 +99,23 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        //change orientation state
+        when(requestedOrientation){
+            ActivityInfo.SCREEN_ORIENTATION_PORTRAIT -> isPortraitMode = true
+            ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE -> isPortraitMode = false
+        }
+        //Lock auto-screen orientation
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LOCKED
+        hideExtraMenu()
+
+        //crutch when systemUI doesn't disappear
+        Handler().postDelayed({onWindowFocusChanged(true)}, 1000)
+
+
         //Declare multi-touch detector
         myMultiTouchGestureDetector = MultiTouchGestureDetector(
                 this, MultiTouchGestureDetectorListener())
+
 
         //Prepare and build Ads
         //TODO ADS
@@ -124,12 +145,32 @@ class MainActivity : AppCompatActivity() {
          * hide extra menu
          */
         drawing_view.setBrushSize(1.toFloat())
-        hideExtraMenu()
+
 
 
         /**
          * BLOCK of all listeners for any clickable objects
          */
+        //move and draw layout
+        //default scale
+        btn_fit.setOnClickListener {
+            defaultScale()
+        }
+        //drag and scale
+        btn_transfer.setOnClickListener {
+            /**
+             * Next statements responsible for scaling and dragging.
+             * Firstly disable drag layout
+             */
+            drawing_view.setIsTouchAllowed(false)
+            //
+            fl_image_container.setOnTouchListener { v, event ->
+                myMultiTouchGestureDetector.onTouchEvent(event)
+            }
+        }
+
+
+        //secondary layout
         //brush
         btn_brush.setOnClickListener { view ->
             showBrushSizeDialog()
@@ -138,20 +179,58 @@ class MainActivity : AppCompatActivity() {
         btn_undo.setOnClickListener {
             drawing_view.removeLastLine()
         }
+        //active draw functionality
+        btn_active_draw.setOnClickListener {
+            drawing_view.setIsTouchAllowed(true)
+        }
+
+
+        //extra layout
+        //extra menu
+        btn_extra_menu.setOnClickListener {
+            if (isMenuShown){
+                hideExtraMenu()
+            }
+            else{
+                //myInterstitialAd.show()
+                showExtraMenu()
+            }
+        }
+        //screen orientation
+        btn_rotate.setOnClickListener {
+            if (isPortraitMode){
+                //switch to landscape
+                requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+            }
+            else{
+                //switch to portrait
+                requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+            }
+        }
         //trash
         btn_trash.setOnClickListener {
-            //TODO ADS
-            //myInterstitialAd.show()
             eraseAll()
             //default scale
             defaultScale()
 
             hideExtraMenu()
         }
+        // share/save
+        btn_share.setOnClickListener {
+            //default scale
+            defaultScale()
+
+            hideExtraMenu()
+
+            if (isPermissionsAreAllowed()){
+                BitmapAsyncTask(getBitmapFromView(fl_image_container)).execute()
+            }
+            else{
+                requestPermissions()
+            }
+        }
         //gallery
         btn_gallery.setOnClickListener{
-            //TODO ADS
-            //myInterstitialAd.show()
             //default scale
             defaultScale()
 
@@ -170,52 +249,6 @@ class MainActivity : AppCompatActivity() {
                 requestPermissions()
             }
         }
-        // share/save
-        btn_share.setOnClickListener {
-            //TODO ADS
-            //myInterstitialAd.show()
-            //default scale
-            defaultScale()
-
-            hideExtraMenu()
-
-            if (isPermissionsAreAllowed()){
-                BitmapAsyncTask(getBitmapFromView(fl_image_container)).execute()
-            }
-            else{
-                requestPermissions()
-            }
-        }
-        //default scale
-        btn_fit.setOnClickListener {
-            defaultScale()
-        }
-        //drag and scale
-        btn_transfer.setOnClickListener {
-            /**
-             * Next statements responsible for scaling and dragging.
-             * Firstly disable drag layout
-             */
-            drawing_view.setIsTouchAllowed(false)
-            //
-            fl_image_container.setOnTouchListener { v, event ->
-                myMultiTouchGestureDetector.onTouchEvent(event)
-            }
-        }
-        //active draw functionality
-        btn_active_draw.setOnClickListener {
-            drawing_view.setIsTouchAllowed(true)
-        }
-        //extra menu
-        btn_extra_menu.setOnClickListener {
-            if (isMenuShown){
-                hideExtraMenu()
-            }
-            else{
-                showExtraMenu()
-            }
-        }
-
         /** BLOCK ENDS**/
     }
 

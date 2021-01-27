@@ -10,7 +10,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginBottom="5dp"
-        android:layout_marginRight="5dp"
+        android:layout_marginHorizontal="5dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@id/ll_primary_options"
         app:layout_constraintTop_toTopOf="parent"
@@ -135,30 +135,51 @@
             android:layout_height="22dp"
             app:layout_constraintBottom_toBottomOf="parent"
             android:layout_marginBottom="10dp"
-
             app:layout_constraintLeft_toRightOf="@id/btn_blue"
-            app:layout_constraintRight_toLeftOf="@id/ll_primary_options"
+            app:layout_constraintRight_toLeftOf="@id/adView_smart_banner"
             android:background="@drawable/btn_purple"
             android:elevation="10dp"
             android:translationZ="10dp"
             android:onClick="colorClicked"
             android:tag="@color/purple_500"
             />
+    <com.google.android.gms.ads.AdView
+        xmlns:ads="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/adView_smart_banner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        ads:layout_constraintBottom_toBottomOf="parent"
+        ads:layout_constraintRight_toRightOf="parent"
+        ads:adSize="BANNER"
+        ads:adUnitId="@string/banner_id_Ads"
+        >
+    </com.google.android.gms.ads.AdView>
 
     <LinearLayout
         android:id="@+id/ll_primary_options"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginEnd="10dp"
+        app:layout_constraintBottom_toTopOf="@id/adView_smart_banner"
         app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginRight="10dp"
         android:background="@drawable/layout_handling_background"
         android:elevation="5dp"
-        android:gravity="center_horizontal"
+        android:gravity="center_vertical"
         android:orientation="vertical"
         >
+        <ImageButton
+            android:id="@+id/btn_fit"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginHorizontal="10dp"
+            android:background="@drawable/ibtn_handling"
+            android:elevation="4dp"
+            android:layout_marginVertical="8dp"
+            android:src="@drawable/ic_fit"
+            android:padding="5dp"
+            android:scaleType="fitXY"
+            />
         <ImageButton
             android:id="@+id/btn_active_draw"
             android:layout_height="32dp"
@@ -183,30 +204,21 @@
             android:padding="5dp"
             android:scaleType="fitXY"
             />
-        <ImageButton
-            android:id="@+id/btn_gallery"
-            android:layout_height="32dp"
-            android:layout_width="32dp"
-            android:layout_marginHorizontal="10dp"
-            android:background="@drawable/ibtn_handling"
-            android:elevation="4dp"
-            android:layout_marginVertical="8dp"
-            android:src="@drawable/ic_gallery"
-            android:scaleType="fitXY"
-            android:padding="5dp"
-            />
-        <ImageButton
-            android:id="@+id/btn_share"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_marginHorizontal="10dp"
-            android:background="@drawable/ibtn_handling"
-            android:elevation="4dp"
-            android:layout_marginVertical="8dp"
-            android:src="@drawable/ic_share"
-            android:padding="5dp"
-            android:scaleType="fitXY"
-            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_secondary_options"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/ll_primary_options"
+        app:layout_constraintTop_toBottomOf="@id/ll_extra_menu"
+        android:background="@drawable/layout_handling_background"
+        android:elevation="5dp"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        >
         <ImageButton
             android:id="@+id/btn_undo"
             android:layout_width="32dp"
@@ -231,53 +243,86 @@
             android:scaleType="fitXY"
             android:padding="5dp"
             />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_extra_menu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:background="@drawable/layout_handling_background"
+        android:elevation="5dp"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal"
+        >
+        <ImageButton
+            android:id="@+id/btn_gallery"
+            android:layout_height="32dp"
+            android:layout_width="32dp"
+            android:layout_marginHorizontal="10dp"
+            android:background="@drawable/ibtn_handling"
+            android:elevation="4dp"
+            android:layout_marginVertical="8dp"
+            android:src="@drawable/ic_gallery"
+            android:scaleType="fitXY"
+            android:padding="5dp"
+            android:visibility="visible"
+            />
+        <ImageButton
+            android:id="@+id/btn_share"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="40dp"
+            android:layout_marginVertical="8dp"
+            android:background="@drawable/ibtn_handling"
+            android:elevation="4dp"
+            android:src="@drawable/ic_share"
+            android:padding="5dp"
+            android:scaleType="fitXY"
+            android:visibility="visible"
+            />
         <ImageButton
             android:id="@+id/btn_trash"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:layout_marginHorizontal="10dp"
+            android:layout_marginVertical="8dp"
             android:background="@drawable/ibtn_handling"
             android:elevation="4dp"
-            android:layout_marginVertical="8dp"
             android:src="@drawable/ic_trash"
             android:scaleType="fitXY"
             android:padding="5dp"
+            android:visibility="visible"
             />
         <ImageButton
             android:id="@+id/btn_rotate"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:layout_marginHorizontal="10dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginVertical="8dp"
             android:background="@drawable/ibtn_handling"
             android:elevation="4dp"
-            android:layout_marginVertical="8dp"
             android:src="@drawable/ic_rotate"
             android:scaleType="fitXY"
             android:padding="5dp"
+            android:visibility="visible"
             />
         <ImageButton
             android:id="@+id/btn_extra_menu"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:layout_marginHorizontal="10dp"
+            android:layout_marginVertical="8dp"
             android:background="@drawable/ibtn_handling"
             android:elevation="4dp"
-            android:layout_marginVertical="8dp"
             android:src="@drawable/ic_menu"
             android:scaleType="fitXY"
             android:padding="5dp"
-            />
-        <ImageButton
-            android:id="@+id/btn_fit"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_marginHorizontal="10dp"
-            android:background="@drawable/ibtn_handling"
-            android:elevation="4dp"
-            android:layout_marginVertical="8dp"
-            android:src="@drawable/ic_fit"
-            android:padding="5dp"
-            android:scaleType="fitXY"
             />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
