@@ -29,13 +29,13 @@ import com.skydoves.colorpickerview.listeners.ColorEnvelopeListener
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.dialog_brush_size.*
 import kotlinx.android.synthetic.main.dialog_color_picker.*
+import kotlinx.android.synthetic.main.dialog_info.*
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import kotlin.Exception
 
 class MainActivity : AppCompatActivity() {
-    //TODO CHANGE PALETTE COLORS
     //TODO ACTIVATE ADS
     /**
      * Permission vars and list of needed permission for app
@@ -63,13 +63,13 @@ class MainActivity : AppCompatActivity() {
     private var isPortraitMode: Boolean = true
     //Scale detector. Declare in onCreate, called by button
     private lateinit var myMultiTouchGestureDetector: MultiTouchGestureDetector
-    //TODO ADS
+    //ADS
     //interstitial ad
     private lateinit var myInterstitialAd: InterstitialAd
     //banner ad
     private lateinit var myBannerAdView: AdView
     //id of interstitial ad
-    private val adInterstitialID: String = "ca-app-pub-3940256099942544/1033173712"
+    private val adInterstitialID: String = "ca-app-pub-4362142146545991/4879230890"
 
     /**
      * Next two fun responsible for fullscreen mode and transparent navigation and status bars
@@ -118,6 +118,8 @@ class MainActivity : AppCompatActivity() {
         //Declare multi-touch detector
         myMultiTouchGestureDetector = MultiTouchGestureDetector(
                 this, MultiTouchGestureDetectorListener())
+        //TODO DELETE
+        Toast.makeText(this, "Made by Ruslan Khvastunov\n\nClosed Beta", Toast.LENGTH_LONG).show()
 
 
         //Prepare and build Ads
@@ -172,6 +174,11 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        //color palette
+        btn_palette.setOnClickListener {
+            showColorPickerDialog()
+        }
+
 
         //secondary layout
         //brush
@@ -195,7 +202,8 @@ class MainActivity : AppCompatActivity() {
                 hideExtraMenu()
             }
             else{
-                //myInterstitialAd.show()
+                //show menu and ads
+                myInterstitialAd.show()
                 showExtraMenu()
             }
         }
@@ -252,10 +260,13 @@ class MainActivity : AppCompatActivity() {
                 requestPermissions()
             }
         }
-        /** BLOCK ENDS**/
-        btn_palette.setOnClickListener {
-            showColorPickerDialog()
+        //info
+        btn_info.setOnClickListener {
+            hideExtraMenu()
+            showInfo()
         }
+        /** BLOCK ENDS**/
+
     }
 
     /**
@@ -264,7 +275,7 @@ class MainActivity : AppCompatActivity() {
      */
     private inner class MultiTouchGestureDetectorListener :
         MultiTouchGestureDetector.SimpleOnMultiTouchGestureListener() {
-        //TODO ADD COMMENTS
+        //scale frame fun
         override fun onScale(detector: MultiTouchGestureDetector?) {
             super.onScale(detector)
             scaleFactor *= detector?.scale ?: 1.0f
@@ -272,6 +283,7 @@ class MainActivity : AppCompatActivity() {
             fl_image_container.scaleX = scaleFactor
             fl_image_container.scaleY = scaleFactor
         }
+        //drag frame fun
         override fun onMove(detector: MultiTouchGestureDetector?) {
             super.onMove(detector)
             fl_image_container.x += detector?.moveX ?: 0.0f
@@ -501,6 +513,7 @@ class MainActivity : AppCompatActivity() {
         btn_trash.visibility = View.VISIBLE
         btn_share.visibility = View.VISIBLE
         btn_gallery.visibility = View.VISIBLE
+        btn_info.visibility = View.VISIBLE
         isMenuShown = true
     }
     private fun hideExtraMenu(){
@@ -508,6 +521,7 @@ class MainActivity : AppCompatActivity() {
         btn_trash.visibility = View.GONE
         btn_share.visibility = View.GONE
         btn_gallery.visibility = View.GONE
+        btn_info.visibility = View.GONE
         isMenuShown = false
     }
 
@@ -618,6 +632,26 @@ class MainActivity : AppCompatActivity() {
             drawing_view.setBrushSize(brushSize.progress.toFloat())
             //turn off brush dialog
             brushDialog.dismiss()
+        }
+    }
+
+
+    /**
+     * Next fun show info about app
+     */
+    fun showInfo(){
+        //create dialog window
+        val infoDialog = Dialog(this)
+        //initialize dialog layout
+        infoDialog.setContentView(R.layout.dialog_info)
+        //make background color to transparent. it needs for round corners
+        infoDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        val myBack = infoDialog.btn_back
+        //show dialog
+        infoDialog.show()
+        //close dialog on button
+        myBack.setOnClickListener {
+            infoDialog.dismiss()
         }
     }
 

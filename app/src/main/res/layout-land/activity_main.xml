@@ -21,7 +21,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerInside"
-            android:foreground="@drawable/ic_closed_beta"
             />
         <com.rssll971.drawingapp.DrawingView
             android:id="@+id/drawing_view"
@@ -258,6 +257,20 @@
         android:gravity="center_horizontal"
         android:orientation="horizontal"
         >
+        <ImageButton
+            android:id="@+id/btn_info"
+            android:layout_height="32dp"
+            android:layout_width="32dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="40dp"
+            android:background="@drawable/ibtn_handling"
+            android:elevation="4dp"
+            android:layout_marginVertical="8dp"
+            android:src="@drawable/ic_info"
+            android:scaleType="fitXY"
+            android:padding="5dp"
+            android:visibility="visible"
+            />
         <ImageButton
             android:id="@+id/btn_gallery"
             android:layout_height="32dp"

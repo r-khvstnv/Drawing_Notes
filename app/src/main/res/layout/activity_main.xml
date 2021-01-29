@@ -237,6 +237,7 @@
             />
     </LinearLayout>
 
+
     <LinearLayout
         android:id="@+id/ll_extra_menu"
         android:layout_width="wrap_content"
@@ -250,6 +251,20 @@
         android:gravity="center_vertical"
         android:orientation="vertical"
         >
+        <ImageButton
+            android:id="@+id/btn_info"
+            android:layout_height="32dp"
+            android:layout_width="32dp"
+            android:layout_marginHorizontal="10dp"
+            android:background="@drawable/ibtn_handling"
+            android:elevation="4dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="40dp"
+            android:src="@drawable/ic_info"
+            android:scaleType="fitXY"
+            android:padding="5dp"
+            android:visibility="visible"
+            />
         <ImageButton
             android:id="@+id/btn_gallery"
             android:layout_height="32dp"
