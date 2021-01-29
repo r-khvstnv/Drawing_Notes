@@ -36,7 +36,7 @@ import java.io.FileOutputStream
 import kotlin.Exception
 
 class MainActivity : AppCompatActivity() {
-    //TODO ACTIVATE ADS
+    //TODO ERASE TOAST
     /**
      * Permission vars and list of needed permission for app
      *
@@ -119,11 +119,12 @@ class MainActivity : AppCompatActivity() {
         myMultiTouchGestureDetector = MultiTouchGestureDetector(
                 this, MultiTouchGestureDetectorListener())
         //TODO DELETE
-        Toast.makeText(this, "Made by Ruslan Khvastunov\n\nClosed Beta", Toast.LENGTH_LONG).show()
+        Toast.makeText(this,
+                "Made by Ruslan Khvastunov\n\nPre-Release Version\n\nNON-DISTRIBUTABLE RESERVE",
+                Toast.LENGTH_LONG).show()
 
 
         //Prepare and build Ads
-        //TODO ADS
         MobileAds.initialize(this)
         //get to local var
         myInterstitialAd = InterstitialAd(this)
