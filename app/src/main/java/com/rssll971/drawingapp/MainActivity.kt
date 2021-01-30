@@ -20,6 +20,8 @@ import android.view.*
 import android.widget.Button
 import android.widget.SeekBar
 import android.widget.Toast
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.dinuscxj.gesture.MultiTouchGestureDetector
@@ -34,9 +36,9 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import kotlin.Exception
+import kotlin.properties.Delegates
 
 class MainActivity : AppCompatActivity() {
-    //TODO ERASE TOAST
     /**
      * Permission vars and list of needed permission for app
      *
@@ -61,6 +63,10 @@ class MainActivity : AppCompatActivity() {
     private var isMenuShown: Boolean = false
     //portrait orientation active
     private var isPortraitMode: Boolean = true
+    //default position of frame
+    private var defaultX: Float? = null
+    private var defaultY: Float? = null
+
     //Scale detector. Declare in onCreate, called by button
     private lateinit var myMultiTouchGestureDetector: MultiTouchGestureDetector
     //ADS
@@ -118,11 +124,11 @@ class MainActivity : AppCompatActivity() {
         //Declare multi-touch detector
         myMultiTouchGestureDetector = MultiTouchGestureDetector(
                 this, MultiTouchGestureDetectorListener())
-        //TODO DELETE
-        Toast.makeText(this,
-                "Made by Ruslan Khvastunov\n\nPre-Release Version\n\nNON-DISTRIBUTABLE RESERVE",
-                Toast.LENGTH_LONG).show()
 
+
+        //save current frame position
+        defaultX = fl_image_container.x
+        defaultY = fl_image_container.y
 
         //Prepare and build Ads
         MobileAds.initialize(this)
@@ -160,10 +166,17 @@ class MainActivity : AppCompatActivity() {
         //move and draw layout
         //default scale
         btn_fit.setOnClickListener {
+            fl_image_container.setBackgroundResource(0)
             defaultScale()
+        }
+        //active draw functionality
+        btn_active_draw.setOnClickListener {
+            fl_image_container.setBackgroundResource(0)
+            drawing_view.setIsTouchAllowed(true)
         }
         //drag and scale
         btn_transfer.setOnClickListener {
+            fl_image_container.setBackgroundResource(R.drawable.active_frame_background)
             /**
              * Next statements responsible for scaling and dragging.
              * Firstly disable drag layout
@@ -190,10 +203,7 @@ class MainActivity : AppCompatActivity() {
         btn_undo.setOnClickListener {
             drawing_view.removeLastLine()
         }
-        //active draw functionality
-        btn_active_draw.setOnClickListener {
-            drawing_view.setIsTouchAllowed(true)
-        }
+
 
 
         //extra layout
@@ -299,11 +309,17 @@ class MainActivity : AppCompatActivity() {
         scaleFactor = 1.0f
         fl_image_container.scaleX = scaleFactor
         fl_image_container.scaleY = scaleFactor
-        //default placement
-        fl_image_container.x = 0.0f
-        fl_image_container.y = 0.0f
+        //for portrait mode
+        if (isPortraitMode) {
+            //align relative to adView
+            fl_image_container.x = myBannerAdView.left.toFloat()
+            fl_image_container.y = myBannerAdView.bottom.toFloat()
+        }
+        else{
+            fl_image_container.x = 0.0f
+            fl_image_container.y = 0.0f
+        }
     }
-
 
     /**
      * BLOCK responsible for all operations related with permissions
