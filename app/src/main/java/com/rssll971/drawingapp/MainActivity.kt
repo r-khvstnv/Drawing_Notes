@@ -49,7 +49,7 @@ class MainActivity : AppCompatActivity() {
     companion object{
         private const val PERMISSIONS_ALL_CODE: Int = 103
         private val PERMISSIONS_REQUIRED = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA)
+            Manifest.permission.WRITE_EXTERNAL_STORAGE)
         private const val GALLERY_CODE = 104
     }
     /**
@@ -63,9 +63,7 @@ class MainActivity : AppCompatActivity() {
     private var isMenuShown: Boolean = false
     //portrait orientation active
     private var isPortraitMode: Boolean = true
-    //default position of frame
-    private var defaultX: Float? = null
-    private var defaultY: Float? = null
+
 
     //Scale detector. Declare in onCreate, called by button
     private lateinit var myMultiTouchGestureDetector: MultiTouchGestureDetector
@@ -110,8 +108,10 @@ class MainActivity : AppCompatActivity() {
 
         //change orientation state
         when(requestedOrientation){
-            ActivityInfo.SCREEN_ORIENTATION_PORTRAIT -> isPortraitMode = true
-            ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE -> isPortraitMode = false
+            ActivityInfo.SCREEN_ORIENTATION_PORTRAIT -> {isPortraitMode = true
+                Toast.makeText(this, "Portrait Mode", Toast.LENGTH_LONG).show()}
+            ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE -> {isPortraitMode = false
+                Toast.makeText(this, "Landscape Mode", Toast.LENGTH_LONG).show()}
         }
         //Lock auto-screen orientation
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LOCKED
@@ -126,9 +126,7 @@ class MainActivity : AppCompatActivity() {
                 this, MultiTouchGestureDetectorListener())
 
 
-        //save current frame position
-        defaultX = fl_image_container.x
-        defaultY = fl_image_container.y
+
 
         //Prepare and build Ads
         MobileAds.initialize(this)
@@ -370,9 +368,7 @@ class MainActivity : AppCompatActivity() {
                 ContextCompat.checkSelfPermission(this,
                         Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
                 ContextCompat.checkSelfPermission(this,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
-                ContextCompat.checkSelfPermission(this,
-                        Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
         ){result = true}
         else{
             //Nothing to do
