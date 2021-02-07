@@ -12,6 +12,7 @@
     <color name="myBlack">#121212</color>
     <color name="myWhite">#FFFFFFFF</color>
     <color name="myGrey">#A0A0A0</color>
+    <color name="myGreyLight">#C4C4C4</color>
     <color name="myGreyDark">#797979</color>
     <color name="myRed">#F01010</color>
     <color name="myOrange">#E1800E</color>

@@ -41,6 +41,12 @@ class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
         setUpDrawing()
     }
 
+    /**
+     * Next fun responsible for conflict resolution between draw and move functionality
+     *
+     * Move action executes when corresponding button is pressed. In this moment,
+     * draw action becomes unavailable and it's override methods can't be run
+     */
     fun setIsTouchAllowed(boolean: Boolean){
         isTouchAllowed = boolean
     }
@@ -81,7 +87,7 @@ class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
      * In next class using parametrized constructor of drawing, which extend my Path
      */
     internal inner class CustomPath(var color: Int,
-                                    var brushThickness: Float) : Path() {       }
+                                    var brushThickness: Float) : Path()
 
 
     /**
@@ -129,7 +135,6 @@ class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
 
             //what should will be executed onTouch
             when(event?.action){
-
                 //press on the screen
                 MotionEvent.ACTION_DOWN ->{
                     //setup path
@@ -175,10 +180,7 @@ class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
             return true
         }
         return false
-
     }
-
-
 
 
     /**
@@ -187,6 +189,7 @@ class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
     fun getBrushSize(): Float {
         return myBrushSize
     }
+
 
     /**
      * Next fun change brush size proportionally for any screen
@@ -199,6 +202,7 @@ class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
         myDrawPaint!!.strokeWidth = myBrushSize
     }
 
+
     /**
      * Next two fun remove lines
      */
@@ -207,21 +211,22 @@ class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
         if (myPaths.size != 0) {
             myPaths.removeAt(myPaths.size - 1)
             invalidate()
-        }else{}
+        }
     }
     //Remove all lines
     fun removeAllLines(){
         if (myPaths.size != 0) {
             myPaths.clear()
             invalidate()
-        }else{}
+        }
     }
+
 
     /**
      * Next fun change color to selected by user
      */
     fun setColor(myColor: String){
-        colorHex = "#" + myColor
+        colorHex = "#$myColor"
         //parse needed color
         color = Color.parseColor(myColor)
         //change color

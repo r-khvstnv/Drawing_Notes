@@ -17,26 +17,19 @@ import android.os.Bundle
 import android.os.Handler
 import android.provider.MediaStore
 import android.view.*
-import android.widget.Button
-import android.widget.SeekBar
-import android.widget.Toast
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.constraintlayout.widget.ConstraintSet
+import android.widget.*
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.dinuscxj.gesture.MultiTouchGestureDetector
 import com.google.android.gms.ads.*
+import com.rssll971.drawingapp.databinding.ActivityMainBinding
 import com.skydoves.colorpickerview.ColorEnvelope
+import com.skydoves.colorpickerview.ColorPickerView
 import com.skydoves.colorpickerview.listeners.ColorEnvelopeListener
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.dialog_brush_size.*
-import kotlinx.android.synthetic.main.dialog_color_picker.*
-import kotlinx.android.synthetic.main.dialog_info.*
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import kotlin.Exception
-import kotlin.properties.Delegates
 
 class MainActivity : AppCompatActivity() {
     /**
@@ -52,6 +45,10 @@ class MainActivity : AppCompatActivity() {
             Manifest.permission.WRITE_EXTERNAL_STORAGE)
         private const val GALLERY_CODE = 104
     }
+    /**
+     * Binding
+     */
+    private lateinit var binding: ActivityMainBinding
     /**
      * Other vars
      */
@@ -104,7 +101,9 @@ class MainActivity : AppCompatActivity() {
     /** ACTIVITY STARTS**/
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        val  view = binding.root
+        setContentView(view)
 
         //change orientation state
         when(requestedOrientation){
@@ -126,8 +125,6 @@ class MainActivity : AppCompatActivity() {
                 this, MultiTouchGestureDetectorListener())
 
 
-
-
         //Prepare and build Ads
         MobileAds.initialize(this)
         //get to local var
@@ -138,6 +135,7 @@ class MainActivity : AppCompatActivity() {
         myInterstitialAd.loadAd(AdRequest.Builder().build())
         myBannerAdView.loadAd(AdRequest.Builder().build())
 
+        //reload ads
         myInterstitialAd.adListener = object : AdListener() {
             override fun onAdClosed() {
                 myInterstitialAd.loadAd(AdRequest.Builder().build())
@@ -154,7 +152,7 @@ class MainActivity : AppCompatActivity() {
          * and
          * hide extra menu
          */
-        drawing_view.setBrushSize(1.toFloat())
+        binding.drawingView.setBrushSize(1.toFloat())
 
 
 
@@ -163,50 +161,53 @@ class MainActivity : AppCompatActivity() {
          */
         //move and draw layout
         //default scale
-        btn_fit.setOnClickListener {
-            fl_image_container.setBackgroundResource(0)
-            defaultScale()
+        binding.btnFit.setOnClickListener {
+            defaultScaleAndPosition()
         }
         //active draw functionality
-        btn_active_draw.setOnClickListener {
-            fl_image_container.setBackgroundResource(0)
-            drawing_view.setIsTouchAllowed(true)
+        binding.btnActiveDraw.setOnClickListener {
+            //buttons background color changes
+            binding.btnActiveDraw.setBackgroundResource(R.drawable.ib_grey_handling)
+            binding.btnTransfer.setBackgroundResource(R.drawable.ib_white_handling)
+            binding.drawingView.setIsTouchAllowed(true)
         }
         //drag and scale
-        btn_transfer.setOnClickListener {
-            fl_image_container.setBackgroundResource(R.drawable.active_frame_background)
+        binding.btnTransfer.setOnClickListener {
             /**
              * Next statements responsible for scaling and dragging.
              * Firstly disable drag layout
              */
-            drawing_view.setIsTouchAllowed(false)
+            binding.drawingView.setIsTouchAllowed(false)
+            //buttons background color changes
+            binding.btnActiveDraw.setBackgroundResource(R.drawable.ib_white_handling)
+            binding.btnTransfer.setBackgroundResource(R.drawable.ib_grey_handling)
             //
-            fl_image_container.setOnTouchListener { v, event ->
+            binding.flImageContainer.setOnTouchListener { v, event ->
                 myMultiTouchGestureDetector.onTouchEvent(event)
             }
         }
 
         //color palette
-        btn_palette.setOnClickListener {
+        binding.btnPalette.setOnClickListener {
             showColorPickerDialog()
         }
 
 
         //secondary layout
         //brush
-        btn_brush.setOnClickListener { view ->
+        binding.btnBrush.setOnClickListener {
             showBrushSizeDialog()
         }
         //undo
-        btn_undo.setOnClickListener {
-            drawing_view.removeLastLine()
+        binding.btnUndo.setOnClickListener {
+            binding.drawingView.removeLastLine()
         }
 
 
 
         //extra layout
         //extra menu
-        btn_extra_menu.setOnClickListener {
+        binding.btnExtraMenu.setOnClickListener {
             if (isMenuShown){
                 hideExtraMenu()
             }
@@ -217,7 +218,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
         //screen orientation
-        btn_rotate.setOnClickListener {
+        binding.btnRotate.setOnClickListener {
             if (isPortraitMode){
                 //switch to landscape
                 requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
@@ -228,31 +229,33 @@ class MainActivity : AppCompatActivity() {
             }
         }
         //trash
-        btn_trash.setOnClickListener {
+        binding.btnTrash.setOnClickListener {
             eraseAll()
             //default scale
-            defaultScale()
+            defaultScaleAndPosition()
 
             hideExtraMenu()
         }
         // share/save
-        btn_share.setOnClickListener {
+        binding.btnShare.setOnClickListener {
             //default scale
-            defaultScale()
+            defaultScaleAndPosition()
 
             hideExtraMenu()
 
             if (isPermissionsAreAllowed()){
-                BitmapAsyncTask(getBitmapFromView(fl_image_container)).execute()
+                //start saving new image
+                BitmapAsyncTask(getBitmapFromView(binding.flImageContainer)).execute()
             }
             else{
+                //request permissions again
                 requestPermissions()
             }
         }
         //gallery
-        btn_gallery.setOnClickListener{
+        binding.btnGallery.setOnClickListener{
             //default scale
-            defaultScale()
+            defaultScaleAndPosition()
 
             hideExtraMenu()
 
@@ -270,7 +273,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
         //info
-        btn_info.setOnClickListener {
+        binding.btnInfo.setOnClickListener {
             hideExtraMenu()
             showInfo()
         }
@@ -289,33 +292,33 @@ class MainActivity : AppCompatActivity() {
             super.onScale(detector)
             scaleFactor *= detector?.scale ?: 1.0f
             scaleFactor = Math.max(1.0f, Math.min(scaleFactor, 5.0f))
-            fl_image_container.scaleX = scaleFactor
-            fl_image_container.scaleY = scaleFactor
+            binding.flImageContainer.scaleX = scaleFactor
+            binding.flImageContainer.scaleY = scaleFactor
         }
         //drag frame fun
         override fun onMove(detector: MultiTouchGestureDetector?) {
             super.onMove(detector)
-            fl_image_container.x += detector?.moveX ?: 0.0f
-            fl_image_container.y += detector?.moveY ?: 0.0f
+            binding.flImageContainer.x += detector?.moveX ?: 0.0f
+            binding.flImageContainer.y += detector?.moveY ?: 0.0f
         }
     }
     /**
      * Next fun fit frame to default
      */
-    private fun defaultScale(){
+    private fun defaultScaleAndPosition(){
         //default size
         scaleFactor = 1.0f
-        fl_image_container.scaleX = scaleFactor
-        fl_image_container.scaleY = scaleFactor
+        binding.flImageContainer.scaleX = scaleFactor
+        binding.flImageContainer.scaleY = scaleFactor
         //for portrait mode
         if (isPortraitMode) {
             //align relative to adView
-            fl_image_container.x = myBannerAdView.left.toFloat()
-            fl_image_container.y = myBannerAdView.bottom.toFloat()
+            binding.flImageContainer.x = myBannerAdView.left.toFloat()
+            binding.flImageContainer.y = myBannerAdView.bottom.toFloat()
         }
         else{
-            fl_image_container.x = 0.0f
-            fl_image_container.y = 0.0f
+            binding.flImageContainer.x = 0.0f
+            binding.flImageContainer.y = 0.0f
         }
     }
 
@@ -328,6 +331,7 @@ class MainActivity : AppCompatActivity() {
      * */
     private fun requestPermissions(){
         //Next if/else statement check necessity to show permissions request
+        //permissions allowed
         if(ActivityCompat.shouldShowRequestPermissionRationale(this,
                         PERMISSIONS_REQUIRED.toString())){
         }
@@ -343,8 +347,7 @@ class MainActivity : AppCompatActivity() {
     override fun onRequestPermissionsResult(
             requestCode: Int,
             permissions: Array<out String>,
-            grantResults: IntArray
-    ) {
+            grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == PERMISSIONS_ALL_CODE){
             var allGranted: Boolean = false
@@ -353,10 +356,15 @@ class MainActivity : AppCompatActivity() {
                 if (grantResults[i] == PackageManager.PERMISSION_GRANTED){
                     allGranted = true
                 }
-                else{
-                    //Nothing have to do
-                }
+
             }
+
+            if (!allGranted){
+                Toast.makeText(this,
+                        "Access to the storage is not available.\n\nPlease grant permission",
+                        Toast.LENGTH_LONG).show()
+            }
+
         }
     }
     /**
@@ -366,13 +374,13 @@ class MainActivity : AppCompatActivity() {
         var result: Boolean = false
         if (
                 ContextCompat.checkSelfPermission(this,
-                        Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
+                        Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+                &&
                 ContextCompat.checkSelfPermission(this,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
         ){result = true}
-        else{
-            //Nothing to do
-        }
+
+
         return result
     }
     /** BLOCK ENDS**/
@@ -396,9 +404,9 @@ class MainActivity : AppCompatActivity() {
                     //check for available data
                     if (data!!.data != null){
                         //make background visible
-                        iv_users_image.visibility = View.VISIBLE
+                        binding.ivUsersImage.visibility = View.VISIBLE
                         //set image
-                        iv_users_image.setImageURI(data.data)
+                        binding.ivUsersImage.setImageURI(data.data)
                     }
                     //if something goes wrong
                     else{
@@ -469,7 +477,7 @@ class MainActivity : AppCompatActivity() {
                     //make it as single file
                     //external directory -> as absolute file -> separate ->
                     val myFile = File("/storage/emulated/0/Download"
-                            + File.separator + System.currentTimeMillis()/1000 + ".png")
+                            + File.separator + "DrawingNote" + System.currentTimeMillis()/1000 + ".png")
                     //stream of our file
                     val myFileOS = FileOutputStream(myFile)
                     //start writing
@@ -484,6 +492,8 @@ class MainActivity : AppCompatActivity() {
                     e.printStackTrace()
                 }
             }
+
+
             return result
         }
         /**
@@ -522,19 +532,19 @@ class MainActivity : AppCompatActivity() {
      * Next two fun responsible for extra menu show/hide
      */
     private fun showExtraMenu(){
-        btn_rotate.visibility = View.VISIBLE
-        btn_trash.visibility = View.VISIBLE
-        btn_share.visibility = View.VISIBLE
-        btn_gallery.visibility = View.VISIBLE
-        btn_info.visibility = View.VISIBLE
+        binding.btnRotate.visibility = View.VISIBLE
+        binding.btnTrash.visibility = View.VISIBLE
+        binding.btnShare.visibility = View.VISIBLE
+        binding.btnGallery.visibility = View.VISIBLE
+        binding.btnInfo.visibility = View.VISIBLE
         isMenuShown = true
     }
     private fun hideExtraMenu(){
-        btn_rotate.visibility = View.GONE
-        btn_trash.visibility = View.GONE
-        btn_share.visibility = View.GONE
-        btn_gallery.visibility = View.GONE
-        btn_info.visibility = View.GONE
+        binding.btnRotate.visibility = View.GONE
+        binding.btnTrash.visibility = View.GONE
+        binding.btnShare.visibility = View.GONE
+        binding.btnGallery.visibility = View.GONE
+        binding.btnInfo.visibility = View.GONE
         isMenuShown = false
     }
 
@@ -544,22 +554,24 @@ class MainActivity : AppCompatActivity() {
      */
     private fun showColorPickerDialog(){
         //last color
-        var myColor: String = drawing_view.getCurrentColor()
+        var myColor: String = binding.drawingView.getCurrentColor()
         //create dialog
         val colorDialog = Dialog(this)
         colorDialog.setContentView(R.layout.dialog_color_picker)
         //make background color to transparent. it needs for round corners
         colorDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         colorDialog.setCanceledOnTouchOutside(false)
+
         //make all touchable object as local
-        val myColorPicker = colorDialog.colorPickerView
-        val myLLCurrentColor = colorDialog.ll_current_color
-        val tvCurrentHex = colorDialog.tv_color_hex
+        val myColorPicker = colorDialog.findViewById<ColorPickerView>(R.id.colorPickerView)
+        val myLLCurrentColor = colorDialog.findViewById<LinearLayout>(R.id.ll_current_color)
+        val tvCurrentHex = colorDialog.findViewById<TextView>(R.id.tv_color_hex)
         //last color as HEX
         tvCurrentHex.text = myColor
 
-        val myOk = colorDialog.btn_ok_color
-        val myCancel = colorDialog.btn_cancel_color
+        val myOk = colorDialog.findViewById<Button>(R.id.btn_ok_color)
+        val myCancel = colorDialog.findViewById<Button>(R.id.btn_cancel_color)
+
         //show
         colorDialog.show()
 
@@ -579,7 +591,7 @@ class MainActivity : AppCompatActivity() {
         //finish dialog
         myOk.setOnClickListener {
             //implement new color
-            drawing_view.setColor("#" + myColor)
+            binding.drawingView.setColor("#" + myColor)
             colorDialog.dismiss()
         }
         myCancel.setOnClickListener {
@@ -605,18 +617,17 @@ class MainActivity : AppCompatActivity() {
          */
         //get values from brush dialog to local variables
             //brush size - next changing
-        val brushSize = brushDialog.sb_brush_size
+        val brushSize = brushDialog.findViewById<SeekBar>(R.id.sb_brush_size)
             //get current brush size to seek bar
-        val currentBrushSize: Int = drawing_view.getBrushSize().toInt()
+        val currentBrushSize: Int = binding.drawingView.getBrushSize().toInt()
         brushSize.progress = 1
         brushSize.progress = textBrushSize
             //text option of brush size
-        val displayBrushSize = brushDialog.tv_brush_size_display
+        val displayBrushSize = brushDialog.findViewById<TextView>(R.id.tv_brush_size_display)
             //button of confirmation
-        val confirmationBrushSize = brushDialog.btn_confirm_size
+        val confirmationBrushSize = brushDialog.findViewById<Button>(R.id.btn_confirm_size)
         //upload brush size
         displayBrushSize.text = "Size: $textBrushSize"
-
 
         //display dialog menu
         brushDialog.show()
@@ -642,7 +653,7 @@ class MainActivity : AppCompatActivity() {
          */
         confirmationBrushSize.setOnClickListener {
             //change brush size
-            drawing_view.setBrushSize(brushSize.progress.toFloat())
+            binding.drawingView.setBrushSize(brushSize.progress.toFloat())
             //turn off brush dialog
             brushDialog.dismiss()
         }
@@ -652,14 +663,14 @@ class MainActivity : AppCompatActivity() {
     /**
      * Next fun show info about app
      */
-    fun showInfo(){
+    private fun showInfo(){
         //create dialog window
         val infoDialog = Dialog(this)
         //initialize dialog layout
         infoDialog.setContentView(R.layout.dialog_info)
         //make background color to transparent. it needs for round corners
         infoDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        val myBack = infoDialog.btn_back
+        val myBack = infoDialog.findViewById<Button>(R.id.btn_back)
         //show dialog
         infoDialog.show()
         //close dialog on button
@@ -678,7 +689,7 @@ class MainActivity : AppCompatActivity() {
         val button = view as Button
         //import color using tag of button
         val colorTag = button.tag.toString()
-        drawing_view.setColor(colorTag)
+        binding.drawingView.setColor(colorTag)
     }
 
 
@@ -687,8 +698,8 @@ class MainActivity : AppCompatActivity() {
      */
     private fun eraseAll(){
         //erase background image
-        iv_users_image.setImageResource(0)
+        binding.ivUsersImage.setImageResource(0)
         //erase lines
-        drawing_view.removeAllLines()
+        binding.drawingView.removeAllLines()
     }
 }
