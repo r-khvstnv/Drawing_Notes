@@ -41,7 +41,7 @@ class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
     }
 
     /**
-     * Next fun responsible for conflict resolution between draw and move functionality
+     * Next method is conflict resolution between draw and move functionality
      *
      * Move action executes when corresponding button is pressed. In this moment,
      * draw action becomes unavailable and it's override methods can't be run
@@ -50,7 +50,7 @@ class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
         isTouchAllowed = boolean
     }
     /**
-     * Next fun prepares for drawing all needed attr vars,
+     * Next method prepares for drawing all needed attr vars,
      *                  such as: color, size, stroke and etc.
      */
     private fun setUpDrawing(){
@@ -72,7 +72,7 @@ class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
 
 
     /**
-     * Next fun create custom canvas implementing bitmap
+     * Next method create custom canvas implementing bitmap
      */
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
@@ -90,7 +90,7 @@ class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
 
 
     /**
-     * Main role of next fun is create new users line
+     * Main role of next method is create new users line
      *
      * More deeply below
      */
@@ -112,7 +112,7 @@ class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
         }
 
         /**
-         * Next line set current values for line and draw it
+         * Next lines set current values for line and draw it
          */
         //thickness
         myDrawPaint!!.strokeWidth = myDrawPath!!.brushThickness
@@ -123,10 +123,11 @@ class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
     }
 
     /**
-     * Next fun takes all parameters for drawing line,
+     * Next method takes all parameters for drawing line,
      *         such as path (using x,y), color, thickness and further actions which should execute
      */
     override fun onTouchEvent(event: MotionEvent?): Boolean {
+        /** Next statement is crutch for conflict described upper*/
         if (isTouchAllowed){
             //store position onTouch
             val touchX = event?.x
@@ -183,7 +184,7 @@ class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
 
 
     /**
-     * Next fun change brush size proportionally for any screen
+     * Next method change brush size proportionally for any screen
      */
     fun setBrushSize(newSize: Float){
         //adapting size for any screen
@@ -195,7 +196,7 @@ class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
 
 
     /**
-     * Next two fun remove lines
+     * Next two methods remove lines
      */
     //Remove last one
     fun removeLastLine(){
@@ -214,7 +215,7 @@ class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
 
 
     /**
-     * Next fun change color to selected by user
+     * Next method change color to selected by user
      */
     fun setColor(myColor: String){
         colorHex = "#$myColor"
@@ -225,7 +226,7 @@ class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
 
     }
     /**
-     * Next fun return current color
+     * Next method return current color
      */
     fun getCurrentColor(): String{
         return colorHex

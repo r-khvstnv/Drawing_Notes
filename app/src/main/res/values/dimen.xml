@@ -13,4 +13,6 @@
     <dimen name="dim_ll_color_dest_margin_horizontal">30dp</dimen>
     <dimen name="dim_ll_color_dest_margin_vertical">40dp</dimen>
 
+    <dimen name="dim_info_licences_margin_top">10dp</dimen>
+
 </resources>

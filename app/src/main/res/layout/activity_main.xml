@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
+    <!-- Ads -->
     <com.google.android.gms.ads.AdView
         xmlns:ads="http://schemas.android.com/apk/res-auto"
         android:id="@+id/adView_smart_banner"
@@ -18,8 +19,9 @@
         ads:adSize="SMART_BANNER"
         ads:adUnitId="@string/banner_id_Ads"
         >
-
     </com.google.android.gms.ads.AdView>
+
+    <!-- Layout with user image and drawing view -->
     <FrameLayout
         android:id="@+id/fl_image_container"
         android:layout_width="0dp"
@@ -46,6 +48,7 @@
             />
     </FrameLayout>
 
+    <!-- Color buttons -->
         <Button
             android:id="@+id/btn_black"
             android:layout_width="@dimen/dim_btn_color_size"
@@ -149,6 +152,7 @@
             android:elevation="5dp"
             />
 
+    <!-- Layout with primary functionality -->
     <LinearLayout
         android:id="@+id/ll_primary_options"
         android:layout_width="wrap_content"
@@ -200,6 +204,7 @@
             />
     </LinearLayout>
 
+    <!-- Layout with secondary functionality -->
     <LinearLayout
         android:id="@+id/ll_secondary_options"
         android:layout_width="wrap_content"
@@ -239,6 +244,7 @@
             />
     </LinearLayout>
 
+    <!-- Brush size changer -->
     <LinearLayout
         android:id="@+id/ll_brush_size_changer"
         android:layout_width="wrap_content"
@@ -273,7 +279,7 @@
             />
     </LinearLayout>
 
-
+    <!-- Layout with extra menu -->
     <LinearLayout
         android:id="@+id/ll_extra_menu"
         android:layout_width="wrap_content"
@@ -311,6 +317,7 @@
             android:scaleType="fitCenter"
             android:padding="5dp"
             android:visibility="visible"
+            android:tag="@string/st_gallery"
             />
         <ImageButton
             android:id="@+id/btn_share"
@@ -324,13 +331,15 @@
             android:padding="5dp"
             android:scaleType="fitCenter"
             android:visibility="visible"
+            android:tag="@string/st__share"
             />
         <ImageButton
             android:id="@+id/btn_trash"
             android:layout_width="@dimen/dim_option_btn_size"
             android:layout_height="@dimen/dim_option_btn_size"
             android:layout_marginHorizontal="@dimen/dim_option_btn_margin_horizontal"
-            android:background="@drawable/ripple_ib_option_white"            android:elevation="4dp"
+            android:background="@drawable/ripple_ib_option_white"
+            android:elevation="4dp"
             android:layout_marginVertical="@dimen/dim_option_btn_margin_vertical"
             android:src="@drawable/ic_trash"
             android:scaleType="fitCenter"
@@ -342,7 +351,8 @@
             android:layout_width="@dimen/dim_option_btn_size"
             android:layout_height="@dimen/dim_option_btn_size"
             android:layout_marginHorizontal="@dimen/dim_option_btn_margin_horizontal"
-            android:background="@drawable/ripple_ib_option_white"            android:elevation="4dp"
+            android:background="@drawable/ripple_ib_option_white"
+            android:elevation="4dp"
             android:layout_marginTop="@dimen/dim_option_btn_margin_vertical"
             android:layout_marginBottom="20dp"
             android:src="@drawable/ic_rotate"

@@ -11,5 +11,11 @@
     <string name="st_cancel">Cancel</string>
     <string name="st_back">Back</string>
     <string name="st_wait">Please wait</string>
+    <string name="st_gallery">Gallery</string>
+    <string name="st__share">Share</string>
+
+    <string name="st_permission_needed_to_be_granted">Permissions required for this feature have been turned off.
+        It can be enabled under the Application Settings</string>
+    <string name="st_go_to_settings">Settings</string>
 
 </resources>

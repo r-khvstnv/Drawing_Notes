@@ -2,27 +2,35 @@ package com.rssll971.drawingapp
 
 import android.Manifest
 import android.app.Activity
+import android.app.AlertDialog
 import android.app.Dialog
+import android.content.ActivityNotFoundException
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.ActivityInfo
-import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.media.MediaScannerConnection
+import android.net.Uri
 import android.os.AsyncTask
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.provider.MediaStore
+import android.provider.Settings
+import android.util.Log
 import android.view.*
 import android.widget.*
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.dinuscxj.gesture.MultiTouchGestureDetector
 import com.google.android.gms.ads.*
+import com.karumi.dexter.Dexter
+import com.karumi.dexter.MultiplePermissionsReport
+import com.karumi.dexter.PermissionToken
+import com.karumi.dexter.listener.PermissionRequest
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.rssll971.drawingapp.databinding.ActivityMainBinding
 import com.skydoves.colorpickerview.ColorEnvelope
 import com.skydoves.colorpickerview.ColorPickerView
@@ -34,16 +42,9 @@ import kotlin.Exception
 
 class MainActivity : AppCompatActivity() {
     /**
-     * Permission vars and list of needed permission for app
-     *
-     * Addition info:
-     * The request code used in ActivityCompat.requestPermissions()
-     * and returned in the Activity's onRequestPermissionsResult()
+     * Permission code for gallery
      */
     companion object{
-        private const val PERMISSIONS_ALL_CODE: Int = 103
-        private val PERMISSIONS_REQUIRED = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE)
         private const val GALLERY_CODE = 104
     }
     /**
@@ -59,8 +60,6 @@ class MainActivity : AppCompatActivity() {
     private var scaleFactor: Float = 1.0f
     //portrait orientation active
     private var isPortraitMode: Boolean = true
-
-
     //Scale detector. Declare in onCreate, called by button
     private lateinit var myMultiTouchGestureDetector: MultiTouchGestureDetector
     //ADS
@@ -72,7 +71,7 @@ class MainActivity : AppCompatActivity() {
     private val adInterstitialID: String = "ca-app-pub-4362142146545991/4879230890"
 
     /**
-     * Next two fun responsible for fullscreen mode and transparent navigation and status bars
+     * Next two method enable fullscreen mode and transparent navigation/status bars
      */
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
@@ -104,20 +103,19 @@ class MainActivity : AppCompatActivity() {
         val  view = binding.root
         setContentView(view)
 
-        //change orientation state
+        /** change orientation state and lock screen rotation**/
         when(requestedOrientation){
             ActivityInfo.SCREEN_ORIENTATION_PORTRAIT -> {isPortraitMode = true
                 Toast.makeText(this, "Portrait Mode", Toast.LENGTH_LONG).show()}
             ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE -> {isPortraitMode = false
                 Toast.makeText(this, "Landscape Mode", Toast.LENGTH_LONG).show()}
         }
-        //Lock auto-screen orientation
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LOCKED
+
 
         /** Hide all unnecessary layouts*/
         hideExtraMenu()
         binding.llBrushSizeChanger.visibility = View.GONE
-
         //crutch when systemUI doesn't disappear
         Handler().postDelayed({onWindowFocusChanged(true)}, 1000)
 
@@ -127,17 +125,15 @@ class MainActivity : AppCompatActivity() {
                 this, MultiTouchGestureDetectorListener())
 
 
-        //Prepare and build Ads
+        /** Prepare and build Ads*/
         MobileAds.initialize(this)
-        //get to local var
+
         myInterstitialAd = InterstitialAd(this)
         myInterstitialAd.adUnitId = adInterstitialID
-
         myBannerAdView = findViewById(R.id.adView_smart_banner)
-        //load
         myInterstitialAd.loadAd(AdRequest.Builder().build())
-        myBannerAdView.loadAd(AdRequest.Builder().build())
 
+        myBannerAdView.loadAd(AdRequest.Builder().build())
         //reload ads
         myInterstitialAd.adListener = object : AdListener() {
             override fun onAdClosed() {
@@ -150,13 +146,9 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        /**
-         * Next lines every time set brush size to 1 on first app start
-         * and
-         * hide extra menu
-         */
-        binding.drawingView.setBrushSize(1.toFloat())
 
+        /** Next line set brush size to 1 on first app start*/
+        binding.drawingView.setBrushSize(1.toFloat())
 
 
         /**
@@ -208,16 +200,11 @@ class MainActivity : AppCompatActivity() {
                 binding.btnBrushSize.setBackgroundResource(R.drawable.ib_option_grey_light)
                 showBrushSizeDialog()
             }
-
         }
         //undo
         binding.btnUndo.setOnClickListener {
             binding.drawingView.removeLastLine()
         }
-
-
-
-        //extra layout
         //extra menu
         binding.btnExtraMenu.setOnClickListener {
             if (binding.btnRotate.isVisible){
@@ -229,7 +216,7 @@ class MainActivity : AppCompatActivity() {
                 showExtraMenu()
             }
         }
-        //screen orientation
+        /** screen orientation */
         binding.btnRotate.setOnClickListener {
             requestedOrientation = if (isPortraitMode){
                 //switch to landscape
@@ -248,39 +235,15 @@ class MainActivity : AppCompatActivity() {
         }
         // share/save
         binding.btnShare.setOnClickListener {
-            //default scale
             defaultScaleAndPosition()
-
             hideExtraMenu()
-
-            if (isPermissionsAreAllowed()){
-                //start saving new image
-                BitmapAsyncTask(getBitmapFromView(binding.flImageContainer)).execute()
-            }
-            else{
-                //request permissions again
-                requestPermissions()
-            }
+            externalProcessesWithImage(it.tag.toString())
         }
         //gallery
         binding.btnGallery.setOnClickListener{
-            //default scale
             defaultScaleAndPosition()
-
             hideExtraMenu()
-
-            //check for having permission
-            if (isPermissionsAreAllowed()){
-                //pick image from gallery
-                //create new intent
-                val pickImageIntent = Intent(Intent.ACTION_PICK,
-                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-                startActivityForResult(pickImageIntent, GALLERY_CODE)
-            }
-            //if don't have permission
-            else{
-                requestPermissions()
-            }
+            externalProcessesWithImage(it.tag.toString())
         }
         //info
         binding.btnInfo.setOnClickListener {
@@ -292,12 +255,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * Next inner class implement multi-touch functionality
-     *  Takes opportunity to scale and drag frame layout
+     * Next inner class implement multi-touch functionality to scale and drag frame layout
      */
     private inner class MultiTouchGestureDetectorListener :
         MultiTouchGestureDetector.SimpleOnMultiTouchGestureListener() {
-        //scale frame fun
+        //scale frame method
         override fun onScale(detector: MultiTouchGestureDetector?) {
             super.onScale(detector)
             scaleFactor *= detector?.scale ?: 1.0f
@@ -305,7 +267,7 @@ class MainActivity : AppCompatActivity() {
             binding.flImageContainer.scaleX = scaleFactor
             binding.flImageContainer.scaleY = scaleFactor
         }
-        //drag frame fun
+        //drag frame method
         override fun onMove(detector: MultiTouchGestureDetector?) {
             super.onMove(detector)
             binding.flImageContainer.x += detector?.moveX ?: 0.0f
@@ -313,7 +275,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
     /**
-     * Next fun fit frame to default
+     * Next method fit frame to default sizes
      */
     private fun defaultScaleAndPosition(){
         //default size
@@ -322,7 +284,8 @@ class MainActivity : AppCompatActivity() {
         binding.flImageContainer.scaleY = scaleFactor
         //for portrait mode
         if (isPortraitMode) {
-            //align relative to adView
+            /** Align all frame relativity to adBanner,
+             * due to it top object in portrait mode*/
             binding.flImageContainer.x = myBannerAdView.left.toFloat()
             binding.flImageContainer.y = myBannerAdView.bottom.toFloat()
         }
@@ -332,79 +295,71 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+
     /**
-     * BLOCK responsible for all operations related with permissions
-     **/
-    /**
-     * Next fun get all needed permissions for app,
-     * such as Storage writing/reading
-     * */
-    private fun requestPermissions(){
-        //Next if/else statement check necessity to show permissions request
-        //permissions allowed
-        if(ActivityCompat.shouldShowRequestPermissionRationale(this,
-                        PERMISSIONS_REQUIRED.toString())){
-            //nothing to do, due to user reject them or granted
+     * Next dialog will be shown, if previously user reject all permissions
+     * required to gallery & share features
+     */
+    private fun showRationalPermissionDialog(){
+        val permissionAlertDialog = AlertDialog.Builder(this).setMessage(R.string.st_permission_needed_to_be_granted)
+        //positive button
+        permissionAlertDialog.setPositiveButton(getString(R.string.st_go_to_settings)){ _: DialogInterface, _: Int ->
+            try {
+                //move to app settings
+                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                val uri = Uri.fromParts("package", packageName, null)
+                intent.data = uri
+                startActivity(intent)
+            }catch (e: ActivityNotFoundException){
+                e.printStackTrace()
+            }
         }
-        //request permissions
-        else{
-            ActivityCompat.requestPermissions(this, PERMISSIONS_REQUIRED, PERMISSIONS_ALL_CODE)
+        //negative button
+        permissionAlertDialog.setNegativeButton(R.string.st_cancel){ dialogInterface: DialogInterface, _: Int ->
+            dialogInterface.dismiss()
         }
+        //show
+        permissionAlertDialog.show()
     }
     /**
-     * Next fun change local permission state var,
-     * depending on result of permission request
-     */
-    override fun onRequestPermissionsResult(
-            requestCode: Int,
-            permissions: Array<out String>,
-            grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == PERMISSIONS_ALL_CODE){
-            var allGranted = false
-            //check if all permissions are granted
-            for (i in grantResults.indices){
-                if (grantResults[i] == PackageManager.PERMISSION_GRANTED){
-                    allGranted = true
+     * Next method check permissions availability for specific action
+     * and makes decision for next processing
+     * */
+    private fun externalProcessesWithImage(tagString: String){
+        Dexter.withContext(this).withPermissions(Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE).withListener(object: MultiplePermissionsListener{
+            override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                if (report!!.areAllPermissionsGranted()){
+                    when(tagString){
+                        /** Action for picking image from gallery*/
+                        getString(R.string.st_gallery) -> {
+                            val pickImageIntent = Intent(Intent.ACTION_PICK,
+                                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+                            startActivityForResult(pickImageIntent, GALLERY_CODE)
+                        }
+                        /** Action for storing image to downloads folder*/
+                        getString(R.string.st__share) -> {
+                            BitmapAsyncTask(getBitmapFromView(binding.flImageContainer)).execute()
+                        }
+                        /** Fatal error*/
+                        else -> Log.e("ExternalImageProcess", "Unknown operation")
+                    }
                 }
-
             }
 
-            if (!allGranted){
-                Toast.makeText(this,
-                        "Access to the storage is not available.\n\nPlease grant permission",
-                        Toast.LENGTH_LONG).show()
+            override fun onPermissionRationaleShouldBeShown(
+                    permissionsList: MutableList<PermissionRequest>?,
+                    permissionToken: PermissionToken?) {
+                showRationalPermissionDialog()
             }
 
-        }
+        }).onSameThread().check()
     }
-    /**
-     * Next fun check permissions availability for app
-     * */
-    private fun isPermissionsAreAllowed(): Boolean{
-        var result = false
-        if (
-                ContextCompat.checkSelfPermission(this,
-                        Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
-                &&
-                ContextCompat.checkSelfPermission(this,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
-        ){result = true}
 
-
-        return result
-    }
-    /** BLOCK ENDS**/
 
 
     /**
-     * BLOCK Responsible for operations of:
-     *      -image extracting from gallery
-     *      -further implementing in app
-     *      -exporting
-     */
-    /**
-     * Next fun extracts user image from gallery and substitutes data in image view
+     * Next method extracts user image from gallery and substitutes data in image view
      */
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -414,8 +369,6 @@ class MainActivity : AppCompatActivity() {
                 try {
                     //check for available data
                     if (data!!.data != null){
-                        //make background visible
-                        binding.ivUsersImage.visibility = View.VISIBLE
                         //set image
                         binding.ivUsersImage.setImageURI(data.data)
                     }
@@ -432,9 +385,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
     /**
-     * Next fun preparing our bitmap for next compressing with image
-     * and
-     * further sharing already final image
+     * Next method makes sandwich with bitmap and image
      */
     private fun getBitmapFromView(view: View): Bitmap{
         //save our bitmap in object with current width, height and bitmap type
@@ -455,7 +406,7 @@ class MainActivity : AppCompatActivity() {
         return returnedBitmap
     }
     /**
-     * Next Class implements AsyncTask and responsible for all process of image exporting/sharing
+     * Next Class implements AsyncTask and responsible for all process with image exporting/sharing
      */
     private inner class BitmapAsyncTask(val myBitmap: Bitmap) : AsyncTask<Any, Void, String>(){
         //Loading simple dialog
@@ -463,6 +414,7 @@ class MainActivity : AppCompatActivity() {
         //show progress, while image is exporting
         fun showProgressDialog(){
             loadingDialog.setContentView(R.layout.dialog_background_progress)
+            loadingDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             loadingDialog.show()
         }
         //dismiss
@@ -475,7 +427,7 @@ class MainActivity : AppCompatActivity() {
         }
         /**
          * While progress dialog is showing
-         * Next fun saves our prepared image in Folder DOWNLOADS in format PNG
+         * Next method saves prepared image in Folder DOWNLOADS in format PNG
          */
         override fun doInBackground(vararg params: Any?): String {
             var result = ""
@@ -508,9 +460,9 @@ class MainActivity : AppCompatActivity() {
             return result
         }
         /**
-         * Next fun reports result of image exporting process
+         * Next method reports result of image exporting process
          * and
-         * after offers to share it with another app
+         * offers to share it with another app
          */
         override fun onPostExecute(result: String?) {
             super.onPostExecute(result)
@@ -523,10 +475,10 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this@MainActivity,
                         "Something went wrong \nPlease try again", Toast.LENGTH_LONG).show()
             }
-            //share image for another app
+            //share image to another app
             MediaScannerConnection.scanFile(this@MainActivity,
                     arrayOf(result), null){
-                path, uri -> val sharingIntent = Intent()
+                _, uri -> val sharingIntent = Intent()
                 sharingIntent.action = Intent.ACTION_SEND
                 sharingIntent.putExtra(Intent.EXTRA_STREAM, uri)
                 sharingIntent.type = "image/png"
@@ -536,11 +488,10 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-    /**BLOCK ENDS**/
 
 
     /**
-     * Next two fun responsible for extra menu show/hide
+     * Next two methods show/hide extra bottom-right menu
      */
     private fun showExtraMenu(){
         binding.btnRotate.visibility = View.VISIBLE
@@ -559,7 +510,7 @@ class MainActivity : AppCompatActivity() {
 
 
     /**
-     * Next fun responsible for dialog menu of Color picker
+     * Next method show dialog menu of Color picker
      */
     private fun showColorPickerDialog(){
         //last color
@@ -586,15 +537,13 @@ class MainActivity : AppCompatActivity() {
                 if (envelope != null) {
                     //show in linear layout current color
                     llCurrentColor.setBackgroundColor(envelope.color)
+                    /** for background color changing*/
                     colorInt = envelope.color
-                    //save color
+                    /** for line color changing*/
                     colorHex = envelope.hexCode
                 }
             }
         })
-
-        //change states by click for color destination type
-
 
         //color for lines
         llLineColor.setOnClickListener {
@@ -610,22 +559,19 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * Next fun responsible for dialog menu of Brush size
+     * Next method show dialog menu of Brush size
      */
     private fun showBrushSizeDialog(){
         /**
-         * Next line using for local saving of current states for brush size
+         * Next line load current value of brush size
          * Needed for better user performance
          */
-        //brush size - next changing
-        binding.sbBrushSize.progress = 1
         binding.sbBrushSize.progress = textBrushSize
-
         //set text variant of brush size
         binding.tvBrushSizeDisplay.text = "${getString(R.string.st_size)} $textBrushSize"
 
         /**
-         * Next seek bar listener in real time show user's size changes
+         * Next seek bar listener in real time show user's size changes and implement them
          */
         binding.sbBrushSize.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, i: Int, b: Boolean) {
@@ -643,7 +589,7 @@ class MainActivity : AppCompatActivity() {
 
 
     /**
-     * Next fun show info about app
+     * Next method show info about app
      */
     private fun showInfo(){
         //create dialog window
@@ -663,7 +609,7 @@ class MainActivity : AppCompatActivity() {
 
 
     /**
-     * Next fun changes line color using tag of every color button
+     * Next method changes line color using tag of every color button
      * Initialize directly in xml file
      */
     fun colorClicked(view: View){
@@ -676,7 +622,7 @@ class MainActivity : AppCompatActivity() {
 
 
     /**
-     * Next fun make clear all frame
+     * Next method remove all lines and background image
      */
     private fun eraseAll(){
         //erase background image
