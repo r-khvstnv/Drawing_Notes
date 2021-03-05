@@ -52,7 +52,7 @@
         app:layout_constraintRight_toLeftOf="@id/btn_ok_color"
         android:background="@drawable/btn_white"
         android:paddingHorizontal="10dp"
-        android:text="Cancel"
+        android:text="@string/st_cancel"
         android:textSize="22sp"
         android:textColor="@color/myGreyDark"
         />
@@ -67,7 +67,7 @@
         app:layout_constraintRight_toRightOf="parent"
         android:background="@drawable/btn_white"
         android:paddingHorizontal="20dp"
-        android:text="OK"
+        android:text="@string/st_ok"
         android:textSize="22sp"
         android:textColor="@color/myGreyDark"
         />

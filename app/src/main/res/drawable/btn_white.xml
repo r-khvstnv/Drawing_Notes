@@ -2,8 +2,7 @@
 <shape
     xmlns:android="http://schemas.android.com/apk/res/android"
     >
-    <size android:width="22dp" android:height="22dp"/>
     <solid android:color="@color/myWhite"/>
-    <corners android:radius="3dp"/>
+    <corners android:radius="@dimen/dim_btn_color_radius"/>
 
 </shape>

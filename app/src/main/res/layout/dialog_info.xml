@@ -149,7 +149,7 @@
         app:layout_constraintRight_toRightOf="parent"
         android:background="@drawable/btn_white"
         android:paddingHorizontal="10dp"
-        android:text="Back"
+        android:text="@string/st_back"
         android:textSize="22sp"
         android:textColor="@color/myGreyDark"
         />

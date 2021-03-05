@@ -6,7 +6,6 @@ import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.MotionEvent
 import android.view.View
-import androidx.core.graphics.blue
 
 /**
  * Next Class responsible for custom drawing view
@@ -180,14 +179,6 @@ class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
             return true
         }
         return false
-    }
-
-
-    /**
-     * Next fun return current brush size
-     */
-    fun getBrushSize(): Float {
-        return myBrushSize
     }
 
 

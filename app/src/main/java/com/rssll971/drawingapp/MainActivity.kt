@@ -130,6 +130,7 @@ class MainActivity : AppCompatActivity() {
         //get to local var
         myInterstitialAd = InterstitialAd(this)
         myInterstitialAd.adUnitId = adInterstitialID
+
         myBannerAdView = findViewById(R.id.adView_smart_banner)
         //load
         myInterstitialAd.loadAd(AdRequest.Builder().build())
@@ -167,8 +168,8 @@ class MainActivity : AppCompatActivity() {
         //active draw functionality
         binding.btnActiveDraw.setOnClickListener {
             //buttons background color changes
-            binding.btnActiveDraw.setBackgroundResource(R.drawable.ib_grey_handling)
-            binding.btnTransfer.setBackgroundResource(R.drawable.ib_white_handling)
+            binding.btnActiveDraw.setBackgroundResource(R.drawable.ib_option_grey)
+            binding.btnTransfer.setBackgroundResource(R.drawable.ib_option_white)
             binding.drawingView.setIsTouchAllowed(true)
         }
         //drag and scale
@@ -179,8 +180,8 @@ class MainActivity : AppCompatActivity() {
              */
             binding.drawingView.setIsTouchAllowed(false)
             //buttons background color changes
-            binding.btnActiveDraw.setBackgroundResource(R.drawable.ib_white_handling)
-            binding.btnTransfer.setBackgroundResource(R.drawable.ib_grey_handling)
+            binding.btnActiveDraw.setBackgroundResource(R.drawable.ib_option_white)
+            binding.btnTransfer.setBackgroundResource(R.drawable.ib_option_grey)
             //
             binding.flImageContainer.setOnTouchListener { v, event ->
                 myMultiTouchGestureDetector.onTouchEvent(event)
@@ -219,13 +220,12 @@ class MainActivity : AppCompatActivity() {
         }
         //screen orientation
         binding.btnRotate.setOnClickListener {
-            if (isPortraitMode){
+            requestedOrientation = if (isPortraitMode){
                 //switch to landscape
-                requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
-            }
-            else{
+                ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+            } else{
                 //switch to portrait
-                requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+                ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
             }
         }
         //trash
@@ -334,6 +334,7 @@ class MainActivity : AppCompatActivity() {
         //permissions allowed
         if(ActivityCompat.shouldShowRequestPermissionRationale(this,
                         PERMISSIONS_REQUIRED.toString())){
+            //nothing to do, due to user reject them or granted
         }
         //request permissions
         else{
@@ -350,7 +351,7 @@ class MainActivity : AppCompatActivity() {
             grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == PERMISSIONS_ALL_CODE){
-            var allGranted: Boolean = false
+            var allGranted = false
             //check if all permissions are granted
             for (i in grantResults.indices){
                 if (grantResults[i] == PackageManager.PERMISSION_GRANTED){
@@ -371,7 +372,7 @@ class MainActivity : AppCompatActivity() {
      * Next fun check permissions availability for app
      * */
     private fun isPermissionsAreAllowed(): Boolean{
-        var result: Boolean = false
+        var result = false
         if (
                 ContextCompat.checkSelfPermission(this,
                         Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
@@ -618,8 +619,6 @@ class MainActivity : AppCompatActivity() {
         //get values from brush dialog to local variables
             //brush size - next changing
         val brushSize = brushDialog.findViewById<SeekBar>(R.id.sb_brush_size)
-            //get current brush size to seek bar
-        val currentBrushSize: Int = binding.drawingView.getBrushSize().toInt()
         brushSize.progress = 1
         brushSize.progress = textBrushSize
             //text option of brush size
@@ -627,7 +626,7 @@ class MainActivity : AppCompatActivity() {
             //button of confirmation
         val confirmationBrushSize = brushDialog.findViewById<Button>(R.id.btn_confirm_size)
         //upload brush size
-        displayBrushSize.text = "Size: $textBrushSize"
+        displayBrushSize.text = "${getString(R.string.st_size)} $textBrushSize"
 
         //display dialog menu
         brushDialog.show()
@@ -639,7 +638,7 @@ class MainActivity : AppCompatActivity() {
             override fun onProgressChanged(seekBar: SeekBar, i: Int, b: Boolean) {
                 // Display the current progress of SeekBar
                 textBrushSize = i
-                displayBrushSize.text = "Size: $textBrushSize"
+                displayBrushSize.text = "${getString(R.string.st_size)} $textBrushSize"
             }
             override fun onStartTrackingTouch(seekBar: SeekBar) {
             }
