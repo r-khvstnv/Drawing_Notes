@@ -26,6 +26,9 @@ import android.widget.*
 import androidx.core.view.isVisible
 import com.dinuscxj.gesture.MultiTouchGestureDetector
 import com.google.android.gms.ads.*
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.ktx.analytics
+import com.google.firebase.ktx.Firebase
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -69,6 +72,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var myBannerAdView: AdView
     //id of interstitial ad
     private val adInterstitialID: String = "ca-app-pub-4362142146545991/4879230890"
+    //firebase
+    private lateinit var firebaseAnalytics: FirebaseAnalytics
 
     /**
      * Next two method enable fullscreen mode and transparent navigation/status bars
@@ -102,6 +107,9 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         val  view = binding.root
         setContentView(view)
+
+        /** Firebase*/
+        firebaseAnalytics = Firebase.analytics
 
         /** change orientation state and lock screen rotation**/
         when(requestedOrientation){
@@ -204,6 +212,7 @@ class MainActivity : AppCompatActivity() {
         //undo
         binding.btnUndo.setOnClickListener {
             binding.drawingView.removeLastLine()
+
         }
         //extra menu
         binding.btnExtraMenu.setOnClickListener {
