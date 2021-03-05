@@ -9,4 +9,8 @@
     <dimen name="dim_option_btn_margin_vertical">8dp</dimen>
     <dimen name="dim_option_btn_radius">4dp</dimen>
 
+    <dimen name="dim_ll_current_color_size">34dp</dimen>
+    <dimen name="dim_ll_color_dest_margin_horizontal">30dp</dimen>
+    <dimen name="dim_ll_color_dest_margin_vertical">40dp</dimen>
+
 </resources>

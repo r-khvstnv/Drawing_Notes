@@ -20,6 +20,7 @@ import android.view.*
 import android.widget.*
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import com.dinuscxj.gesture.MultiTouchGestureDetector
 import com.google.android.gms.ads.*
 import com.rssll971.drawingapp.databinding.ActivityMainBinding
@@ -56,8 +57,6 @@ class MainActivity : AppCompatActivity() {
     private var textBrushSize: Int = 1
     //var to make scaling of layout
     private var scaleFactor: Float = 1.0f
-    //show extra menu or not
-    private var isMenuShown: Boolean = false
     //portrait orientation active
     private var isPortraitMode: Boolean = true
 
@@ -114,7 +113,10 @@ class MainActivity : AppCompatActivity() {
         }
         //Lock auto-screen orientation
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LOCKED
+
+        /** Hide all unnecessary layouts*/
         hideExtraMenu()
+        binding.llBrushSizeChanger.visibility = View.GONE
 
         //crutch when systemUI doesn't disappear
         Handler().postDelayed({onWindowFocusChanged(true)}, 1000)
@@ -168,7 +170,7 @@ class MainActivity : AppCompatActivity() {
         //active draw functionality
         binding.btnActiveDraw.setOnClickListener {
             //buttons background color changes
-            binding.btnActiveDraw.setBackgroundResource(R.drawable.ib_option_grey)
+            binding.btnActiveDraw.setBackgroundResource(R.drawable.ib_option_grey_light)
             binding.btnTransfer.setBackgroundResource(R.drawable.ib_option_white)
             binding.drawingView.setIsTouchAllowed(true)
         }
@@ -181,7 +183,7 @@ class MainActivity : AppCompatActivity() {
             binding.drawingView.setIsTouchAllowed(false)
             //buttons background color changes
             binding.btnActiveDraw.setBackgroundResource(R.drawable.ib_option_white)
-            binding.btnTransfer.setBackgroundResource(R.drawable.ib_option_grey)
+            binding.btnTransfer.setBackgroundResource(R.drawable.ib_option_grey_light)
             //
             binding.flImageContainer.setOnTouchListener { v, event ->
                 myMultiTouchGestureDetector.onTouchEvent(event)
@@ -196,8 +198,17 @@ class MainActivity : AppCompatActivity() {
 
         //secondary layout
         //brush
-        binding.btnBrush.setOnClickListener {
-            showBrushSizeDialog()
+        binding.btnBrushSize.setOnClickListener {
+            if (binding.llBrushSizeChanger.isVisible){
+                binding.llBrushSizeChanger.visibility = View.GONE
+                binding.btnBrushSize.setBackgroundResource(R.drawable.ib_option_white)
+            }
+            else{
+                binding.llBrushSizeChanger.visibility = View.VISIBLE
+                binding.btnBrushSize.setBackgroundResource(R.drawable.ib_option_grey_light)
+                showBrushSizeDialog()
+            }
+
         }
         //undo
         binding.btnUndo.setOnClickListener {
@@ -209,7 +220,7 @@ class MainActivity : AppCompatActivity() {
         //extra layout
         //extra menu
         binding.btnExtraMenu.setOnClickListener {
-            if (isMenuShown){
+            if (binding.btnRotate.isVisible){
                 hideExtraMenu()
             }
             else{
@@ -233,7 +244,6 @@ class MainActivity : AppCompatActivity() {
             eraseAll()
             //default scale
             defaultScaleAndPosition()
-
             hideExtraMenu()
         }
         // share/save
@@ -538,7 +548,6 @@ class MainActivity : AppCompatActivity() {
         binding.btnShare.visibility = View.VISIBLE
         binding.btnGallery.visibility = View.VISIBLE
         binding.btnInfo.visibility = View.VISIBLE
-        isMenuShown = true
     }
     private fun hideExtraMenu(){
         binding.btnRotate.visibility = View.GONE
@@ -546,7 +555,6 @@ class MainActivity : AppCompatActivity() {
         binding.btnShare.visibility = View.GONE
         binding.btnGallery.visibility = View.GONE
         binding.btnInfo.visibility = View.GONE
-        isMenuShown = false
     }
 
 
@@ -555,23 +563,19 @@ class MainActivity : AppCompatActivity() {
      */
     private fun showColorPickerDialog(){
         //last color
-        var myColor: String = binding.drawingView.getCurrentColor()
+        var colorHex: String = binding.drawingView.getCurrentColor()
+        var colorInt = 0
         //create dialog
         val colorDialog = Dialog(this)
         colorDialog.setContentView(R.layout.dialog_color_picker)
         //make background color to transparent. it needs for round corners
         colorDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        colorDialog.setCanceledOnTouchOutside(false)
 
         //make all touchable object as local
         val myColorPicker = colorDialog.findViewById<ColorPickerView>(R.id.colorPickerView)
-        val myLLCurrentColor = colorDialog.findViewById<LinearLayout>(R.id.ll_current_color)
-        val tvCurrentHex = colorDialog.findViewById<TextView>(R.id.tv_color_hex)
-        //last color as HEX
-        tvCurrentHex.text = myColor
-
-        val myOk = colorDialog.findViewById<Button>(R.id.btn_ok_color)
-        val myCancel = colorDialog.findViewById<Button>(R.id.btn_cancel_color)
+        val llCurrentColor = colorDialog.findViewById<LinearLayout>(R.id.ll_current_color)
+        val llLineColor = colorDialog.findViewById<LinearLayout>(R.id.ll_line_color)
+        val llSolidColor = colorDialog.findViewById<LinearLayout>(R.id.ll_solid_color)
 
         //show
         colorDialog.show()
@@ -581,21 +585,26 @@ class MainActivity : AppCompatActivity() {
             override fun onColorSelected(envelope: ColorEnvelope?, fromUser: Boolean) {
                 if (envelope != null) {
                     //show in linear layout current color
-                    myLLCurrentColor.setBackgroundColor(envelope.color)
-                    tvCurrentHex.text = "#" + envelope.hexCode
+                    llCurrentColor.setBackgroundColor(envelope.color)
+                    colorInt = envelope.color
                     //save color
-                    myColor = envelope.hexCode
+                    colorHex = envelope.hexCode
                 }
             }
         })
 
-        //finish dialog
-        myOk.setOnClickListener {
+        //change states by click for color destination type
+
+
+        //color for lines
+        llLineColor.setOnClickListener {
             //implement new color
-            binding.drawingView.setColor("#" + myColor)
+            binding.drawingView.setColor("#$colorHex")
             colorDialog.dismiss()
         }
-        myCancel.setOnClickListener {
+        //color for background
+        llSolidColor.setOnClickListener {
+            binding.ivUsersImage.setBackgroundColor(colorInt)
             colorDialog.dismiss()
         }
     }
@@ -604,58 +613,32 @@ class MainActivity : AppCompatActivity() {
      * Next fun responsible for dialog menu of Brush size
      */
     private fun showBrushSizeDialog(){
-        //create dialog window
-        val brushDialog = Dialog(this)
-        //initialize dialog layout
-        brushDialog.setContentView(R.layout.dialog_brush_size)
-        //make background color to transparent. it needs for round corners
-        brushDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        brushDialog.setCanceledOnTouchOutside(false)
-
         /**
          * Next line using for local saving of current states for brush size
          * Needed for better user performance
          */
-        //get values from brush dialog to local variables
-            //brush size - next changing
-        val brushSize = brushDialog.findViewById<SeekBar>(R.id.sb_brush_size)
-        brushSize.progress = 1
-        brushSize.progress = textBrushSize
-            //text option of brush size
-        val displayBrushSize = brushDialog.findViewById<TextView>(R.id.tv_brush_size_display)
-            //button of confirmation
-        val confirmationBrushSize = brushDialog.findViewById<Button>(R.id.btn_confirm_size)
-        //upload brush size
-        displayBrushSize.text = "${getString(R.string.st_size)} $textBrushSize"
+        //brush size - next changing
+        binding.sbBrushSize.progress = 1
+        binding.sbBrushSize.progress = textBrushSize
 
-        //display dialog menu
-        brushDialog.show()
+        //set text variant of brush size
+        binding.tvBrushSizeDisplay.text = "${getString(R.string.st_size)} $textBrushSize"
 
         /**
          * Next seek bar listener in real time show user's size changes
          */
-        brushSize.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+        binding.sbBrushSize.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, i: Int, b: Boolean) {
                 // Display the current progress of SeekBar
                 textBrushSize = i
-                displayBrushSize.text = "${getString(R.string.st_size)} $textBrushSize"
+                binding.tvBrushSizeDisplay.text = "${getString(R.string.st_size)} $textBrushSize"
+                binding.drawingView.setBrushSize(i.toFloat())
             }
             override fun onStartTrackingTouch(seekBar: SeekBar) {
             }
             override fun onStopTrackingTouch(seekBar: SeekBar) {
             }
         })
-        /**
-         * Next listener on OK button implements changes
-         * and
-         * close dialog menu
-         */
-        confirmationBrushSize.setOnClickListener {
-            //change brush size
-            binding.drawingView.setBrushSize(brushSize.progress.toFloat())
-            //turn off brush dialog
-            brushDialog.dismiss()
-        }
     }
 
 

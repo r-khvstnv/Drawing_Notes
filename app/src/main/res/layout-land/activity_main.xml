@@ -160,23 +160,22 @@
             android:layout_width="@dimen/dim_option_btn_size"
             android:layout_height="@dimen/dim_option_btn_size"
             android:layout_marginHorizontal="@dimen/dim_option_btn_margin_horizontal"
-            android:background="@drawable/ib_option_white"
-            android:elevation="4dp"
+            android:background="@drawable/ripple_ib_option_white"            android:elevation="4dp"
             android:layout_marginVertical="@dimen/dim_option_btn_margin_vertical"
             android:src="@drawable/ic_fit"
             android:padding="5dp"
-            android:scaleType="fitXY"
+            android:scaleType="fitCenter"
             />
         <ImageButton
             android:id="@+id/btn_active_draw"
             android:layout_width="@dimen/dim_option_btn_size"
             android:layout_height="@dimen/dim_option_btn_size"
             android:layout_marginHorizontal="@dimen/dim_option_btn_margin_horizontal"
-            android:background="@drawable/ib_option_grey"
+            android:background="@drawable/ib_option_grey_light"
             android:elevation="4dp"
             android:layout_marginVertical="@dimen/dim_option_btn_margin_vertical"
             android:src="@drawable/ic_active_draw"
-            android:scaleType="fitXY"
+            android:scaleType="fitCenter"
             android:padding="5dp"
             />
         <ImageButton
@@ -189,7 +188,7 @@
             android:layout_marginVertical="@dimen/dim_option_btn_margin_vertical"
             android:src="@drawable/ic_moving"
             android:padding="5dp"
-            android:scaleType="fitXY"
+            android:scaleType="fitCenter"
             />
     </LinearLayout>
 
@@ -211,15 +210,14 @@
             android:layout_width="@dimen/dim_option_btn_size"
             android:layout_height="@dimen/dim_option_btn_size"
             android:layout_marginHorizontal="@dimen/dim_option_btn_margin_horizontal"
-            android:background="@drawable/ib_option_white"
-            android:elevation="4dp"
+            android:background="@drawable/ripple_ib_option_white"            android:elevation="4dp"
             android:layout_marginVertical="@dimen/dim_option_btn_margin_vertical"
             android:src="@drawable/ic_undo"
-            android:scaleType="fitXY"
+            android:scaleType="fitCenter"
             android:padding="5dp"
             />
         <ImageButton
-            android:id="@+id/btn_brush"
+            android:id="@+id/btn_brush_size"
             android:layout_width="@dimen/dim_option_btn_size"
             android:layout_height="@dimen/dim_option_btn_size"
             android:layout_marginHorizontal="@dimen/dim_option_btn_margin_horizontal"
@@ -227,8 +225,43 @@
             android:elevation="4dp"
             android:layout_marginVertical="@dimen/dim_option_btn_margin_vertical"
             android:src="@drawable/ic_pencil_size"
-            android:scaleType="fitXY"
+            android:scaleType="fitCenter"
             android:padding="5dp"
+            />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/ll_brush_size_changer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="30dp"
+        app:layout_constraintBottom_toBottomOf="@id/ll_secondary_options"
+        app:layout_constraintRight_toLeftOf="@id/ll_secondary_options"
+        android:background="@drawable/ib_option_white"
+        android:orientation="horizontal"
+        android:elevation="10dp"
+        android:paddingVertical="10dp"
+        android:paddingHorizontal="20dp"
+        android:visibility="visible"
+        >
+        <SeekBar
+            android:id="@+id/sb_brush_size"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:min="1"
+            android:max="50"
+            android:theme="@style/MySeekBar"
+            style="?android:attr/progressBarStyleHorizontal"
+            />
+        <TextView
+            android:id="@+id/tv_brush_size_display"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            tools:text="Size: 50"
+            android:textAlignment="textStart"
+            android:textSize="14sp"
+            android:textColor="@color/myGreyDark"
             />
     </LinearLayout>
 
@@ -251,11 +284,10 @@
             android:layout_height="@dimen/dim_option_btn_size"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="40dp"
-            android:background="@drawable/ib_option_white"
-            android:elevation="4dp"
+            android:background="@drawable/ripple_ib_option_white"            android:elevation="4dp"
             android:layout_marginVertical="@dimen/dim_option_btn_margin_vertical"
             android:src="@drawable/ic_info"
-            android:scaleType="fitXY"
+            android:scaleType="fitCenter"
             android:padding="5dp"
             android:visibility="visible"
             />
@@ -264,11 +296,10 @@
             android:layout_width="@dimen/dim_option_btn_size"
             android:layout_height="@dimen/dim_option_btn_size"
             android:layout_marginHorizontal="@dimen/dim_option_btn_margin_horizontal"
-            android:background="@drawable/ib_option_white"
-            android:elevation="4dp"
+            android:background="@drawable/ripple_ib_option_white"            android:elevation="4dp"
             android:layout_marginVertical="@dimen/dim_option_btn_margin_vertical"
             android:src="@drawable/ic_gallery"
-            android:scaleType="fitXY"
+            android:scaleType="fitCenter"
             android:padding="5dp"
             android:visibility="visible"
             />
@@ -279,11 +310,10 @@
             android:layout_marginStart="10dp"
             android:layout_marginEnd="40dp"
             android:layout_marginVertical="@dimen/dim_option_btn_margin_vertical"
-            android:background="@drawable/ib_option_white"
-            android:elevation="4dp"
+            android:background="@drawable/ripple_ib_option_white"            android:elevation="4dp"
             android:src="@drawable/ic_share"
             android:padding="5dp"
-            android:scaleType="fitXY"
+            android:scaleType="fitCenter"
             android:visibility="visible"
             />
         <ImageButton
@@ -292,10 +322,9 @@
             android:layout_height="@dimen/dim_option_btn_size"
             android:layout_marginHorizontal="@dimen/dim_option_btn_margin_horizontal"
             android:layout_marginVertical="@dimen/dim_option_btn_margin_vertical"
-            android:background="@drawable/ib_option_white"
-            android:elevation="4dp"
+            android:background="@drawable/ripple_ib_option_white"            android:elevation="4dp"
             android:src="@drawable/ic_trash"
-            android:scaleType="fitXY"
+            android:scaleType="fitCenter"
             android:padding="5dp"
             android:visibility="visible"
             />
@@ -306,10 +335,9 @@
             android:layout_marginHorizontal="@dimen/dim_option_btn_margin_horizontal"
             android:layout_marginEnd="20dp"
             android:layout_marginVertical="@dimen/dim_option_btn_margin_vertical"
-            android:background="@drawable/ib_option_white"
-            android:elevation="4dp"
+            android:background="@drawable/ripple_ib_option_white"            android:elevation="4dp"
             android:src="@drawable/ic_rotate"
-            android:scaleType="fitXY"
+            android:scaleType="fitCenter"
             android:padding="5dp"
             android:visibility="visible"
             />
@@ -319,10 +347,9 @@
             android:layout_height="@dimen/dim_option_btn_size"
             android:layout_marginHorizontal="@dimen/dim_option_btn_margin_horizontal"
             android:layout_marginVertical="@dimen/dim_option_btn_margin_vertical"
-            android:background="@drawable/ib_option_white"
-            android:elevation="4dp"
+            android:background="@drawable/ripple_ib_option_white"            android:elevation="4dp"
             android:src="@drawable/ic_menu"
-            android:scaleType="fitXY"
+            android:scaleType="fitCenter"
             android:padding="5dp"
             />
     </LinearLayout>
