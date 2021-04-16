@@ -14,10 +14,8 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.media.MediaScannerConnection
 import android.net.Uri
-import android.os.AsyncTask
+import android.os.*
 import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
-import android.os.Handler
 import android.provider.MediaStore
 import android.provider.Settings
 import android.util.Log
@@ -26,6 +24,8 @@ import android.widget.*
 import androidx.core.view.isVisible
 import com.dinuscxj.gesture.MultiTouchGestureDetector
 import com.google.android.gms.ads.*
+import com.google.android.gms.ads.interstitial.InterstitialAd
+import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
@@ -38,6 +38,10 @@ import com.rssll971.drawingapp.databinding.ActivityMainBinding
 import com.skydoves.colorpickerview.ColorEnvelope
 import com.skydoves.colorpickerview.ColorPickerView
 import com.skydoves.colorpickerview.listeners.ColorEnvelopeListener
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
@@ -65,13 +69,13 @@ class MainActivity : AppCompatActivity() {
     private var isPortraitMode: Boolean = true
     //Scale detector. Declare in onCreate, called by button
     private lateinit var myMultiTouchGestureDetector: MultiTouchGestureDetector
+    //coroutines
+    val scope = CoroutineScope(Dispatchers.IO)
     //ADS
-    //interstitial ad
-    private lateinit var myInterstitialAd: InterstitialAd
     //banner ad
     private lateinit var myBannerAdView: AdView
-    //id of interstitial ad
-    private val adInterstitialID: String = "ca-app-pub-4362142146545991/4879230890"
+    //interstitial
+    private var mInterstitialAd: InterstitialAd? = null
     //firebase
     private lateinit var firebaseAnalytics: FirebaseAnalytics
 
@@ -83,21 +87,31 @@ class MainActivity : AppCompatActivity() {
         if (hasFocus) hideSystemUI()
     }
     private fun hideSystemUI() {
-        /**
-         * Enables regular immersive mode.
-         * For "lean back" mode, remove SYSTEM_UI_FLAG_IMMERSIVE.
-         * Or for "sticky immersive," replace it with SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-         */
-        window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                // Set the content to appear under the system bars so that the
-                // content doesn't resize when the system bars hide and show.
-                or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                // Hide the nav bar and status bar
-                or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                or View.SYSTEM_UI_FLAG_FULLSCREEN
-                )
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R){
+            window.setDecorFitsSystemWindows(false)
+            window.insetsController?.let {
+                it.hide(WindowInsets.Type.statusBars() or WindowInsets.Type.navigationBars())
+                it.systemBarsBehavior = WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+            }
+        }
+        else{
+            /**
+             * Enables regular immersive mode.
+             * For "lean back" mode, remove SYSTEM_UI_FLAG_IMMERSIVE.
+             * Or for "sticky immersive," replace it with SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+             */
+            @Suppress("DEPRECATION")
+            window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                    // Set the content to appear under the system bars so that the
+                    // content doesn't resize when the system bars hide and show.
+                    or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                    or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                    or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    // Hide the nav bar and status bar
+                    or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                    or View.SYSTEM_UI_FLAG_FULLSCREEN
+                    )
+        }
     }
 
 
@@ -125,8 +139,7 @@ class MainActivity : AppCompatActivity() {
         hideExtraMenu()
         binding.llBrushSizeChanger.visibility = View.GONE
         //crutch when systemUI doesn't disappear
-        Handler().postDelayed({onWindowFocusChanged(true)}, 1000)
-
+        Handler(Looper.getMainLooper()).postDelayed({onWindowFocusChanged(true)}, 1000)
 
         //Declare multi-touch detector
         myMultiTouchGestureDetector = MultiTouchGestureDetector(
@@ -134,26 +147,7 @@ class MainActivity : AppCompatActivity() {
 
 
         /** Prepare and build Ads*/
-        MobileAds.initialize(this)
-
-        myInterstitialAd = InterstitialAd(this)
-        myInterstitialAd.adUnitId = adInterstitialID
-        myBannerAdView = findViewById(R.id.adView_smart_banner)
-        myInterstitialAd.loadAd(AdRequest.Builder().build())
-
-        myBannerAdView.loadAd(AdRequest.Builder().build())
-        //reload ads
-        myInterstitialAd.adListener = object : AdListener() {
-            override fun onAdClosed() {
-                myInterstitialAd.loadAd(AdRequest.Builder().build())
-            }
-        }
-        myBannerAdView.adListener = object : AdListener(){
-            override fun onAdClosed() {
-                myBannerAdView.loadAd(AdRequest.Builder().build())
-            }
-        }
-
+        prepareAds()
 
         /** Next line set brush size to 1 on first app start*/
         binding.drawingView.setBrushSize(1.toFloat())
@@ -185,7 +179,7 @@ class MainActivity : AppCompatActivity() {
             binding.btnActiveDraw.setBackgroundResource(R.drawable.ib_option_white)
             binding.btnTransfer.setBackgroundResource(R.drawable.ib_option_grey_light)
             //
-            binding.flImageContainer.setOnTouchListener { v, event ->
+            binding.flImageContainer.setOnTouchListener { _, event ->
                 myMultiTouchGestureDetector.onTouchEvent(event)
             }
         }
@@ -221,7 +215,7 @@ class MainActivity : AppCompatActivity() {
             }
             else{
                 //show menu and ads
-                myInterstitialAd.show()
+                showInterstitialAd()
                 showExtraMenu()
             }
         }
@@ -260,7 +254,58 @@ class MainActivity : AppCompatActivity() {
             showInfo()
         }
         /** BLOCK ENDS**/
+    }
 
+
+    /**
+     * Next 3 methods provide all functionality relative to ads
+     * */
+    private fun prepareAds(){
+        //interstitial
+        requestInterstitialAd()
+        //banner ads
+        MobileAds.initialize(this)
+        myBannerAdView = findViewById(R.id.adView_smart_banner)
+        myBannerAdView.loadAd(AdRequest.Builder().build())
+        myBannerAdView.adListener = object : AdListener(){
+            override fun onAdClosed() {
+                myBannerAdView.loadAd(AdRequest.Builder().build())
+            }
+        }
+    }
+    private fun requestInterstitialAd(){
+        val adRequest = AdRequest.Builder().build()
+        loadInterstitialAd(adRequest)
+    }
+    private fun loadInterstitialAd(adRequest: AdRequest){
+        InterstitialAd.load(this, getString(R.string.add_interstitial_ID), adRequest, object : InterstitialAdLoadCallback(){
+            override fun onAdFailedToLoad(adError: LoadAdError) {
+                Log.d("AdMob", adError.message)
+                mInterstitialAd = null
+            }
+            override fun onAdLoaded(interstitialAd: InterstitialAd) {
+                mInterstitialAd = interstitialAd
+
+                mInterstitialAd?.fullScreenContentCallback = object: FullScreenContentCallback() {
+                    override fun onAdDismissedFullScreenContent() {
+                        requestInterstitialAd()
+                    }
+
+                    override fun onAdFailedToShowFullScreenContent(adError: AdError?) {
+                        requestInterstitialAd()
+                    }
+
+                    override fun onAdShowedFullScreenContent() {
+                        mInterstitialAd = null
+                    }
+                }
+            }
+        })
+    }
+    private fun showInterstitialAd(){
+        if (mInterstitialAd != null) {
+            mInterstitialAd!!.show(this)
+        }
     }
 
     /**
@@ -348,7 +393,8 @@ class MainActivity : AppCompatActivity() {
                         }
                         /** Action for storing image to downloads folder*/
                         getString(R.string.st__share) -> {
-                            BitmapAsyncTask(getBitmapFromView(binding.flImageContainer)).execute()
+                            //BitmapAsyncTask(getBitmapFromView(binding.flImageContainer)).execute()
+                            BitmapCoroutine(getBitmapFromView(binding.flImageContainer)).bitmapJob
                         }
                         /** Fatal error*/
                         else -> Log.e("ExternalImageProcess", "Unknown operation")
@@ -361,12 +407,10 @@ class MainActivity : AppCompatActivity() {
                     permissionToken: PermissionToken?) {
                 showRationalPermissionDialog()
             }
-
         }).onSameThread().check()
     }
 
-
-
+    
     /**
      * Next method extracts user image from gallery and substitutes data in image view
      */
@@ -415,9 +459,74 @@ class MainActivity : AppCompatActivity() {
         return returnedBitmap
     }
     /**
-     * Next Class implements AsyncTask and responsible for all process with image exporting/sharing
+     * Next Class implements Coroutines or AsyncTask (previously) and responsible for all process with image exporting/sharing
      */
-    private inner class BitmapAsyncTask(val myBitmap: Bitmap) : AsyncTask<Any, Void, String>(){
+    private inner class BitmapCoroutine(myBitmap: Bitmap){
+        var result: String? = null
+        //Loading simple dialog
+        var loadingDialog = Dialog(this@MainActivity)
+        //show progress, while image is exporting
+        fun showProgressDialog(){
+            loadingDialog.setContentView(R.layout.dialog_background_progress)
+            loadingDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            loadingDialog.show()
+        }
+        //dismiss
+        fun cancelProgressDialog(){
+            loadingDialog.dismiss()
+        }
+
+        val bitmapJob = scope.launch {
+            withContext(Dispatchers.Main){
+                showProgressDialog()
+            }
+
+            runCatching{
+                //variable where we will save our output data
+                val bytes = ByteArrayOutputStream()
+                //compress our bitmap to PNG using stream of val bytes
+                myBitmap.compress(Bitmap.CompressFormat.PNG, 100, bytes)
+                //make it as single file
+                //external directory -> as absolute file -> separate ->
+                val myFile = File("/storage/emulated/0/Download"
+                        + File.separator + "DrawingNote" + System.currentTimeMillis()/1000 + ".png")
+                //stream of our file
+                val myFileOS = FileOutputStream(myFile)
+                //start writing
+                myFileOS.write(bytes.toByteArray())
+                //close os write operation
+                myFileOS.close()
+                //store the result to path
+                result = myFile.absolutePath
+            }.onFailure {
+                it.printStackTrace()
+            }
+
+            withContext(Dispatchers.Main){
+                cancelProgressDialog()
+                if (result != null){
+                    Toast.makeText(this@MainActivity,
+                            "File saved: $result", Toast.LENGTH_LONG).show()
+                }
+                else{
+                    Toast.makeText(this@MainActivity,
+                            "Something went wrong \nPlease try again", Toast.LENGTH_LONG).show()
+                }
+                //share image to another app
+                MediaScannerConnection.scanFile(this@MainActivity,
+                        arrayOf(result), null){
+                    _, uri -> val sharingIntent = Intent()
+                    sharingIntent.action = Intent.ACTION_SEND
+                    sharingIntent.putExtra(Intent.EXTRA_STREAM, uri)
+                    sharingIntent.type = "image/png"
+                    startActivity(
+                            Intent.createChooser( sharingIntent, "Share")
+                    )
+                }
+            }
+        }
+    }
+    /*private inner class BitmapAsyncTask(val myBitmap: Bitmap) : AsyncTask<Any, Void, String>(){
         //Loading simple dialog
         var loadingDialog = Dialog(this@MainActivity)
         //show progress, while image is exporting
@@ -434,10 +543,10 @@ class MainActivity : AppCompatActivity() {
             super.onPreExecute()
             showProgressDialog()
         }
-        /**
+        *//**
          * While progress dialog is showing
          * Next method saves prepared image in Folder DOWNLOADS in format PNG
-         */
+         *//*
         override fun doInBackground(vararg params: Any?): String {
             var result = ""
             if (myBitmap != null){
@@ -468,11 +577,11 @@ class MainActivity : AppCompatActivity() {
 
             return result
         }
-        /**
+        *//**
          * Next method reports result of image exporting process
          * and
          * offers to share it with another app
-         */
+         *//*
         override fun onPostExecute(result: String?) {
             super.onPostExecute(result)
             cancelProgressDialog()
@@ -496,7 +605,7 @@ class MainActivity : AppCompatActivity() {
                 )
             }
         }
-    }
+    }*/
 
 
     /**

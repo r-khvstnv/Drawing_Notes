@@ -3,6 +3,6 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     >
     <solid android:color="@color/myGreyLight"/>
-    <corners android:radius="@dimen/dim_option_btn_radius"/>
+    <corners android:radius="@dimen/dim_general_radius"/>
 
 </shape>

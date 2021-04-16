@@ -2,6 +2,8 @@ package com.rssll971.drawingapp
 
 import android.content.Context
 import android.graphics.*
+import android.os.Handler
+import android.os.Looper
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.MotionEvent
@@ -72,14 +74,24 @@ class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
 
 
     /**
-     * Next method create custom canvas implementing bitmap
+     * Next method adapt size of custom canvas
      */
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
-        //create bitmap with current width and height, using this config of colors
-        myCanvasBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
-        //create canvas with our bitmap
-        canvas = Canvas(myCanvasBitmap!!)
+        if (w == 0 || h == 0){
+            Handler(Looper.getMainLooper()).postDelayed({
+                //create bitmap with current width and height, using this config of colors
+                myCanvasBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
+                //create canvas with our bitmap
+                canvas = Canvas(myCanvasBitmap!!)
+            }, 1000)
+        }
+        else{
+            //create bitmap with current width and height, using this config of colors
+            myCanvasBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
+            //create canvas with our bitmap
+            canvas = Canvas(myCanvasBitmap!!)
+        }
     }
 
     /**

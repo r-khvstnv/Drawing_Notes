@@ -7,12 +7,13 @@
     <dimen name="dim_option_btn_size">32dp</dimen>
     <dimen name="dim_option_btn_margin_horizontal">10dp</dimen>
     <dimen name="dim_option_btn_margin_vertical">8dp</dimen>
-    <dimen name="dim_option_btn_radius">4dp</dimen>
+    <dimen name="dim_general_radius">4dp</dimen>
 
     <dimen name="dim_ll_current_color_size">34dp</dimen>
     <dimen name="dim_ll_color_dest_margin_horizontal">30dp</dimen>
     <dimen name="dim_ll_color_dest_margin_vertical">40dp</dimen>
 
     <dimen name="dim_info_licences_margin_top">10dp</dimen>
+    <dimen name="dim_info_text_size">16sp</dimen>
 
 </resources>

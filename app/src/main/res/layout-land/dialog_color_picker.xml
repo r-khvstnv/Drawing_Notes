@@ -28,7 +28,6 @@
         app:layout_constraintLeft_toRightOf="@id/colorPickerView"
         android:background="@color/myGrey"
         android:orientation="horizontal"
-        android:elevation="5dp"
         />
 
 
@@ -44,7 +43,7 @@
         app:layout_constraintRight_toRightOf="parent"
         android:orientation="horizontal"
         android:gravity="center"
-        android:background="@drawable/ripple_ib_option_white"
+        android:background="@drawable/ib_option_ripple_white"
         android:elevation="5dp"
         >
         <ImageView
@@ -76,7 +75,7 @@
         app:layout_constraintRight_toRightOf="parent"
         android:orientation="horizontal"
         android:gravity="center"
-        android:background="@drawable/ripple_ib_option_white"
+        android:background="@drawable/ib_option_ripple_white"
         android:elevation="5dp"
         >
         <ImageView
