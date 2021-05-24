@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    tools:ignore="ContentDescription,UsingOnClickInXml"
     tools:context=".MainActivity">
     <!-- Layout with user image and drawing view -->
     <FrameLayout
@@ -266,9 +267,8 @@
             android:id="@+id/sb_brush_size"
             android:layout_width="150dp"
             android:layout_height="wrap_content"
-            android:min="1"
+            tools:progress="18"
             android:max="50"
-            android:theme="@style/MySeekBar"
             style="?android:attr/progressBarStyleHorizontal"
             />
         <TextView

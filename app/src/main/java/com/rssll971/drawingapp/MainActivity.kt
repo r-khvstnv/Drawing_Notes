@@ -5,6 +5,7 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.ActivityNotFoundException
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.ActivityInfo
@@ -21,6 +22,8 @@ import android.provider.Settings
 import android.util.Log
 import android.view.*
 import android.widget.*
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContract
 import androidx.core.view.isVisible
 import com.dinuscxj.gesture.MultiTouchGestureDetector
 import com.google.android.gms.ads.*
@@ -38,22 +41,13 @@ import com.rssll971.drawingapp.databinding.ActivityMainBinding
 import com.skydoves.colorpickerview.ColorEnvelope
 import com.skydoves.colorpickerview.ColorPickerView
 import com.skydoves.colorpickerview.listeners.ColorEnvelopeListener
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import kotlin.Exception
 
 class MainActivity : AppCompatActivity() {
-    /**
-     * Permission code for gallery
-     */
-    companion object{
-        private const val GALLERY_CODE = 104
-    }
     /**
      * Binding
      */
@@ -65,12 +59,10 @@ class MainActivity : AppCompatActivity() {
     private var textBrushSize: Int = 1
     //var to make scaling of layout
     private var scaleFactor: Float = 1.0f
-    //portrait orientation active
-    private var isPortraitMode: Boolean = true
     //Scale detector. Declare in onCreate, called by button
     private lateinit var myMultiTouchGestureDetector: MultiTouchGestureDetector
-    //coroutines
-    val scope = CoroutineScope(Dispatchers.IO)
+    //image picker launcher
+    private lateinit var galleryLauncher: ActivityResultLauncher<String>
     //ADS
     //banner ad
     private lateinit var myBannerAdView: AdView
@@ -93,8 +85,7 @@ class MainActivity : AppCompatActivity() {
                 it.hide(WindowInsets.Type.statusBars() or WindowInsets.Type.navigationBars())
                 it.systemBarsBehavior = WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
             }
-        }
-        else{
+        } else{
             /**
              * Enables regular immersive mode.
              * For "lean back" mode, remove SYSTEM_UI_FLAG_IMMERSIVE.
@@ -124,16 +115,7 @@ class MainActivity : AppCompatActivity() {
 
         /** Firebase*/
         firebaseAnalytics = Firebase.analytics
-
-        /** change orientation state and lock screen rotation**/
-        when(requestedOrientation){
-            ActivityInfo.SCREEN_ORIENTATION_PORTRAIT -> {isPortraitMode = true
-                Toast.makeText(this, "Portrait Mode", Toast.LENGTH_LONG).show()}
-            ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE -> {isPortraitMode = false
-                Toast.makeText(this, "Landscape Mode", Toast.LENGTH_LONG).show()}
-        }
-        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LOCKED
-
+        registerGalleryPicker()
 
         /** Hide all unnecessary layouts*/
         hideExtraMenu()
@@ -144,7 +126,6 @@ class MainActivity : AppCompatActivity() {
         //Declare multi-touch detector
         myMultiTouchGestureDetector = MultiTouchGestureDetector(
                 this, MultiTouchGestureDetectorListener())
-
 
         /** Prepare and build Ads*/
         prepareAds()
@@ -189,15 +170,13 @@ class MainActivity : AppCompatActivity() {
             showColorPickerDialog()
         }
 
-
         //secondary layout
         //brush
         binding.btnBrushSize.setOnClickListener {
             if (binding.llBrushSizeChanger.isVisible){
                 binding.llBrushSizeChanger.visibility = View.GONE
                 binding.btnBrushSize.setBackgroundResource(R.drawable.ib_option_white)
-            }
-            else{
+            } else{
                 binding.llBrushSizeChanger.visibility = View.VISIBLE
                 binding.btnBrushSize.setBackgroundResource(R.drawable.ib_option_grey_light)
                 showBrushSizeDialog()
@@ -212,8 +191,7 @@ class MainActivity : AppCompatActivity() {
         binding.btnExtraMenu.setOnClickListener {
             if (binding.btnRotate.isVisible){
                 hideExtraMenu()
-            }
-            else{
+            } else{
                 //show menu and ads
                 showInterstitialAd()
                 showExtraMenu()
@@ -221,13 +199,14 @@ class MainActivity : AppCompatActivity() {
         }
         /** screen orientation */
         binding.btnRotate.setOnClickListener {
-            requestedOrientation = if (isPortraitMode){
-                //switch to landscape
-                ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
-            } else{
-                //switch to portrait
-                ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-            }
+            requestedOrientation =
+                if (requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT){
+                    //switch to landscape
+                    ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+                } else{
+                    //switch to portrait
+                    ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+                }
         }
         //trash
         binding.btnTrash.setOnClickListener {
@@ -278,7 +257,8 @@ class MainActivity : AppCompatActivity() {
         loadInterstitialAd(adRequest)
     }
     private fun loadInterstitialAd(adRequest: AdRequest){
-        InterstitialAd.load(this, getString(R.string.add_interstitial_ID), adRequest, object : InterstitialAdLoadCallback(){
+        InterstitialAd.load(this, getString(R.string.add_interstitial_ID),
+            adRequest, object : InterstitialAdLoadCallback(){
             override fun onAdFailedToLoad(adError: LoadAdError) {
                 Log.d("AdMob", adError.message)
                 mInterstitialAd = null
@@ -303,9 +283,8 @@ class MainActivity : AppCompatActivity() {
         })
     }
     private fun showInterstitialAd(){
-        if (mInterstitialAd != null) {
+        if (mInterstitialAd != null)
             mInterstitialAd!!.show(this)
-        }
     }
 
     /**
@@ -317,7 +296,7 @@ class MainActivity : AppCompatActivity() {
         override fun onScale(detector: MultiTouchGestureDetector?) {
             super.onScale(detector)
             scaleFactor *= detector?.scale ?: 1.0f
-            scaleFactor = Math.max(1.0f, Math.min(scaleFactor, 5.0f))
+            scaleFactor = 1.0f.coerceAtLeast(scaleFactor.coerceAtMost(5.0f))
             binding.flImageContainer.scaleX = scaleFactor
             binding.flImageContainer.scaleY = scaleFactor
         }
@@ -337,13 +316,12 @@ class MainActivity : AppCompatActivity() {
         binding.flImageContainer.scaleX = scaleFactor
         binding.flImageContainer.scaleY = scaleFactor
         //for portrait mode
-        if (isPortraitMode) {
+        if (requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
             /** Align all frame relativity to adBanner,
              * due to it top object in portrait mode*/
             binding.flImageContainer.x = myBannerAdView.left.toFloat()
             binding.flImageContainer.y = myBannerAdView.bottom.toFloat()
-        }
-        else{
+        } else{
             binding.flImageContainer.x = 0.0f
             binding.flImageContainer.y = 0.0f
         }
@@ -364,12 +342,13 @@ class MainActivity : AppCompatActivity() {
                 val uri = Uri.fromParts("package", packageName, null)
                 intent.data = uri
                 startActivity(intent)
-            }catch (e: ActivityNotFoundException){
+            } catch (e: ActivityNotFoundException){
                 e.printStackTrace()
             }
         }
         //negative button
-        permissionAlertDialog.setNegativeButton(R.string.st_cancel){ dialogInterface: DialogInterface, _: Int ->
+        permissionAlertDialog.setNegativeButton(R.string.st_cancel){
+                dialogInterface: DialogInterface, _: Int ->
             dialogInterface.dismiss()
         }
         //show
@@ -380,16 +359,19 @@ class MainActivity : AppCompatActivity() {
      * and makes decision for next processing
      * */
     private fun externalProcessesWithImage(tagString: String){
-        Dexter.withContext(this).withPermissions(Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE).withListener(object: MultiplePermissionsListener{
+        Dexter.withContext(this)
+            .withPermissions(Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            .withListener(object: MultiplePermissionsListener{
             override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                 if (report!!.areAllPermissionsGranted()){
                     when(tagString){
                         /** Action for picking image from gallery*/
                         getString(R.string.st_gallery) -> {
-                            val pickImageIntent = Intent(Intent.ACTION_PICK,
+                            /*val pickImageIntent = Intent(Intent.ACTION_PICK,
                                     MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-                            startActivityForResult(pickImageIntent, GALLERY_CODE)
+                            startActivityForResult(pickImageIntent, GALLERY_CODE)*/
+                            galleryLauncher.launch("image/*")
                         }
                         /** Action for storing image to downloads folder*/
                         getString(R.string.st__share) -> {
@@ -409,34 +391,43 @@ class MainActivity : AppCompatActivity() {
             }
         }).onSameThread().check()
     }
-
-    
     /**
      * Next method extracts user image from gallery and substitutes data in image view
      */
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == Activity.RESULT_OK){
-            if (requestCode == GALLERY_CODE){
-                //get user image as background, using exception
-                try {
-                    //check for available data
-                    if (data!!.data != null){
-                        //set image
-                        binding.ivUsersImage.setImageURI(data.data)
-                    }
-                    //if something goes wrong
-                    else{
-                        Toast.makeText(this, "Wrong data type",
-                                Toast.LENGTH_LONG).show()
-                    }
+    class GalleryContract: ActivityResultContract<String, Uri?>(){
+        override fun createIntent(context: Context, input: String?): Intent {
+            return Intent(Intent.ACTION_PICK,
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+                .apply { type = input }
+        }
+
+        override fun parseResult(resultCode: Int, intent: Intent?): Uri? {
+            return intent?.data.takeIf { resultCode == Activity.RESULT_OK }
+        }
+    }
+
+    private fun registerGalleryPicker(){
+        galleryLauncher = registerForActivityResult(GalleryContract()){
+                uri ->
+            //get user image as background, using exception
+            try {
+                //check for available data
+                if (uri != null){
+                    //set image
+                    binding.ivUsersImage.setImageURI(uri)
                 }
-                catch (e: Exception){
-                    e.printStackTrace()
+                //if something goes wrong
+                else{
+                    Toast.makeText(this, "Wrong data type",
+                        Toast.LENGTH_LONG).show()
                 }
+            }
+            catch (e: Exception){
+                e.printStackTrace()
             }
         }
     }
+
     /**
      * Next method makes sandwich with bitmap and image
      */
@@ -459,9 +450,10 @@ class MainActivity : AppCompatActivity() {
         return returnedBitmap
     }
     /**
-     * Next Class implements Coroutines or AsyncTask (previously) and responsible for all process with image exporting/sharing
+     * Next Class implements Coroutines or AsyncTask (previously)
+     * and responsible for all process with image exporting/sharing
      */
-    private inner class BitmapCoroutine(myBitmap: Bitmap){
+    private inner class BitmapCoroutine(mBitmap: Bitmap){
         var result: String? = null
         //Loading simple dialog
         var loadingDialog = Dialog(this@MainActivity)
@@ -476,6 +468,8 @@ class MainActivity : AppCompatActivity() {
             loadingDialog.dismiss()
         }
 
+        //coroutines
+        val scope = CoroutineScope(Dispatchers.IO + Job())
         val bitmapJob = scope.launch {
             withContext(Dispatchers.Main){
                 showProgressDialog()
@@ -485,11 +479,12 @@ class MainActivity : AppCompatActivity() {
                 //variable where we will save our output data
                 val bytes = ByteArrayOutputStream()
                 //compress our bitmap to PNG using stream of val bytes
-                myBitmap.compress(Bitmap.CompressFormat.PNG, 100, bytes)
+                mBitmap.compress(Bitmap.CompressFormat.PNG, 100, bytes)
                 //make it as single file
                 //external directory -> as absolute file -> separate ->
                 val myFile = File("/storage/emulated/0/Download"
-                        + File.separator + "DrawingNote" + System.currentTimeMillis()/1000 + ".png")
+                        + File.separator + "DrawingNote"
+                        + System.currentTimeMillis()/1000 + ".png")
                 //stream of our file
                 val myFileOS = FileOutputStream(myFile)
                 //start writing
@@ -507,10 +502,10 @@ class MainActivity : AppCompatActivity() {
                 if (result != null){
                     Toast.makeText(this@MainActivity,
                             "File saved: $result", Toast.LENGTH_LONG).show()
-                }
-                else{
+                } else{
                     Toast.makeText(this@MainActivity,
-                            "Something went wrong \nPlease try again", Toast.LENGTH_LONG).show()
+                            "Something went wrong \nPlease try again",
+                        Toast.LENGTH_LONG).show()
                 }
                 //share image to another app
                 MediaScannerConnection.scanFile(this@MainActivity,
@@ -526,86 +521,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-    /*private inner class BitmapAsyncTask(val myBitmap: Bitmap) : AsyncTask<Any, Void, String>(){
-        //Loading simple dialog
-        var loadingDialog = Dialog(this@MainActivity)
-        //show progress, while image is exporting
-        fun showProgressDialog(){
-            loadingDialog.setContentView(R.layout.dialog_background_progress)
-            loadingDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-            loadingDialog.show()
-        }
-        //dismiss
-        fun cancelProgressDialog(){
-            loadingDialog.dismiss()
-        }
-        override fun onPreExecute() {
-            super.onPreExecute()
-            showProgressDialog()
-        }
-        *//**
-         * While progress dialog is showing
-         * Next method saves prepared image in Folder DOWNLOADS in format PNG
-         *//*
-        override fun doInBackground(vararg params: Any?): String {
-            var result = ""
-            if (myBitmap != null){
-                try {
-                    //variable where we will save our output data
-                    val bytes = ByteArrayOutputStream()
-                    //compress our bitmap to PNG using stream of val bytes
-                    myBitmap.compress(Bitmap.CompressFormat.PNG, 100, bytes)
-                    //make it as single file
-                    //external directory -> as absolute file -> separate ->
-                    val myFile = File("/storage/emulated/0/Download"
-                            + File.separator + "DrawingNote" + System.currentTimeMillis()/1000 + ".png")
-                    //stream of our file
-                    val myFileOS = FileOutputStream(myFile)
-                    //start writing
-                    myFileOS.write(bytes.toByteArray())
-                    //close os write operation
-                    myFileOS.close()
-                    //store the result to path
-                    result = myFile.absolutePath
-                }
-                catch (e: Exception){
-                    result = ""
-                    e.printStackTrace()
-                }
-            }
-
-
-            return result
-        }
-        *//**
-         * Next method reports result of image exporting process
-         * and
-         * offers to share it with another app
-         *//*
-        override fun onPostExecute(result: String?) {
-            super.onPostExecute(result)
-            cancelProgressDialog()
-            if (result != null){
-                Toast.makeText(this@MainActivity,
-                        "File saved: $result", Toast.LENGTH_LONG).show()
-            }
-            else{
-                Toast.makeText(this@MainActivity,
-                        "Something went wrong \nPlease try again", Toast.LENGTH_LONG).show()
-            }
-            //share image to another app
-            MediaScannerConnection.scanFile(this@MainActivity,
-                    arrayOf(result), null){
-                _, uri -> val sharingIntent = Intent()
-                sharingIntent.action = Intent.ACTION_SEND
-                sharingIntent.putExtra(Intent.EXTRA_STREAM, uri)
-                sharingIntent.type = "image/png"
-                startActivity(
-                        Intent.createChooser( sharingIntent, "Share")
-                )
-            }
-        }
-    }*/
 
 
     /**
@@ -625,7 +540,6 @@ class MainActivity : AppCompatActivity() {
         binding.btnGallery.visibility = View.GONE
         binding.btnInfo.visibility = View.GONE
     }
-
 
     /**
      * Next method show dialog menu of Color picker
@@ -689,9 +603,11 @@ class MainActivity : AppCompatActivity() {
         binding.tvBrushSizeDisplay.text = "${getString(R.string.st_size)} $textBrushSize"
 
         /**
-         * Next seek bar listener in real time show user's size changes and implement them
+         * Next seek bar listener in real time
+         * show user's size changes and implement them
          */
-        binding.sbBrushSize.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+        binding.sbBrushSize
+            .setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, i: Int, b: Boolean) {
                 // Display the current progress of SeekBar
                 textBrushSize = i
@@ -704,7 +620,6 @@ class MainActivity : AppCompatActivity() {
             }
         })
     }
-
 
     /**
      * Next method show info about app
@@ -725,7 +640,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-
     /**
      * Next method changes line color using tag of every color button
      * Initialize directly in xml file
@@ -738,7 +652,6 @@ class MainActivity : AppCompatActivity() {
         binding.drawingView.setColor(colorTag)
     }
 
-
     /**
      * Next method remove all lines and background image
      */
@@ -748,4 +661,116 @@ class MainActivity : AppCompatActivity() {
         //erase lines
         binding.drawingView.removeAllLines()
     }
+
+
+    /**
+     * Next methods is OUTDATED and were left as an example
+     *
+     * OnActivityResult was recently replaced
+     * by the release of a new version of appcompat (1.3.0)
+     * */
+    /*private inner class BitmapAsyncTask(val myBitmap: Bitmap) : AsyncTask<Any, Void, String>(){
+        //Loading simple dialog
+        var loadingDialog = Dialog(this@MainActivity)
+        //show progress, while image is exporting
+        fun showProgressDialog(){
+            loadingDialog.setContentView(R.layout.dialog_background_progress)
+            loadingDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            loadingDialog.show()
+        }
+        //dismiss
+        fun cancelProgressDialog(){
+            loadingDialog.dismiss()
+        }
+        override fun onPreExecute() {
+            super.onPreExecute()
+            showProgressDialog()
+        }
+        *//**
+     * While progress dialog is showing
+     * Next method saves prepared image in Folder DOWNLOADS in format PNG
+     *//*
+        override fun doInBackground(vararg params: Any?): String {
+            var result = ""
+            if (myBitmap != null){
+                try {
+                    //variable where we will save our output data
+                    val bytes = ByteArrayOutputStream()
+                    //compress our bitmap to PNG using stream of val bytes
+                    myBitmap.compress(Bitmap.CompressFormat.PNG, 100, bytes)
+                    //make it as single file
+                    //external directory -> as absolute file -> separate ->
+                    val myFile = File("/storage/emulated/0/Download"
+                            + File.separator + "DrawingNote" + System.currentTimeMillis()/1000 + ".png")
+                    //stream of our file
+                    val myFileOS = FileOutputStream(myFile)
+                    //start writing
+                    myFileOS.write(bytes.toByteArray())
+                    //close os write operation
+                    myFileOS.close()
+                    //store the result to path
+                    result = myFile.absolutePath
+                }
+                catch (e: Exception){
+                    result = ""
+                    e.printStackTrace()
+                }
+            }
+
+
+            return result
+        }
+        *//**
+     * Next method reports result of image exporting process
+     * and
+     * offers to share it with another app
+     *//*
+        override fun onPostExecute(result: String?) {
+            super.onPostExecute(result)
+            cancelProgressDialog()
+            if (result != null){
+                Toast.makeText(this@MainActivity,
+                        "File saved: $result", Toast.LENGTH_LONG).show()
+            }
+            else{
+                Toast.makeText(this@MainActivity,
+                        "Something went wrong \nPlease try again", Toast.LENGTH_LONG).show()
+            }
+            //share image to another app
+            MediaScannerConnection.scanFile(this@MainActivity,
+                    arrayOf(result), null){
+                _, uri -> val sharingIntent = Intent()
+                sharingIntent.action = Intent.ACTION_SEND
+                sharingIntent.putExtra(Intent.EXTRA_STREAM, uri)
+                sharingIntent.type = "image/png"
+                startActivity(
+                        Intent.createChooser( sharingIntent, "Share")
+                )
+            }
+        }
+    }*/
+
+    /*override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK){
+            if (requestCode == GALLERY_CODE){
+                //get user image as background, using exception
+                try {
+                    //check for available data
+                    if (data!!.data != null){
+                        //set image
+                        binding.ivUsersImage.setImageURI(data.data)
+                    }
+                    //if something goes wrong
+                    else{
+                        Toast.makeText(this, "Wrong data type",
+                                Toast.LENGTH_LONG).show()
+                    }
+                }
+                catch (e: Exception){
+                    e.printStackTrace()
+                }
+            }
+        }
+    }*/
 }

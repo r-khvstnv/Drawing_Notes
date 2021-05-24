@@ -5,6 +5,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:background="@drawable/dialog_background"
+    tools:ignore="ContentDescription"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <com.skydoves.colorpickerview.ColorPickerView
         android:id="@+id/colorPickerView"
@@ -57,7 +58,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Line color"
+            android:text="@string/st_line_color"
             android:textColor="@color/myBlack"
             android:textSize="12sp"
             />
@@ -89,7 +90,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Solid color"
+            android:text="@string/st_solid_color"
             android:textColor="@color/myBlack"
             android:textSize="12sp"
             />
