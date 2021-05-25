@@ -376,7 +376,7 @@ class MainActivity : AppCompatActivity() {
                         /** Action for storing image to downloads folder*/
                         getString(R.string.st__share) -> {
                             //BitmapAsyncTask(getBitmapFromView(binding.flImageContainer)).execute()
-                            BitmapCoroutine(getBitmapFromView(binding.flImageContainer)).bitmapJob
+                            BitmapCoroutine(getBitmapFromView(binding.flImageContainer)).launchJob
                         }
                         /** Fatal error*/
                         else -> Log.e("ExternalImageProcess", "Unknown operation")
@@ -470,7 +470,7 @@ class MainActivity : AppCompatActivity() {
 
         //coroutines
         val scope = CoroutineScope(Dispatchers.IO + Job())
-        val bitmapJob = scope.launch {
+        val launchJob = scope.launch {
             withContext(Dispatchers.Main){
                 showProgressDialog()
             }
@@ -661,6 +661,7 @@ class MainActivity : AppCompatActivity() {
         //erase lines
         binding.drawingView.removeAllLines()
     }
+
 
 
     /**

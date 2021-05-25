@@ -1,99 +1,92 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:background="@drawable/dialog_background"
     tools:ignore="ContentDescription"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:padding="10dp"
+    >
     <com.skydoves.colorpickerview.ColorPickerView
         android:id="@+id/colorPickerView"
-        android:layout_width="300dp"
-        android:layout_height="300dp"
-        android:layout_marginVertical="30dp"
-        android:layout_marginHorizontal="30dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_width="280dp"
+        android:layout_height="280dp"
         android:elevation="4dp"
+        android:orientation="vertical"
         />
     <LinearLayout
-        android:id="@+id/ll_current_color"
-        android:layout_width="@dimen/dim_ll_current_color_size"
-        android:layout_height="@dimen/dim_ll_current_color_size"
-        android:layout_marginTop="120dp"
-        android:layout_marginHorizontal="@dimen/dim_ll_color_dest_margin_horizontal"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toRightOf="@id/colorPickerView"
-        android:background="@color/myGrey"
-        android:orientation="horizontal"
-        />
-
-
-    <LinearLayout
-        android:id="@+id/ll_line_color"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="5dp"
-        android:layout_marginHorizontal="@dimen/dim_ll_color_dest_margin_horizontal"
-        android:layout_marginVertical="@dimen/dim_ll_color_dest_margin_vertical"
-        app:layout_constraintTop_toBottomOf="@id/ll_current_color"
-        app:layout_constraintLeft_toRightOf="@id/colorPickerView"
-        app:layout_constraintRight_toRightOf="parent"
-        android:orientation="horizontal"
+        android:layout_height="match_parent"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="50dp"
+        android:orientation="vertical"
         android:gravity="center"
-        android:background="@drawable/ib_option_ripple_white"
-        android:elevation="5dp"
         >
-        <ImageView
-            android:layout_width="24sp"
-            android:layout_height="24sp"
-            android:elevation="4dp"
-            android:src="@drawable/ic_pencil"
-            android:scaleType="fitCenter"
-            android:padding="5dp"
+        <LinearLayout
+            android:id="@+id/ll_current_color"
+            android:layout_width="@dimen/dim_ll_current_color_size"
+            android:layout_height="@dimen/dim_ll_current_color_size"
+            android:layout_margin="@dimen/dim_color_picker_items_margin"
+            tools:background="@color/myGrey"
+            android:orientation="horizontal"
             />
-        <TextView
+        <LinearLayout
+            android:id="@+id/ll_line_color"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/st_line_color"
-            android:textColor="@color/myBlack"
-            android:textSize="12sp"
-            />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/ll_solid_color"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="5dp"
-        android:layout_marginHorizontal="@dimen/dim_ll_color_dest_margin_horizontal"
-        android:layout_marginVertical="@dimen/dim_ll_color_dest_margin_vertical"
-        app:layout_constraintTop_toBottomOf="@id/ll_line_color"
-        app:layout_constraintLeft_toRightOf="@id/colorPickerView"
-        app:layout_constraintRight_toRightOf="parent"
-        android:orientation="horizontal"
-        android:gravity="center"
-        android:background="@drawable/ib_option_ripple_white"
-        android:elevation="5dp"
-        >
-        <ImageView
-            android:layout_width="24sp"
-            android:layout_height="24sp"
-            android:elevation="4dp"
-            android:src="@drawable/ic_solid"
-            android:scaleType="fitCenter"
+            android:layout_margin="@dimen/dim_color_picker_items_margin"
             android:padding="5dp"
-            />
-        <TextView
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:background="@drawable/ib_option_ripple_white"
+            android:elevation="5dp"
+            >
+            <ImageView
+                android:layout_width="24sp"
+                android:layout_height="24sp"
+                android:elevation="4dp"
+                android:src="@drawable/ic_pencil"
+                android:scaleType="fitCenter"
+                android:padding="5dp"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/st_line_color"
+                android:textColor="@color/myBlack"
+                android:textSize="12sp"
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_solid_color"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/st_solid_color"
-            android:textColor="@color/myBlack"
-            android:textSize="12sp"
-            />
+            android:layout_margin="@dimen/dim_color_picker_items_margin"
+            android:padding="5dp"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:background="@drawable/ib_option_ripple_white"
+            android:elevation="5dp"
+            >
+            <ImageView
+                android:layout_width="24sp"
+                android:layout_height="24sp"
+                android:elevation="4dp"
+                android:src="@drawable/ic_solid"
+                android:scaleType="fitCenter"
+                android:padding="5dp"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/st_solid_color"
+                android:textColor="@color/myBlack"
+                android:textSize="12sp"
+                />
+        </LinearLayout>
     </LinearLayout>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>
