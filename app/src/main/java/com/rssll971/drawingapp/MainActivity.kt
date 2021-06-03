@@ -1,6 +1,7 @@
 package com.rssll971.drawingapp
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
 import android.app.Dialog
@@ -33,10 +34,11 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
 import com.karumi.dexter.Dexter
-import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
+import com.karumi.dexter.listener.PermissionDeniedResponse
+import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.PermissionRequest
-import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+import com.karumi.dexter.listener.single.PermissionListener
 import com.rssll971.drawingapp.databinding.ActivityMainBinding
 import com.skydoves.colorpickerview.ColorEnvelope
 import com.skydoves.colorpickerview.ColorPickerView
@@ -85,6 +87,7 @@ class MainActivity : AppCompatActivity() {
                 it.hide(WindowInsets.Type.statusBars() or WindowInsets.Type.navigationBars())
                 it.systemBarsBehavior = WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
             }
+
         } else{
             /**
              * Enables regular immersive mode.
@@ -360,11 +363,9 @@ class MainActivity : AppCompatActivity() {
      * */
     private fun externalProcessesWithImage(tagString: String){
         Dexter.withContext(this)
-            .withPermissions(Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE)
-            .withListener(object: MultiplePermissionsListener{
-            override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
-                if (report!!.areAllPermissionsGranted()){
+            .withPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
+            .withListener(object: PermissionListener{
+                override fun onPermissionGranted(p0: PermissionGrantedResponse?) {
                     when(tagString){
                         /** Action for picking image from gallery*/
                         getString(R.string.st_gallery) -> {
@@ -376,20 +377,27 @@ class MainActivity : AppCompatActivity() {
                         /** Action for storing image to downloads folder*/
                         getString(R.string.st__share) -> {
                             //BitmapAsyncTask(getBitmapFromView(binding.flImageContainer)).execute()
-                            BitmapCoroutine(getBitmapFromView(binding.flImageContainer)).launchJob
+                            BitmapCoroutine(
+                                getBitmapFromView(binding.flImageContainer),
+                                this@MainActivity).launchJob
                         }
                         /** Fatal error*/
                         else -> Log.e("ExternalImageProcess", "Unknown operation")
                     }
                 }
-            }
 
-            override fun onPermissionRationaleShouldBeShown(
-                    permissionsList: MutableList<PermissionRequest>?,
-                    permissionToken: PermissionToken?) {
-                showRationalPermissionDialog()
-            }
-        }).onSameThread().check()
+                override fun onPermissionDenied(p0: PermissionDeniedResponse?) {
+                    showRationalPermissionDialog()
+                }
+
+                override fun onPermissionRationaleShouldBeShown(
+                    p0: PermissionRequest?,
+                    p1: PermissionToken?
+                ) {
+                    p1!!.continuePermissionRequest()
+                }
+
+            }).onSameThread().check()
     }
     /**
      * Next method extracts user image from gallery and substitutes data in image view
@@ -453,7 +461,7 @@ class MainActivity : AppCompatActivity() {
      * Next Class implements Coroutines or AsyncTask (previously)
      * and responsible for all process with image exporting/sharing
      */
-    private inner class BitmapCoroutine(mBitmap: Bitmap){
+    private inner class BitmapCoroutine(mBitmap: Bitmap, context: Context){
         var result: String? = null
         //Loading simple dialog
         var loadingDialog = Dialog(this@MainActivity)
@@ -480,11 +488,9 @@ class MainActivity : AppCompatActivity() {
                 val bytes = ByteArrayOutputStream()
                 //compress our bitmap to PNG using stream of val bytes
                 mBitmap.compress(Bitmap.CompressFormat.PNG, 100, bytes)
-                //make it as single file
-                //external directory -> as absolute file -> separate ->
-                val myFile = File("/storage/emulated/0/Download"
-                        + File.separator + "DrawingNote"
-                        + System.currentTimeMillis()/1000 + ".png")
+
+                val myFile = File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES),
+                    "DrawingNote" + System.currentTimeMillis()/1000 + ".png")
                 //stream of our file
                 val myFileOS = FileOutputStream(myFile)
                 //start writing
@@ -593,6 +599,7 @@ class MainActivity : AppCompatActivity() {
     /**
      * Next method show dialog menu of Brush size
      */
+    @SuppressLint("SetTextI18n")
     private fun showBrushSizeDialog(){
         /**
          * Next line load current value of brush size
