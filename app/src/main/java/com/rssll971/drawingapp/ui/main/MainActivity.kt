@@ -1,4 +1,4 @@
-package com.rssll971.drawingapp
+package com.rssll971.drawingapp.ui.main
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -39,7 +39,10 @@ import com.karumi.dexter.listener.PermissionDeniedResponse
 import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.single.PermissionListener
+import com.rssll971.drawingapp.R
 import com.rssll971.drawingapp.databinding.ActivityMainBinding
+import com.rssll971.drawingapp.di.ActivityModule
+import com.rssll971.drawingapp.di.DaggerActivityComponent
 import com.skydoves.colorpickerview.ColorEnvelope
 import com.skydoves.colorpickerview.ColorPickerView
 import com.skydoves.colorpickerview.listeners.ColorEnvelopeListener
@@ -47,9 +50,11 @@ import kotlinx.coroutines.*
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
+import javax.inject.Inject
 import kotlin.Exception
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), MainContract.MainView {
+    @Inject lateinit var presenter: MainPresenter
     /**
      * Binding
      */
@@ -109,6 +114,12 @@ class MainActivity : AppCompatActivity() {
     }
 
 
+    private fun injector(){
+        val injectorMainComponent =
+            DaggerActivityComponent.builder()
+                .activityModule(ActivityModule(this)).build()
+        injectorMainComponent.inject(this)
+    }
     /** ACTIVITY STARTS**/
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -116,6 +127,8 @@ class MainActivity : AppCompatActivity() {
         val  view = binding.root
         setContentView(view)
 
+        injector()
+        //presenter.attach(this)
         /** Firebase*/
         firebaseAnalytics = Firebase.analytics
         registerGalleryPicker()

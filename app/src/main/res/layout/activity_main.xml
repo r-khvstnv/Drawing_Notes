@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:ignore="ContentDescription,UsingOnClickInXml"
-    tools:context=".MainActivity">
+    tools:context=".ui.main.MainActivity">
     <!-- Ads -->
     <com.google.android.gms.ads.AdView
         xmlns:ads="http://schemas.android.com/apk/res-auto"
@@ -41,7 +41,7 @@
             android:layout_height="match_parent"
             android:scaleType="centerInside"
             />
-        <com.rssll971.drawingapp.DrawingView
+        <com.rssll971.drawingapp.ui.draw.DrawingView
             android:id="@+id/drawing_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

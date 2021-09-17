@@ -1,4 +1,4 @@
-package com.rssll971.drawingapp
+package com.rssll971.drawingapp.ui.draw
 
 import android.content.Context
 import android.graphics.*
@@ -8,26 +8,33 @@ import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.MotionEvent
 import android.view.View
+import com.rssll971.drawingapp.di.DaggerViewComponent
+import com.rssll971.drawingapp.di.ViewModule
+import javax.inject.Inject
 
 /**
  * Next Class responsible for custom drawing view
  */
-class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) {
+class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs), DrawContract.DrawView {
+    @Inject
+    lateinit var presenter: DrawPresenter
     /**
      * BLOCK with all vars for drawing
      */
     //path of sth drawing
-    private var myDrawPath: CustomPath? = null
+    private var mDrawPath: CustomPath? = null
     //map of current path
-    private var myCanvasBitmap: Bitmap? = null
+    private var mCanvasBitmap: Bitmap? = null
     //styles of drawing path
-    private var myDrawPaint: Paint? = null
+    private var mDrawPaint: Paint? = null
     private var myCanvasPaint: Paint? = null
+
     //thickness of brush
     private var myBrushSize: Float = 0.toFloat()
     //color of drawing (by default)
     private var color = Color.BLACK
     private var colorHex: String = "#121212"
+
     //canvas - холст
     private var canvas: Canvas? = null
     //all created paths
@@ -38,10 +45,16 @@ class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
     //SETUP VARIABLES
     //init block where we initialized all of variables
     init {
+        injector()
         //prepare
         setUpDrawing()
+        presenter.attach(this)
     }
 
+    private fun injector(){
+        val injectorDraw = DaggerViewComponent.builder().viewModule(ViewModule()).build()
+        injectorDraw.inject(this)
+    }
     /**
      * Next method is conflict resolution between draw and move functionality
      *
@@ -57,16 +70,16 @@ class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
      */
     private fun setUpDrawing(){
         //object of paint
-        myDrawPaint = Paint()
+        mDrawPaint = Paint()
         //styles of drawing implemented inner class
-        myDrawPath = CustomPath(color, myBrushSize)
+        mDrawPath = CustomPath(color, myBrushSize)
         //color
-        myDrawPath!!.color = color
+        mDrawPath!!.color = color
         //type of drawing is line
-        myDrawPaint!!.style = Paint.Style.STROKE
+        mDrawPaint!!.style = Paint.Style.STROKE
         //style of line ends
-        myDrawPaint!!.strokeJoin = Paint.Join.ROUND
-        myDrawPaint!!.strokeCap = Paint.Cap.ROUND
+        mDrawPaint!!.strokeJoin = Paint.Join.ROUND
+        mDrawPaint!!.strokeCap = Paint.Cap.ROUND
 
         //copy graphic bit from one part to another
         myCanvasPaint = Paint(Paint.DITHER_FLAG)
@@ -81,16 +94,16 @@ class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
         if (w == 0 || h == 0){
             Handler(Looper.getMainLooper()).postDelayed({
                 //create bitmap with current width and height, using this config of colors
-                myCanvasBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
+                mCanvasBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
                 //create canvas with our bitmap
-                canvas = Canvas(myCanvasBitmap!!)
+                canvas = Canvas(mCanvasBitmap!!)
             }, 1000)
         }
         else{
             //create bitmap with current width and height, using this config of colors
-            myCanvasBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
+            mCanvasBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
             //create canvas with our bitmap
-            canvas = Canvas(myCanvasBitmap!!)
+            canvas = Canvas(mCanvasBitmap!!)
         }
     }
 
@@ -109,29 +122,29 @@ class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
         //implement our canvasBitmap, starting on top-left using our canvasPaint
-        canvas?.drawBitmap(myCanvasBitmap!!, 0f, 0f, myCanvasPaint)
+        canvas?.drawBitmap(mCanvasBitmap!!, 0f, 0f, myCanvasPaint)
 
         /**
          * Next loop make visible all previous lines
          */
         for (path in myPaths){
             //thickness
-            myDrawPaint!!.strokeWidth = path.brushThickness
+            mDrawPaint!!.strokeWidth = path.brushThickness
             //color
-            myDrawPaint!!.color = path.color
+            mDrawPaint!!.color = path.color
             //draw
-            canvas?.drawPath(path, myDrawPaint!!)
+            canvas?.drawPath(path, mDrawPaint!!)
         }
 
         /**
          * Next lines set current values for line and draw it
          */
         //thickness
-        myDrawPaint!!.strokeWidth = myDrawPath!!.brushThickness
+        mDrawPaint!!.strokeWidth = mDrawPath!!.brushThickness
         //color
-        myDrawPaint!!.color = myDrawPath!!.color
+        mDrawPaint!!.color = mDrawPath!!.color
         //draw path
-        canvas?.drawPath(myDrawPath!!, myDrawPaint!!)
+        canvas?.drawPath(mDrawPath!!, mDrawPaint!!)
     }
 
     /**
@@ -150,16 +163,16 @@ class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
                 //press on the screen
                 MotionEvent.ACTION_DOWN ->{
                     //setup path
-                    myDrawPath!!.color = color
-                    myDrawPath!!.brushThickness = myBrushSize
+                    mDrawPath!!.color = color
+                    mDrawPath!!.brushThickness = myBrushSize
 
                     //delete any path
-                    myDrawPath!!.reset()
+                    mDrawPath!!.reset()
 
                     //start drawing by positions
                     if (touchX != null) {
                         if (touchY != null) {
-                            myDrawPath!!.moveTo(touchX, touchY)
+                            mDrawPath!!.moveTo(touchX, touchY)
                         }
                     }
                 }
@@ -169,7 +182,7 @@ class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
                     //draw line
                     if (touchX != null) {
                         if (touchY != null) {
-                            myDrawPath!!.lineTo(touchX, touchY)
+                            mDrawPath!!.lineTo(touchX, touchY)
                         }
                     }
                 }
@@ -177,9 +190,9 @@ class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
                 //press gesture
                 MotionEvent.ACTION_UP ->{
                     //add created path in array
-                    myPaths.add(myDrawPath!!)
+                    myPaths.add(mDrawPath!!)
                     //end of line
-                    myDrawPath = CustomPath(color, myBrushSize)
+                    mDrawPath = CustomPath(color, myBrushSize)
                 }
 
                 //default
@@ -203,7 +216,7 @@ class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
         myBrushSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
                 newSize, resources.displayMetrics)
         //change size of brush
-        myDrawPaint!!.strokeWidth = myBrushSize
+        mDrawPaint!!.strokeWidth = myBrushSize
     }
 
 
@@ -234,7 +247,7 @@ class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
         //parse needed color
         color = Color.parseColor(myColor)
         //change color
-        myDrawPaint!!.color = color
+        mDrawPaint!!.color = color
 
     }
     /**
