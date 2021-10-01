@@ -2,7 +2,7 @@ package com.rssll971.drawingapp.ui.main
 
 import com.rssll971.drawingapp.di.BaseContract
 
-class MainContract {
+interface MainContract {
     interface Presenter: BaseContract.Presenter<MainView>{
 
     }
