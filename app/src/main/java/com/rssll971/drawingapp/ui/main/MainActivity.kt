@@ -5,7 +5,6 @@ import android.os.*
 import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
 import android.view.*
-import android.widget.Toast
 import com.google.android.gms.ads.*
 import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
@@ -14,8 +13,6 @@ import com.rssll971.drawingapp.R
 import com.rssll971.drawingapp.databinding.ActivityMainBinding
 import com.rssll971.drawingapp.di.ActivityModule
 import com.rssll971.drawingapp.di.DaggerActivityComponent
-import com.rssll971.drawingapp.ui.draw.DrawCustomView
-import com.rssll971.drawingapp.ui.draw.DrawPresenter
 import javax.inject.Inject
 
 
@@ -76,19 +73,39 @@ class MainActivity : AppCompatActivity(), MainContract.MainView {
         setContentView(view)
         injector()
         presenter.attach(this)
+        presenter.getContext(this)
         /** Firebase*/
         //firebaseAnalytics = Firebase.analytics todo enable
-
         //crutch when systemUI doesn't disappear
         Handler(Looper.getMainLooper()).postDelayed({onWindowFocusChanged(true)}, 1000)
 
         /** Prepare and build Ads*/
         prepareAds()
-        binding.btnFit.setOnClickListener {
-            binding.drawingView.resetPos()
-        }
 
+        with(binding){//todo functionality buttons
+            //primary buttons
+            btnFit.setOnClickListener { this@MainActivity.fitFrameView() }
+            btnUndo.setOnClickListener {  }
+            btnBrushSize.setOnClickListener { presenter.setViewVisibility(llBrushSizeWindow, it.tag.toString()) }
+            btnPalette.setOnClickListener {  }
+
+            //extra menu
+            btnExtraOptions.setOnClickListener { presenter.setViewVisibility(llExtraOptions, it.tag.toString()) }
+            btnTrash.setOnClickListener {  }
+            btnShare.setOnClickListener {  }
+            btnGallery.setOnClickListener {  }
+            btnInfo.setOnClickListener { }
+        }
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        presenter.detach()
+    }
+
+
+
+
 
 
     /**
@@ -99,7 +116,7 @@ class MainActivity : AppCompatActivity(), MainContract.MainView {
         requestInterstitialAd()
         //banner ads
         MobileAds.initialize(this)
-        myBannerAdView = findViewById(R.id.adView_smart_banner)
+        myBannerAdView = findViewById(R.id.adView_banner)
         myBannerAdView.loadAd(AdRequest.Builder().build())
         myBannerAdView.adListener = object : AdListener(){
             override fun onAdClosed() {
@@ -142,11 +159,24 @@ class MainActivity : AppCompatActivity(), MainContract.MainView {
             mInterstitialAd!!.show(this)
     }
 
-
-    override fun onTouchEvent(event: MotionEvent?): Boolean {
-        Toast.makeText(this, "Ok", Toast.LENGTH_SHORT).show()
-        return true
+    override fun fitFrameView() {
+        binding.flContainer.apply {
+            scaleX = 1f
+            scaleY = 1f
+            x = 0f
+            y = 0f
+        }
     }
 
+    override fun changeBrushSizeWindowVisibility(visibility: Int) {
+        binding.llBrushSizeWindow.visibility = visibility
+    }
 
+    override fun changeExtraOptionsVisibility(visibility: Int) {
+        binding.llExtraOptions.visibility = visibility
+    }
+
+    fun colorClicked(v: View) {
+        binding.drawingView.presenter.setColor(v.tag.toString())
+    }
 }

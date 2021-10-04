@@ -28,7 +28,7 @@
         android:layout_marginHorizontal="30dp"
         android:text="@string/app_name"
         android:textSize="22sp"
-        android:textColor="@color/myGreyDark"
+        android:textColor="@color/mGreyDark"
         android:textStyle="bold"
         />
     <TextView
@@ -41,7 +41,7 @@
         android:layout_marginHorizontal="30dp"
         android:text="Version: "
         android:textSize="22sp"
-        android:textColor="@color/myGreyDark"
+        android:textColor="@color/mGreyDark"
         android:textStyle="bold"
         />
     <TextView
@@ -54,7 +54,7 @@
         android:layout_marginHorizontal="10dp"
         android:text="@string/app_version"
         android:textSize="22sp"
-        android:textColor="@color/myGreyDark"
+        android:textColor="@color/mGreyDark"
         />
 
     <LinearLayout
@@ -75,7 +75,7 @@
             android:layout_marginStart="20dp"
             android:text="Open source licenses"
             android:textSize="24sp"
-            android:textColor="@color/myGreyDark"
+            android:textColor="@color/mGreyDark"
             android:textAlignment="textStart"
             android:textStyle="bold"
             />
@@ -85,7 +85,7 @@
             android:layout_marginStart="20dp"
             android:text="Apache License"
             android:textSize="18sp"
-            android:textColor="@color/myGreyDark"
+            android:textColor="@color/mGreyDark"
             android:textAlignment="textStart"
             android:textStyle="bold"
             />
@@ -95,7 +95,7 @@
             android:layout_marginStart="20dp"
             android:text="Version 2.0, January 2004"
             android:textSize="18sp"
-            android:textColor="@color/myGreyDark"
+            android:textColor="@color/mGreyDark"
             android:textAlignment="textStart"
             android:textStyle="bold"
             />
@@ -107,7 +107,7 @@
             android:layout_marginTop="@dimen/dim_info_licences_margin_top"
             android:text=" - ColorPickerPreference"
             android:textSize="@dimen/dim_info_text_size"
-            android:textColor="@color/myGreyDark"
+            android:textColor="@color/mGreyDark"
             android:textAlignment="textStart"
             android:textStyle="bold"
             />
@@ -117,7 +117,7 @@
             android:layout_marginStart="36dp"
             android:text="Copyright 2018 skydoves"
             android:textSize="@dimen/dim_info_text_size"
-            android:textColor="@color/myGreyDark"
+            android:textColor="@color/mGreyDark"
             android:textAlignment="textStart"
             />
 
@@ -128,7 +128,7 @@
             android:layout_marginTop="@dimen/dim_info_licences_margin_top"
             android:text=" - MultiTouchGestureDetector"
             android:textSize="@dimen/dim_info_text_size"
-            android:textColor="@color/myGreyDark"
+            android:textColor="@color/mGreyDark"
             android:textAlignment="textStart"
             android:textStyle="bold"
             />
@@ -138,7 +138,7 @@
             android:layout_marginStart="36dp"
             android:text="Copyright 2015-2019 dinuscxj"
             android:textSize="@dimen/dim_info_text_size"
-            android:textColor="@color/myGreyDark"
+            android:textColor="@color/mGreyDark"
             android:textAlignment="textStart"
             />
 
@@ -149,7 +149,7 @@
             android:layout_marginTop="@dimen/dim_info_licences_margin_top"
             android:text=" - Dexter"
             android:textSize="@dimen/dim_info_text_size"
-            android:textColor="@color/myGreyDark"
+            android:textColor="@color/mGreyDark"
             android:textAlignment="textStart"
             android:textStyle="bold"
             />
@@ -159,7 +159,7 @@
             android:layout_marginStart="36dp"
             android:text="Copyright 2015 Karumi"
             android:textSize="@dimen/dim_info_text_size"
-            android:textColor="@color/myGreyDark"
+            android:textColor="@color/mGreyDark"
             android:textAlignment="textStart"
             />
     </LinearLayout>
@@ -171,11 +171,11 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        android:background="@drawable/btn_white"
+        android:background="@drawable/btn_colors_background"
         android:paddingHorizontal="10dp"
         android:text="@string/st_back"
         android:textSize="22sp"
-        android:textColor="@color/myGreyDark"
+        android:textColor="@color/mGreyDark"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

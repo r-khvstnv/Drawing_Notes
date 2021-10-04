@@ -6,6 +6,9 @@
     <string name="add_interstitial_ID">ca-app-pub-4362142146545991/4879230890</string>
     <string name="banner_id_Ads">ca-app-pub-4362142146545991/4140864297</string>
 
+    <string name="st_extra_options">Extra Options</string>
+    <string name="st_brush_size">Brush Size</string>
+
     <string name="st_size">Size: </string>
     <string name="st_ok">OK</string>
     <string name="st_cancel">Cancel</string>

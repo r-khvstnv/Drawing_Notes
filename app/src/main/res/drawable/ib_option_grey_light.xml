@@ -2,7 +2,7 @@
 <shape
     xmlns:android="http://schemas.android.com/apk/res/android"
     >
-    <solid android:color="@color/myGreyLight"/>
+    <solid android:color="@color/mGreyLight"/>
     <corners android:radius="@dimen/dim_general_radius"/>
 
 </shape>

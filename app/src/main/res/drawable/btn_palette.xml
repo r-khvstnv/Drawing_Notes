@@ -2,8 +2,8 @@
 <shape
     xmlns:android="http://schemas.android.com/apk/res/android"
     >
-    <gradient android:type="sweep" android:startColor="@color/myGreen"
-        android:centerColor="@color/myRed" android:endColor="@color/myPurple"/>
+    <gradient android:type="sweep" android:startColor="@color/mGreen"
+        android:centerColor="@color/mRed" android:endColor="@color/mPurple"/>
     <corners android:radius="@dimen/dim_btn_color_radius"/>
 
 </shape>

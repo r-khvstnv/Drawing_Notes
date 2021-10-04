@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="dim_btn_color_size">22dp</dimen>
+    <dimen name="dim_btn_color_size">24dp</dimen>
     <dimen name="dim_btn_color_margin_bottom">10dp</dimen>
-    <dimen name="dim_btn_color_radius">5dp</dimen>
+    <dimen name="dim_btn_color_radius">6dp</dimen>
 
-    <dimen name="dim_option_btn_size">32dp</dimen>
+    <dimen name="dim_option_btn_size">36dp</dimen>
     <dimen name="dim_option_btn_margin_horizontal">10dp</dimen>
     <dimen name="dim_option_btn_margin_vertical">8dp</dimen>
     <dimen name="dim_general_radius">6dp</dimen>
+    <dimen name="dim_option_btn_elevation">4dp</dimen>
 
+    <dimen name="dim_extra_options_margin_horizontal">10dp</dimen>
+    <dimen name="dim_extra_options_margin_vertical">8dp</dimen>
     <dimen name="dim_ll_current_color_size">34dp</dimen>
     <dimen name="dim_color_picker_items_margin">8dp</dimen>
 

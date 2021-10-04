@@ -1,380 +1,347 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:ignore="ContentDescription,UsingOnClickInXml"
-    tools:context=".ui.main.MainActivity">
+    android:orientation="vertical"
+    tools:context=".ui.main.MainActivity"
+    tools:ignore="ContentDescription"
+    >
     <!-- Ads -->
     <com.google.android.gms.ads.AdView
         xmlns:ads="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/adView_smart_banner"
+        android:id="@+id/adView_banner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        ads:layout_constraintTop_toTopOf="parent"
-        ads:layout_constraintLeft_toLeftOf="parent"
-        ads:layout_constraintRight_toRightOf="parent"
         android:elevation="5dp"
         ads:adSize="SMART_BANNER"
         ads:adUnitId="@string/banner_id_Ads"
-        >
-    </com.google.android.gms.ads.AdView>
+        ads:layout_constraintLeft_toLeftOf="parent"
+        ads:layout_constraintRight_toRightOf="parent"
+        ads:layout_constraintTop_toTopOf="parent"/>
 
-    <!-- Layout with user image and drawing view -->
-    <FrameLayout
-        android:id="@+id/fl_image_container"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginBottom="5dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/adView_smart_banner"
-        app:layout_constraintBottom_toTopOf="@id/btn_black"
-        android:background="@color/myWhite"
-        android:elevation="2dp"
-        >
-        <ImageView
-            android:id="@+id/iv_users_image"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="centerInside"
-            />
-        <com.rssll971.drawingapp.ui.draw.DrawCustomView
-            android:id="@+id/drawing_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/myGrey"
-            />
-    </FrameLayout>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <!-- Layout with user image and drawing view -->
+        <FrameLayout
+            android:id="@+id/fl_container"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="10dp"
+            android:background="@color/mWhite"
+            android:elevation="2dp"
+            app:layout_constraintBottom_toTopOf="@id/btn_black"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-    <!-- Color buttons -->
+            <ImageView
+                android:id="@+id/iv_users_image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerInside"
+                />
+
+            <com.rssll971.drawingapp.ui.draw.DrawCustomView
+                android:id="@+id/drawing_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent" />
+        </FrameLayout>
+
+        <!-- Color buttons -->
         <Button
             android:id="@+id/btn_black"
             android:layout_width="@dimen/dim_btn_color_size"
             android:layout_height="@dimen/dim_btn_color_size"
-            app:layout_constraintBottom_toTopOf="@id/ll_primary_options"
             android:layout_marginBottom="@dimen/dim_btn_color_margin_bottom"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toLeftOf="@id/btn_grey"
-            android:background="@drawable/btn_white"
-            android:backgroundTint="@color/myBlack"
+            android:background="@drawable/btn_colors_background"
+            android:backgroundTint="@color/mBlack"
             android:elevation="5dp"
             android:onClick="colorClicked"
-            android:tag="@color/myBlack"
-            />
+            android:tag="@color/mBlack"
+            app:layout_constraintBottom_toTopOf="@id/ll_primary_options"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@id/btn_grey" />
+
         <Button
             android:id="@+id/btn_grey"
             android:layout_width="@dimen/dim_btn_color_size"
             android:layout_height="@dimen/dim_btn_color_size"
-            app:layout_constraintBottom_toTopOf="@id/ll_primary_options"
-            android:layout_marginBottom="@dimen/dim_btn_color_margin_bottom"
-            app:layout_constraintLeft_toRightOf="@id/btn_black"
-            app:layout_constraintRight_toLeftOf="@id/btn_white"
-            android:background="@drawable/btn_white"
-            android:backgroundTint="@color/myGrey"
+            android:background="@drawable/btn_colors_background"
+            android:backgroundTint="@color/mGrey"
             android:elevation="5dp"
             android:onClick="colorClicked"
-            android:tag="@color/myGrey"
-            />
+            android:tag="@color/mGrey"
+            app:layout_constraintBottom_toBottomOf="@id/btn_black"
+            app:layout_constraintLeft_toRightOf="@id/btn_black"
+            app:layout_constraintRight_toLeftOf="@id/btn_white" />
+
         <Button
             android:id="@+id/btn_white"
             android:layout_width="@dimen/dim_btn_color_size"
             android:layout_height="@dimen/dim_btn_color_size"
-            app:layout_constraintBottom_toTopOf="@id/ll_primary_options"
-            android:layout_marginBottom="@dimen/dim_btn_color_margin_bottom"
-            app:layout_constraintLeft_toRightOf="@id/btn_grey"
-            app:layout_constraintRight_toLeftOf="@id/btn_red"
-            android:background="@drawable/btn_white"
+            android:background="@drawable/btn_colors_background"
             android:elevation="5dp"
             android:onClick="colorClicked"
-            android:tag="@color/myWhite"
-            />
+            android:tag="@color/mWhite"
+            app:layout_constraintBottom_toBottomOf="@id/btn_black"
+            app:layout_constraintLeft_toRightOf="@id/btn_grey"
+            app:layout_constraintRight_toLeftOf="@id/btn_red" />
+
         <Button
             android:id="@+id/btn_red"
             android:layout_width="@dimen/dim_btn_color_size"
             android:layout_height="@dimen/dim_btn_color_size"
-            app:layout_constraintBottom_toTopOf="@id/ll_primary_options"
-            android:layout_marginBottom="@dimen/dim_btn_color_margin_bottom"
-            app:layout_constraintLeft_toRightOf="@id/btn_white"
-            app:layout_constraintRight_toLeftOf="@id/btn_orange"
-            android:background="@drawable/btn_white"
-            android:backgroundTint="@color/myRed"
+            android:background="@drawable/btn_colors_background"
+            android:backgroundTint="@color/mRed"
             android:elevation="5dp"
             android:onClick="colorClicked"
-            android:tag="@color/myRed"
-            />
+            android:tag="@color/mRed"
+            app:layout_constraintBottom_toBottomOf="@id/btn_black"
+            app:layout_constraintLeft_toRightOf="@id/btn_white"
+            app:layout_constraintRight_toLeftOf="@id/btn_orange" />
+
         <Button
             android:id="@+id/btn_orange"
             android:layout_width="@dimen/dim_btn_color_size"
             android:layout_height="@dimen/dim_btn_color_size"
-            app:layout_constraintBottom_toTopOf="@id/ll_primary_options"
-            android:layout_marginBottom="@dimen/dim_btn_color_margin_bottom"
-            app:layout_constraintLeft_toRightOf="@id/btn_red"
-            app:layout_constraintRight_toLeftOf="@id/btn_green"
-            android:background="@drawable/btn_white"
-            android:backgroundTint="@color/myOrange"
+            android:background="@drawable/btn_colors_background"
+            android:backgroundTint="@color/mOrange"
             android:elevation="5dp"
             android:onClick="colorClicked"
-            android:tag="@color/myOrange"
-            />
+            android:tag="@color/mOrange"
+            app:layout_constraintBottom_toBottomOf="@id/btn_black"
+            app:layout_constraintLeft_toRightOf="@id/btn_red"
+            app:layout_constraintRight_toLeftOf="@id/btn_green" />
+
         <Button
             android:id="@+id/btn_green"
             android:layout_width="@dimen/dim_btn_color_size"
             android:layout_height="@dimen/dim_btn_color_size"
-            app:layout_constraintBottom_toTopOf="@id/ll_primary_options"
-            android:layout_marginBottom="@dimen/dim_btn_color_margin_bottom"
-            app:layout_constraintLeft_toRightOf="@id/btn_orange"
-            app:layout_constraintRight_toLeftOf="@id/btn_blue"
-            android:background="@drawable/btn_white"
-            android:backgroundTint="@color/myGreen"
+            android:background="@drawable/btn_colors_background"
+            android:backgroundTint="@color/mGreen"
             android:elevation="5dp"
             android:onClick="colorClicked"
-            android:tag="@color/myGreen"
-            />
+            android:tag="@color/mGreen"
+            app:layout_constraintBottom_toBottomOf="@id/btn_black"
+            app:layout_constraintLeft_toRightOf="@id/btn_orange"
+            app:layout_constraintRight_toLeftOf="@id/btn_blue" />
+
         <Button
             android:id="@+id/btn_blue"
             android:layout_width="@dimen/dim_btn_color_size"
             android:layout_height="@dimen/dim_btn_color_size"
-            app:layout_constraintBottom_toTopOf="@id/ll_primary_options"
-            android:layout_marginBottom="@dimen/dim_btn_color_margin_bottom"
+            android:background="@drawable/btn_colors_background"
+            android:backgroundTint="@color/mBlue"
+            android:elevation="5dp"
+            android:tag="@color/mBlue"
+            app:layout_constraintBottom_toBottomOf="@id/btn_black"
             app:layout_constraintLeft_toRightOf="@id/btn_green"
-            app:layout_constraintRight_toLeftOf="@id/btn_palette"
-            android:background="@drawable/btn_white"
-            android:backgroundTint="@color/myBlue"
+            app:layout_constraintRight_toRightOf="parent" />
+
+        <!-- Layout with primary functionality -->
+        <LinearLayout
+            android:id="@+id/ll_primary_options"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/option_list_background"
             android:elevation="5dp"
-            android:onClick="colorClicked"
-            android:tag="@color/myBlue"
-            />
-        <Button
-            android:id="@+id/btn_palette"
-            android:layout_width="@dimen/dim_btn_color_size"
-            android:layout_height="@dimen/dim_btn_color_size"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent">
+
+            <ImageButton
+                android:id="@+id/btn_fit"
+                android:layout_width="@dimen/dim_option_btn_size"
+                android:layout_height="@dimen/dim_option_btn_size"
+                android:layout_marginHorizontal="@dimen/dim_option_btn_margin_horizontal"
+                android:layout_marginVertical="@dimen/dim_option_btn_margin_vertical"
+                android:background="@drawable/ib_option_ripple_white"
+                android:elevation="4dp"
+                android:padding="5dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_fit" />
+
+            <ImageButton
+                android:id="@+id/btn_undo"
+                android:layout_width="@dimen/dim_option_btn_size"
+                android:layout_height="@dimen/dim_option_btn_size"
+                android:layout_marginHorizontal="@dimen/dim_option_btn_margin_horizontal"
+                android:layout_marginVertical="@dimen/dim_option_btn_margin_vertical"
+                android:background="@drawable/ib_option_ripple_white"
+                android:elevation="4dp"
+                android:padding="5dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_undo" />
+
+            <ImageButton
+                android:id="@+id/btn_brush_size"
+                android:layout_width="@dimen/dim_option_btn_size"
+                android:layout_height="@dimen/dim_option_btn_size"
+                android:layout_marginHorizontal="@dimen/dim_option_btn_margin_horizontal"
+                android:layout_marginVertical="@dimen/dim_option_btn_margin_vertical"
+                android:background="@drawable/ib_option_ripple_white"
+                android:elevation="4dp"
+                android:padding="5dp"
+                android:tag="@string/st_brush_size"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_pencil" />
+
+            <ImageButton
+                android:id="@+id/btn_palette"
+                android:layout_width="@dimen/dim_option_btn_size"
+                android:layout_height="@dimen/dim_option_btn_size"
+                android:layout_marginHorizontal="@dimen/dim_option_btn_margin_horizontal"
+                android:layout_marginVertical="@dimen/dim_option_btn_margin_vertical"
+                android:background="@drawable/ib_option_ripple_white"
+                android:elevation="4dp"
+                android:padding="5dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_palette" />
+
+        </LinearLayout>
+
+
+        <!-- Brush size changer -->
+        <LinearLayout
+            android:id="@+id/ll_brush_size_window"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="50dp"
+            android:background="@drawable/option_list_background"
+            android:elevation="10dp"
+            android:orientation="horizontal"
+            android:paddingHorizontal="20dp"
+            android:paddingVertical="10dp"
+            tools:visibility="visible"
+            android:visibility="gone"
             app:layout_constraintBottom_toTopOf="@id/ll_primary_options"
-            android:layout_marginBottom="@dimen/dim_btn_color_margin_bottom"
-            app:layout_constraintLeft_toRightOf="@id/btn_blue"
-            app:layout_constraintRight_toRightOf="parent"
-            android:background="@drawable/btn_palette"
+            app:layout_constraintRight_toRightOf="@id/ll_primary_options">
+
+            <SeekBar
+                android:id="@+id/sb_brush_size"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:max="50" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Size: "
+                android:textAlignment="textStart"
+                android:textColor="@color/mGreyDark"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/tv_brush_size"
+                android:layout_width="30dp"
+                android:layout_height="wrap_content"
+                android:textAlignment="textStart"
+                android:textColor="@color/mGreyDark"
+                android:textSize="14sp"
+                tools:text="50" />
+        </LinearLayout>
+
+        <!-- Layout with extra menu -->
+        <LinearLayout
+            android:id="@+id/ll_menu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/option_list_background"
             android:elevation="5dp"
-            />
+            android:gravity="center_vertical"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="1"
+            app:layout_constraintLeft_toRightOf="@id/ll_primary_options"
+            app:layout_constraintRight_toRightOf="parent">
 
-    <!-- Layout with primary functionality -->
-    <LinearLayout
-        android:id="@+id/ll_primary_options"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        android:layout_marginStart="10dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:background="@drawable/layout_handling_background"
-        android:elevation="5dp"
-        android:gravity="center_horizontal"
-        android:orientation="horizontal"
-        >
-        <ImageButton
-            android:id="@+id/btn_fit"
-            android:layout_width="@dimen/dim_option_btn_size"
-            android:layout_height="@dimen/dim_option_btn_size"
-            android:layout_marginHorizontal="@dimen/dim_option_btn_margin_horizontal"
-            android:background="@drawable/ib_option_ripple_white"
-            android:elevation="4dp"
-            android:layout_marginVertical="@dimen/dim_option_btn_margin_vertical"
-            android:src="@drawable/ic_fit"
-            android:padding="5dp"
-            android:scaleType="fitCenter"
-            />
-        <ImageButton
-            android:id="@+id/btn_active_draw"
-            android:layout_width="@dimen/dim_option_btn_size"
-            android:layout_height="@dimen/dim_option_btn_size"
-            android:layout_marginHorizontal="@dimen/dim_option_btn_margin_horizontal"
-            android:background="@drawable/ib_option_grey_light"
-            android:elevation="4dp"
-            android:layout_marginVertical="@dimen/dim_option_btn_margin_vertical"
-            android:src="@drawable/ic_active_draw"
-            android:scaleType="fitCenter"
-            android:padding="5dp"
-            />
-        <ImageButton
-            android:id="@+id/btn_transfer"
-            android:layout_width="@dimen/dim_option_btn_size"
-            android:layout_height="@dimen/dim_option_btn_size"
-            android:layout_marginHorizontal="@dimen/dim_option_btn_margin_horizontal"
-            android:background="@drawable/ib_option_white"
-            android:elevation="4dp"
-            android:layout_marginVertical="@dimen/dim_option_btn_margin_vertical"
-            android:src="@drawable/ic_moving"
-            android:padding="5dp"
-            android:scaleType="fitCenter"
-            />
-    </LinearLayout>
+            <LinearLayout
+                android:id="@+id/ll_extra_options"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:gravity="center"
+                android:orientation="vertical">
 
-    <!-- Layout with secondary functionality -->
-    <LinearLayout
-        android:id="@+id/ll_secondary_options"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toRightOf="@id/ll_primary_options"
-        app:layout_constraintRight_toLeftOf="@+id/ll_extra_menu"
-        android:background="@drawable/layout_handling_background"
-        android:elevation="5dp"
-        android:gravity="center_horizontal"
-        android:orientation="horizontal"
-        >
-        <ImageButton
-            android:id="@+id/btn_undo"
-            android:layout_width="@dimen/dim_option_btn_size"
-            android:layout_height="@dimen/dim_option_btn_size"
-            android:layout_marginHorizontal="@dimen/dim_option_btn_margin_horizontal"
-            android:background="@drawable/ib_option_ripple_white"
-            android:elevation="4dp"
-            android:layout_marginVertical="@dimen/dim_option_btn_margin_vertical"
-            android:src="@drawable/ic_undo"
-            android:scaleType="fitCenter"
-            android:padding="5dp"
-            />
-        <ImageButton
-            android:id="@+id/btn_brush_size"
-            android:layout_width="@dimen/dim_option_btn_size"
-            android:layout_height="@dimen/dim_option_btn_size"
-            android:layout_marginHorizontal="@dimen/dim_option_btn_margin_horizontal"
-            android:background="@drawable/ib_option_white"
-            android:elevation="4dp"
-            android:layout_marginVertical="@dimen/dim_option_btn_margin_vertical"
-            android:src="@drawable/ic_pencil_size"
-            android:scaleType="fitCenter"
-            android:padding="5dp"
-            />
-    </LinearLayout>
+                <ImageButton
+                    android:id="@+id/btn_info"
+                    android:layout_width="@dimen/dim_option_btn_size"
+                    android:layout_height="@dimen/dim_option_btn_size"
+                    android:layout_marginHorizontal="@dimen/dim_extra_options_margin_horizontal"
+                    android:layout_marginVertical="@dimen/dim_extra_options_margin_vertical"
+                    android:background="@drawable/ib_option_ripple_white"
+                    android:elevation="@dimen/dim_option_btn_elevation"
+                    android:padding="5dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_info"
+                    android:visibility="visible" />
 
-    <!-- Brush size changer -->
-    <LinearLayout
-        android:id="@+id/ll_brush_size_changer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="50dp"
-        app:layout_constraintBottom_toTopOf="@id/ll_secondary_options"
-        app:layout_constraintRight_toRightOf="@id/ll_secondary_options"
-        android:background="@drawable/layout_handling_background"
-        android:orientation="horizontal"
-        android:elevation="10dp"
-        android:paddingVertical="10dp"
-        android:paddingHorizontal="20dp"
-        android:visibility="visible"
-        >
-        <SeekBar
-            android:id="@+id/sb_brush_size"
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:max="50"
-            style="?android:attr/progressBarStyleHorizontal"
-            />
-        <TextView
-            android:id="@+id/tv_brush_size_display"
-            android:layout_width="60dp"
-            android:layout_height="wrap_content"
-            tools:text="Size: 50"
-            android:textAlignment="textStart"
-            android:textSize="14sp"
-            android:textColor="@color/myGreyDark"
-            />
-    </LinearLayout>
+                <ImageButton
+                    android:id="@+id/btn_gallery"
+                    android:layout_width="@dimen/dim_option_btn_size"
+                    android:layout_height="@dimen/dim_option_btn_size"
+                    android:layout_marginHorizontal="@dimen/dim_extra_options_margin_horizontal"
+                    android:layout_marginVertical="@dimen/dim_extra_options_margin_vertical"
+                    android:background="@drawable/ib_option_ripple_white"
+                    android:elevation="@dimen/dim_option_btn_elevation"
+                    android:padding="5dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_gallery"
+                    android:tag="@string/st_gallery"
+                    android:visibility="visible" />
 
-    <!-- Layout with extra menu -->
-    <LinearLayout
-        android:id="@+id/ll_extra_menu"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        android:layout_marginEnd="10dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        android:background="@drawable/layout_handling_background"
-        android:elevation="5dp"
-        android:gravity="center_vertical"
-        android:orientation="vertical"
-        >
-        <ImageButton
-            android:id="@+id/btn_info"
-            android:layout_width="@dimen/dim_option_btn_size"
-            android:layout_height="@dimen/dim_option_btn_size"
-            android:layout_marginHorizontal="@dimen/dim_option_btn_margin_horizontal"
-            android:background="@drawable/ib_option_ripple_white"            android:elevation="4dp"
-            android:layout_marginTop="@dimen/dim_option_btn_margin_vertical"
-            android:layout_marginBottom="40dp"
-            android:src="@drawable/ic_info"
-            android:scaleType="fitCenter"
-            android:padding="5dp"
-            android:visibility="visible"
-            />
-        <ImageButton
-            android:id="@+id/btn_gallery"
-            android:layout_width="@dimen/dim_option_btn_size"
-            android:layout_height="@dimen/dim_option_btn_size"
-            android:layout_marginHorizontal="@dimen/dim_option_btn_margin_horizontal"
-            android:background="@drawable/ib_option_ripple_white"            android:elevation="4dp"
-            android:layout_marginVertical="@dimen/dim_option_btn_margin_vertical"
-            android:src="@drawable/ic_gallery"
-            android:scaleType="fitCenter"
-            android:padding="5dp"
-            android:visibility="visible"
-            android:tag="@string/st_gallery"
-            />
-        <ImageButton
-            android:id="@+id/btn_share"
-            android:layout_width="@dimen/dim_option_btn_size"
-            android:layout_height="@dimen/dim_option_btn_size"
-            android:layout_marginHorizontal="@dimen/dim_option_btn_margin_horizontal"
-            android:background="@drawable/ib_option_ripple_white"            android:elevation="4dp"
-            android:layout_marginTop="@dimen/dim_option_btn_margin_vertical"
-            android:layout_marginBottom="40dp"
-            android:src="@drawable/ic_share"
-            android:padding="5dp"
-            android:scaleType="fitCenter"
-            android:visibility="visible"
-            android:tag="@string/st__share"
-            />
-        <ImageButton
-            android:id="@+id/btn_trash"
-            android:layout_width="@dimen/dim_option_btn_size"
-            android:layout_height="@dimen/dim_option_btn_size"
-            android:layout_marginHorizontal="@dimen/dim_option_btn_margin_horizontal"
-            android:background="@drawable/ib_option_ripple_white"
-            android:elevation="4dp"
-            android:layout_marginVertical="@dimen/dim_option_btn_margin_vertical"
-            android:src="@drawable/ic_trash"
-            android:scaleType="fitCenter"
-            android:padding="5dp"
-            android:visibility="visible"
-            />
-        <ImageButton
-            android:id="@+id/btn_rotate"
-            android:layout_width="@dimen/dim_option_btn_size"
-            android:layout_height="@dimen/dim_option_btn_size"
-            android:layout_marginHorizontal="@dimen/dim_option_btn_margin_horizontal"
-            android:background="@drawable/ib_option_ripple_white"
-            android:elevation="4dp"
-            android:layout_marginTop="@dimen/dim_option_btn_margin_vertical"
-            android:layout_marginBottom="20dp"
-            android:src="@drawable/ic_rotate"
-            android:scaleType="fitCenter"
-            android:padding="5dp"
-            android:visibility="visible"
-            />
-        <ImageButton
-            android:id="@+id/btn_extra_menu"
-            android:layout_width="@dimen/dim_option_btn_size"
-            android:layout_height="@dimen/dim_option_btn_size"
-            android:layout_marginHorizontal="@dimen/dim_option_btn_margin_horizontal"
-            android:background="@drawable/ib_option_ripple_white"            android:elevation="4dp"
-            android:layout_marginVertical="@dimen/dim_option_btn_margin_vertical"
-            android:src="@drawable/ic_menu"
-            android:scaleType="fitCenter"
-            android:padding="5dp"
-            />
-    </LinearLayout>
-</androidx.constraintlayout.widget.ConstraintLayout>
+                <ImageButton
+                    android:id="@+id/btn_share"
+                    android:layout_width="@dimen/dim_option_btn_size"
+                    android:layout_height="@dimen/dim_option_btn_size"
+                    android:layout_marginHorizontal="@dimen/dim_extra_options_margin_horizontal"
+                    android:layout_marginVertical="@dimen/dim_extra_options_margin_vertical"
+                    android:background="@drawable/ib_option_ripple_white"
+                    android:elevation="@dimen/dim_option_btn_elevation"
+                    android:padding="5dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_share"
+                    android:tag="@string/st__share"
+                    android:visibility="visible" />
+
+                <ImageButton
+                    android:id="@+id/btn_trash"
+                    android:layout_width="@dimen/dim_option_btn_size"
+                    android:layout_height="@dimen/dim_option_btn_size"
+                    android:layout_marginHorizontal="@dimen/dim_extra_options_margin_horizontal"
+                    android:layout_marginVertical="@dimen/dim_extra_options_margin_vertical"
+                    android:background="@drawable/ib_option_ripple_white"
+                    android:elevation="@dimen/dim_option_btn_elevation"
+                    android:padding="5dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_trash"
+                    android:visibility="visible" />
+            </LinearLayout>
+
+            <ImageButton
+                android:id="@+id/btn_extra_options"
+                android:layout_width="@dimen/dim_option_btn_size"
+                android:layout_height="@dimen/dim_option_btn_size"
+                android:layout_marginHorizontal="@dimen/dim_extra_options_margin_horizontal"
+                android:layout_marginVertical="@dimen/dim_extra_options_margin_vertical"
+                android:background="@drawable/ib_option_ripple_white"
+                android:elevation="4dp"
+                android:padding="5dp"
+                android:tag="@string/st_extra_options"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_menu" />
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

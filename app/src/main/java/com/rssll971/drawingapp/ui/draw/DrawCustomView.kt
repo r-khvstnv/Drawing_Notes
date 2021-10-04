@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
 import android.view.MotionEvent
-import android.view.ScaleGestureDetector
 import android.view.View
 import android.widget.FrameLayout
 import com.rssll971.drawingapp.R
@@ -32,7 +31,6 @@ class DrawCustomView(context: Context, attrs: AttributeSet) :
         presenter.setupDrawingOptions()
     }
 
-
     private fun injector(){
         val injectorDraw = DaggerViewComponent.builder().viewModule(ViewModule()).build()
         injectorDraw.inject(this)
@@ -52,7 +50,6 @@ class DrawCustomView(context: Context, attrs: AttributeSet) :
         frameLayout!!.y += y
 
     }
-
 
     /**
      * Next method adapt size of custom canvas
@@ -78,7 +75,7 @@ class DrawCustomView(context: Context, attrs: AttributeSet) :
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         if (frameLayout == null)
-            frameLayout = this.rootView.findViewById(R.id.fl_image_container)
+            frameLayout = this.rootView.findViewById(R.id.fl_container)
 
         presenter.touchEventProduced(event)
         return true

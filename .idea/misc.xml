@@ -3,6 +3,22 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Programming/DrawingApp/app/src/main/res/drawable/btn_palette.xml" value="0.2703125" />
+        <entry key="..\:/Programming/DrawingApp/app/src/main/res/drawable/btn_white.xml" value="0.2703125" />
+        <entry key="..\:/Programming/DrawingApp/app/src/main/res/drawable/ib_option_grey_light.xml" value="0.2703125" />
+        <entry key="..\:/Programming/DrawingApp/app/src/main/res/drawable/ib_option_ripple_white.xml" value="0.2703125" />
+        <entry key="..\:/Programming/DrawingApp/app/src/main/res/drawable/ib_option_white.xml" value="0.2703125" />
+        <entry key="..\:/Programming/DrawingApp/app/src/main/res/drawable/ic_fit.xml" value="0.2703125" />
+        <entry key="..\:/Programming/DrawingApp/app/src/main/res/drawable/ic_gallery.xml" value="0.2703125" />
+        <entry key="..\:/Programming/DrawingApp/app/src/main/res/drawable/ic_info.xml" value="0.2703125" />
+        <entry key="..\:/Programming/DrawingApp/app/src/main/res/drawable/ic_menu.xml" value="0.2703125" />
+        <entry key="..\:/Programming/DrawingApp/app/src/main/res/drawable/ic_palette.xml" value="0.2703125" />
+        <entry key="..\:/Programming/DrawingApp/app/src/main/res/drawable/ic_pencil.xml" value="0.2703125" />
+        <entry key="..\:/Programming/DrawingApp/app/src/main/res/drawable/ic_share.xml" value="0.2703125" />
+        <entry key="..\:/Programming/DrawingApp/app/src/main/res/drawable/ic_solid.xml" value="0.2703125" />
+        <entry key="..\:/Programming/DrawingApp/app/src/main/res/drawable/ic_trash.xml" value="0.2703125" />
+        <entry key="..\:/Programming/DrawingApp/app/src/main/res/drawable/ic_undo.xml" value="0.2703125" />
+        <entry key="..\:/Programming/DrawingApp/app/src/main/res/layout-land/activity_main.xml" value="0.20729166666666668" />
         <entry key="..\:/Programming/DrawingApp/app/src/main/res/layout/activity_main.xml" value="0.25416666666666665" />
       </map>
     </option>

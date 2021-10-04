@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ripple xmlns:android="http://schemas.android.com/apk/res/android"
-    android:color="@color/myGrey">
+    android:color="@color/mGrey">
     <item android:drawable="@drawable/ib_option_white"/>
 
 </ripple>

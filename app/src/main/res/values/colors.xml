@@ -9,15 +9,15 @@
     <color name="white">#FFFFFFFF</color>
 
     <!-- All colors implemented in project -->
-    <color name="myBlack">#121212</color>
-    <color name="myWhite">#FFFFFFFF</color>
-    <color name="myGrey">#A0A0A0</color>
-    <color name="myGreyLight">#C4C4C4</color>
-    <color name="myGreyDark">#797979</color>
-    <color name="myRed">#F01010</color>
-    <color name="myOrange">#E1800E</color>
-    <color name="myGreen">#18D04C</color>
-    <color name="myBlue">#56BDE6</color>
-    <color name="myPurple">#702BE0</color>
+    <color name="mBlack">#121212</color>
+    <color name="mWhite">#FFFFFFFF</color>
+    <color name="mGrey">#A0A0A0</color>
+    <color name="mGreyLight">#C4C4C4</color>
+    <color name="mGreyDark">#797979</color>
+    <color name="mRed">#F01010</color>
+    <color name="mOrange">#E1800E</color>
+    <color name="mGreen">#18D04C</color>
+    <color name="mBlue">#56BDE6</color>
+    <color name="mPurple">#702BE0</color>
 
 </resources>
