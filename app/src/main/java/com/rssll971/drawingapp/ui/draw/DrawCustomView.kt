@@ -1,8 +1,11 @@
 package com.rssll971.drawingapp.ui.draw
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.graphics.*
+import android.os.Parcelable
 import android.util.AttributeSet
+import android.util.SparseArray
 import android.view.MotionEvent
 import android.view.View
 import android.widget.FrameLayout
@@ -58,9 +61,6 @@ class DrawCustomView(context: Context, attrs: AttributeSet) :
         super.onSizeChanged(w, h, oldw, oldh)
         presenter.onViewSizeChanged(w, h)
     }
-
-
-
 
     /**
      * Main role of next method is create new users line

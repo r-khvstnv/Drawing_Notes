@@ -12,6 +12,10 @@ interface DrawContract {
         fun onViewSizeChanged(width: Int, height: Int)
         fun onDrawRequest(canvas: Canvas?)
         fun touchEventProduced(event: MotionEvent?)
+        fun getBrushSize(): Int
+        fun setBrushColorFromInt(mColor: Int)
+        fun setBrushColorFromString(mColor: String)
+        fun getCurrentBrushColor(): Int
     }
     interface DrawView: BaseContract.View{
         fun invalidateCanvas()

@@ -30,7 +30,8 @@
             android:layout_width="@dimen/dim_ll_current_color_size"
             android:layout_height="@dimen/dim_ll_current_color_size"
             android:layout_margin="@dimen/dim_color_picker_items_margin"
-            tools:background="@color/mGrey"
+            android:background="@drawable/ib_option_white"
+            tools:backgroundTint="@color/mGrey"
             android:orientation="horizontal"
             />
         <LinearLayout

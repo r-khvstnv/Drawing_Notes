@@ -2,6 +2,7 @@ package com.rssll971.drawingapp.ui.main
 
 import android.content.Context
 import android.view.View
+import android.widget.Toast
 
 import androidx.core.view.isVisible
 import com.rssll971.drawingapp.R
@@ -26,9 +27,13 @@ class MainPresenter: MainContract.Presenter {
         else
             View.VISIBLE
 
-        if (tag == context?.getString(R.string.st_extra_options))
-            view?.changeExtraOptionsVisibility(updatedVisibility)
-        else
-            view?.changeBrushSizeWindowVisibility(updatedVisibility)
+        when(tag){
+            context?.getString(R.string.st_extra_options) ->
+                view?.changeExtraOptionsVisibility(updatedVisibility)
+            context?.getString(R.string.st_brush_size) ->
+                view?.changeBrushSizeWindowVisibility(updatedVisibility)
+        }
     }
+
+
 }

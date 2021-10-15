@@ -23,4 +23,8 @@
 
     <string name="st_line_color">Line color</string>
     <string name="st_solid_color">Solid color</string>
+    <string name="st_what_want_to_remove">What do You want to remove?</string>
+    <string name="st_lines">Lines</string>
+    <string name="st_background">Background</string>
+    <string name="st_all">All</string>
 </resources>

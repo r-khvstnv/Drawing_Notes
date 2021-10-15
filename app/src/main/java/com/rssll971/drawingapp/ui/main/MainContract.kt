@@ -1,6 +1,7 @@
 package com.rssll971.drawingapp.ui.main
 
 import android.content.Context
+import android.graphics.Canvas
 import android.nfc.Tag
 import android.view.View
 import com.rssll971.drawingapp.di.BaseContract
@@ -20,5 +21,11 @@ interface MainContract {
         fun fitFrameView()
         fun changeBrushSizeWindowVisibility(visibility: Int)
         fun changeExtraOptionsVisibility(visibility: Int)
+        fun showDeleteDialogChooser()
+        fun requestLineRemoving()
+        fun requestBackgroundRemoving()
+        fun showColorPickerDialog()
+        fun requestBackgroundColorChanging(color: Int)
+        fun showInfoDialog()
     }
 }

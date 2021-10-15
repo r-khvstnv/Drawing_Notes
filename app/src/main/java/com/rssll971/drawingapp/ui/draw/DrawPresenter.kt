@@ -5,6 +5,7 @@ import android.content.res.Resources
 import android.graphics.*
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.util.TypedValue
 import android.view.MotionEvent
 import com.dinuscxj.gesture.MultiTouchGestureDetector
@@ -27,7 +28,6 @@ class DrawPresenter: DrawContract.Presenter {
     private var myBrushSize: Float = 0.toFloat()
     //color of drawing (by default)
     private var color = Color.BLACK
-    private var colorHex: String = "#121212"
 
     //canvas - холст
     private var canvas: Canvas? = null
@@ -91,6 +91,10 @@ class DrawPresenter: DrawContract.Presenter {
             canvas = Canvas(mCanvasBitmap!!)
         }
     }
+
+
+
+
 
     override fun onDrawRequest(canvas: Canvas?) {
         //implement our canvasBitmap, starting on top-left using our canvasPaint
@@ -198,9 +202,14 @@ class DrawPresenter: DrawContract.Presenter {
      */
     fun setBrushSize(newSize: Float){
         //adapting size for any screen
+        if (newSize <= 50)
         myBrushSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, newSize, Resources.getSystem().displayMetrics)
         //change size of brush
         mDrawPaint!!.strokeWidth = myBrushSize
+    }
+
+    override fun getBrushSize(): Int {
+        return myBrushSize.toInt()
     }
 
     /**
@@ -224,19 +233,22 @@ class DrawPresenter: DrawContract.Presenter {
     /**
      * Next method change color to selected by user
      */
-    fun setColor(myColor: String){
-        colorHex = "#$myColor"
+    override fun setBrushColorFromInt(mColor: Int) {
         //parse needed color
-        color = Color.parseColor(myColor)
+        color = mColor
         //change color
         mDrawPaint!!.color = color
-
     }
-    /**
-     * Next method return current color
-     */
-    fun getCurrentColor(): String{
-        return colorHex
+
+    override fun setBrushColorFromString(mColor: String) {
+        //parse needed color
+        color = Color.parseColor(mColor)
+        //change color
+        mDrawPaint!!.color = color
+    }
+
+    override fun getCurrentBrushColor(): Int {
+        return color
     }
 
 }

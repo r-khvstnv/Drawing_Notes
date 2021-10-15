@@ -3,9 +3,11 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Programming/DrawingApp/app/src/main/res/drawable/btn_colors_background.xml" value="0.2703125" />
         <entry key="..\:/Programming/DrawingApp/app/src/main/res/drawable/btn_palette.xml" value="0.2703125" />
         <entry key="..\:/Programming/DrawingApp/app/src/main/res/drawable/btn_white.xml" value="0.2703125" />
         <entry key="..\:/Programming/DrawingApp/app/src/main/res/drawable/ib_option_grey_light.xml" value="0.2703125" />
+        <entry key="..\:/Programming/DrawingApp/app/src/main/res/drawable/ib_option_ripple_red.xml" value="0.2703125" />
         <entry key="..\:/Programming/DrawingApp/app/src/main/res/drawable/ib_option_ripple_white.xml" value="0.2703125" />
         <entry key="..\:/Programming/DrawingApp/app/src/main/res/drawable/ib_option_white.xml" value="0.2703125" />
         <entry key="..\:/Programming/DrawingApp/app/src/main/res/drawable/ic_fit.xml" value="0.2703125" />
@@ -19,7 +21,12 @@
         <entry key="..\:/Programming/DrawingApp/app/src/main/res/drawable/ic_trash.xml" value="0.2703125" />
         <entry key="..\:/Programming/DrawingApp/app/src/main/res/drawable/ic_undo.xml" value="0.2703125" />
         <entry key="..\:/Programming/DrawingApp/app/src/main/res/layout-land/activity_main.xml" value="0.20729166666666668" />
+        <entry key="..\:/Programming/DrawingApp/app/src/main/res/layout-land/dialog_color_picker.xml" value="0.1671875" />
+        <entry key="..\:/Programming/DrawingApp/app/src/main/res/layout-land/dialog_info.xml" value="0.19895833333333332" />
         <entry key="..\:/Programming/DrawingApp/app/src/main/res/layout/activity_main.xml" value="0.25416666666666665" />
+        <entry key="..\:/Programming/DrawingApp/app/src/main/res/layout/dialog_color_picker.xml" value="0.25416666666666665" />
+        <entry key="..\:/Programming/DrawingApp/app/src/main/res/layout/dialog_delete.xml" value="0.25416666666666665" />
+        <entry key="..\:/Programming/DrawingApp/app/src/main/res/layout/dialog_info.xml" value="0.25416666666666665" />
       </map>
     </option>
   </component>
