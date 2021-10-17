@@ -17,9 +17,8 @@
     <string name="st_gallery">Gallery</string>
     <string name="st__share">Share</string>
 
-    <string name="st_permission_needed_to_be_granted">Permissions required for this feature have been turned off.
-        It can be enabled under the Application Settings</string>
-    <string name="st_go_to_settings">Settings</string>
+    <string name="st_permission_needed_to_be_granted">Permissions required for this feature has not been provided</string>
+    <string name="st_settings">Settings</string>
 
     <string name="st_line_color">Line color</string>
     <string name="st_solid_color">Solid color</string>

@@ -2,20 +2,25 @@ package com.rssll971.drawingapp.ui.main
 
 
 import android.app.Dialog
-import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.media.MediaScannerConnection
+import android.net.Uri
 import android.os.*
+import android.provider.Settings
 import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
 import android.view.*
 import android.widget.SeekBar
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts.*
 import androidx.core.content.ContextCompat
-import androidx.core.graphics.drawable.DrawableCompat
-import androidx.lifecycle.Lifecycle
 import com.google.android.gms.ads.*
 import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.rssll971.drawingapp.R
 import com.rssll971.drawingapp.databinding.ActivityMainBinding
@@ -23,7 +28,9 @@ import com.rssll971.drawingapp.databinding.DialogColorPickerBinding
 import com.rssll971.drawingapp.databinding.DialogDeleteBinding
 import com.rssll971.drawingapp.di.ActivityModule
 import com.rssll971.drawingapp.di.DaggerActivityComponent
+import com.rssll971.drawingapp.utils.GalleryContract
 import com.skydoves.colorpickerview.listeners.ColorListener
+import java.lang.Exception
 import javax.inject.Inject
 
 
@@ -38,6 +45,11 @@ class MainActivity : AppCompatActivity(), MainContract.MainView {
     private var mInterstitialAd: InterstitialAd? = null
     //firebase
     private lateinit var firebaseAnalytics: FirebaseAnalytics
+
+    companion object{
+        const val GALLERY_PERMISSION_REQUEST_CODE = 101
+        const val IMAGE_PICKER_FROM_GALLERY_CODE = 201
+    }
 
     /** ACTIVITY STARTS**/
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -66,10 +78,22 @@ class MainActivity : AppCompatActivity(), MainContract.MainView {
 
             //extra menu
             btnExtraOptions.setOnClickListener { presenter.setViewVisibility(llExtraOptions, it.tag.toString()) }
-            btnTrash.setOnClickListener { showDeleteDialogChooser() }
-            btnShare.setOnClickListener { }
-            btnGallery.setOnClickListener { }
-            btnInfo.setOnClickListener { showInfoDialog() }
+            btnTrash.setOnClickListener {
+                changeExtraOptionsVisibility(View.GONE)
+                showDeleteDialogChooser()
+            }
+            btnShare.setOnClickListener {
+                changeExtraOptionsVisibility(View.GONE)
+                presenter.onSaveBitmapClick(presenter.getBitmapFromView(binding.flContainer))
+            }
+            btnGallery.setOnClickListener {
+                changeExtraOptionsVisibility(View.GONE)
+                presenter.checkStoragePermission()
+            }
+            btnInfo.setOnClickListener {
+                changeExtraOptionsVisibility(View.GONE)
+                showInfoDialog()
+            }
         }
     }
 
@@ -219,7 +243,8 @@ class MainActivity : AppCompatActivity(), MainContract.MainView {
     }
 
     override fun requestBackgroundRemoving() {
-        binding.ivUsersImage.setBackgroundResource(R.color.mWhite)
+        binding.ivUsersImage.setImageResource(0)
+        binding.ivUsersImage.setBackgroundColor(ContextCompat.getColor(this, R.color.mWhite))
     }
 
     fun colorClicked(v: View) {
@@ -264,5 +289,73 @@ class MainActivity : AppCompatActivity(), MainContract.MainView {
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog.setContentView(R.layout.dialog_info)
         dialog.show()
+    }
+
+
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when(requestCode){
+           GALLERY_PERMISSION_REQUEST_CODE ->{
+               changeExtraOptionsVisibility(View.GONE)
+               if (grantResults.isNotEmpty() &&
+                   grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                   showGalleryForImage()
+               } else{
+                   showSnackBarPermissionRequest()
+               }
+           }
+       }
+    }
+
+    override fun showSnackBarPermissionRequest() {
+        val sb = Snackbar.make(
+            findViewById(android.R.id.content),
+            getString(R.string.st_permission_needed_to_be_granted),
+            Snackbar.LENGTH_LONG)
+        sb.view.setBackgroundColor(ContextCompat.getColor(this, R.color.mGreyDark))
+        sb.setActionTextColor(ContextCompat.getColor(this, R.color.mWhite))
+        sb.setAction(getString(R.string.st_settings)){
+            showAppSettings()
+        }
+        sb.show()
+    }
+
+    override fun showAppSettings() {
+        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+        val uri = Uri.fromParts("package", packageName, null)
+        intent.data = uri
+        startActivity(intent)
+    }
+
+    private val galleryLauncher = registerForActivityResult(GalleryContract()){ uri: Uri? ->
+        try {
+            if (uri != null)
+                binding.ivUsersImage.setImageURI(uri)
+        } catch (e: Exception){
+            e.printStackTrace()
+        }
+    }
+
+    override fun showGalleryForImage() {
+        galleryLauncher.launch("image/*")
+    }
+
+    override fun showShareOption(path: String) {
+        MediaScannerConnection.scanFile(
+            this@MainActivity,
+            arrayOf(path), null){ _, uri ->
+            val sharingIntent = Intent()
+            sharingIntent.action = Intent.ACTION_SEND
+            sharingIntent.putExtra(Intent.EXTRA_STREAM, uri)
+            sharingIntent.type = "image/png"
+            startActivity(
+                Intent.createChooser( sharingIntent, "Share")
+            )
+        }
     }
 }
