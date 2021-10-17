@@ -10,6 +10,7 @@ import android.util.TypedValue
 import android.view.MotionEvent
 import com.dinuscxj.gesture.MultiTouchGestureDetector
 import com.rssll971.drawingapp.ui.main.MainActivity
+import com.rssll971.drawingapp.utils.CustomPath
 
 class DrawPresenter: DrawContract.Presenter {
     private var view: DrawContract.DrawView? = null
@@ -32,7 +33,7 @@ class DrawPresenter: DrawContract.Presenter {
     //canvas - холст
     private var canvas: Canvas? = null
     //all created paths
-    private val myPaths = ArrayList<CustomPath>()
+    var myPaths = ArrayList<CustomPath>()
 
 
     //multi-touch
@@ -68,11 +69,6 @@ class DrawPresenter: DrawContract.Presenter {
         myCanvasPaint = Paint(Paint.DITHER_FLAG)
     }
 
-    /**
-     * In next class using parametrized constructor of drawing, which extend my Path
-     */
-    internal inner class CustomPath(var color: Int,
-                                    var brushThickness: Float) : Path()
 
 
     override fun onViewSizeChanged(width: Int, height: Int) {
@@ -249,6 +245,15 @@ class DrawPresenter: DrawContract.Presenter {
 
     override fun getCurrentBrushColor(): Int {
         return color
+    }
+
+    override fun setPathList(pathList: ArrayList<CustomPath>) {
+        myPaths = pathList
+        view?.invalidateCanvas()
+    }
+
+    override fun getPathList(): ArrayList<CustomPath> {
+        return myPaths
     }
 
 }

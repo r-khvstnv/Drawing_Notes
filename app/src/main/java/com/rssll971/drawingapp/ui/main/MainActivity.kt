@@ -28,6 +28,7 @@ import com.rssll971.drawingapp.databinding.DialogColorPickerBinding
 import com.rssll971.drawingapp.databinding.DialogDeleteBinding
 import com.rssll971.drawingapp.di.ActivityModule
 import com.rssll971.drawingapp.di.DaggerActivityComponent
+import com.rssll971.drawingapp.utils.CustomPath
 import com.rssll971.drawingapp.utils.GalleryContract
 import com.skydoves.colorpickerview.listeners.ColorListener
 import java.lang.Exception
@@ -48,7 +49,9 @@ class MainActivity : AppCompatActivity(), MainContract.MainView {
 
     companion object{
         const val GALLERY_PERMISSION_REQUEST_CODE = 101
-        const val IMAGE_PICKER_FROM_GALLERY_CODE = 201
+        const val CONTAINER_WIDTH_KEY = "containerWidth"
+        const val CONTAINER_HEIGHT_KEY = "containerHeight"
+        const val PATH_LIST_KEY = "pathList"
     }
 
     /** ACTIVITY STARTS**/
@@ -77,7 +80,10 @@ class MainActivity : AppCompatActivity(), MainContract.MainView {
             btnPalette.setOnClickListener { showColorPickerDialog() }
 
             //extra menu
-            btnExtraOptions.setOnClickListener { presenter.setViewVisibility(llExtraOptions, it.tag.toString()) }
+            btnExtraOptions.setOnClickListener {
+                showInterstitialAd()
+                presenter.setViewVisibility(llExtraOptions, it.tag.toString())
+            }
             btnTrash.setOnClickListener {
                 changeExtraOptionsVisibility(View.GONE)
                 showDeleteDialogChooser()
@@ -357,5 +363,31 @@ class MainActivity : AppCompatActivity(), MainContract.MainView {
                 Intent.createChooser( sharingIntent, "Share")
             )
         }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        val list = binding.drawingView.presenter.getPathList()
+        outState.putParcelableArrayList(PATH_LIST_KEY, list)
+        if (list.isNotEmpty()){
+            val width = binding.flContainer.width
+            val height = binding.flContainer.height
+            outState.putInt(CONTAINER_WIDTH_KEY, width)
+            outState.putInt(CONTAINER_HEIGHT_KEY, height)
+        }
+
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        val list = savedInstanceState.getParcelableArrayList<CustomPath>(PATH_LIST_KEY)!!
+        if (list.isNotEmpty()){
+            val width = savedInstanceState.getInt(CONTAINER_WIDTH_KEY)
+            val height = savedInstanceState.getInt(CONTAINER_HEIGHT_KEY)
+            binding.flContainer.layoutParams = ViewGroup.LayoutParams(width, height)
+
+        }
+
+        binding.drawingView.presenter.setPathList(list)
     }
 }
