@@ -1,19 +1,14 @@
 package com.rssll971.drawingapp.ui.draw
 
 import android.content.Context
-import android.content.SharedPreferences
 import android.graphics.*
-import android.os.Bundle
-import android.os.Parcelable
 import android.util.AttributeSet
-import android.util.SparseArray
 import android.view.MotionEvent
 import android.view.View
 import android.widget.FrameLayout
 import com.rssll971.drawingapp.R
 import com.rssll971.drawingapp.di.DaggerViewComponent
 import com.rssll971.drawingapp.di.ViewModule
-import com.rssll971.drawingapp.utils.CustomPath
 import javax.inject.Inject
 
 /**
@@ -32,7 +27,7 @@ class DrawCustomView(context: Context, attrs: AttributeSet) :
         injector()
         //prepare
         presenter.attach(this)
-        presenter.setContext(context = context)
+        presenter.setTouchDetector(context = context)
         presenter.setupDrawingOptions()
     }
 

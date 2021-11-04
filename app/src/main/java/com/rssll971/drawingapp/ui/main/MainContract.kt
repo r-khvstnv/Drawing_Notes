@@ -13,11 +13,8 @@ interface MainContract {
         fun setViewVisibility(v: View, tag: String)
         fun checkStoragePermission()
         fun getBitmapFromView(v: View): Bitmap
-        //todo share
     }
     interface MainView: BaseContract.View{
-        //todo interstitial ad
-        //todo rewarded ad
         fun fitFrameView()
         fun changeBrushSizeWindowVisibility(visibility: Int)
         fun changeExtraOptionsVisibility(visibility: Int)

@@ -14,7 +14,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
 import android.view.*
 import android.widget.SeekBar
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts.*
 import androidx.core.content.ContextCompat
 import com.google.android.gms.ads.*
@@ -41,7 +40,7 @@ class MainActivity : AppCompatActivity(), MainContract.MainView {
 
     //ADS
     //banner ad
-    private lateinit var myBannerAdView: AdView
+    private lateinit var mBannerAdView: AdView
     //interstitial
     private var mInterstitialAd: InterstitialAd? = null
     //firebase
@@ -72,7 +71,7 @@ class MainActivity : AppCompatActivity(), MainContract.MainView {
         prepareAds()
         enableBrushSizeListener()
 
-        with(binding){//todo functionality buttons
+        with(binding){
             //primary buttons
             btnFit.setOnClickListener { fitFrameView() }
             btnUndo.setOnClickListener { binding.drawingView.presenter.removeLastLine() }
@@ -81,7 +80,7 @@ class MainActivity : AppCompatActivity(), MainContract.MainView {
 
             //extra menu
             btnExtraOptions.setOnClickListener {
-                showInterstitialAd()
+                //showInterstitialAd() todo enable
                 presenter.setViewVisibility(llExtraOptions, it.tag.toString())
             }
             btnTrash.setOnClickListener {
@@ -152,11 +151,11 @@ class MainActivity : AppCompatActivity(), MainContract.MainView {
         requestInterstitialAd()
         //banner ads
         MobileAds.initialize(this)
-        myBannerAdView = findViewById(R.id.adView_banner)
-        myBannerAdView.loadAd(AdRequest.Builder().build())
-        myBannerAdView.adListener = object : AdListener(){
+        mBannerAdView = findViewById(R.id.adView_banner)
+        mBannerAdView.loadAd(AdRequest.Builder().build())
+        mBannerAdView.adListener = object : AdListener(){
             override fun onAdClosed() {
-                myBannerAdView.loadAd(AdRequest.Builder().build())
+                mBannerAdView.loadAd(AdRequest.Builder().build())
             }
         }
     }
@@ -204,6 +203,7 @@ class MainActivity : AppCompatActivity(), MainContract.MainView {
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
     }
+
     override fun fitFrameView() {
         binding.flContainer.apply {
             scaleX = 1f
@@ -296,7 +296,6 @@ class MainActivity : AppCompatActivity(), MainContract.MainView {
         dialog.setContentView(R.layout.dialog_info)
         dialog.show()
     }
-
 
 
     override fun onRequestPermissionsResult(

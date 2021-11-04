@@ -14,7 +14,7 @@
         android:theme="@style/Theme.NoActionBar.FullScreen"
         >
         <activity android:name=".ui.main.MainActivity"
-            >
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -24,24 +24,5 @@
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="@string/app_add_ID"/>
-
-        <!-- For having successful access to storage
-                exported -> Deny access to other applications
-                grantUriPermissions -> Temporarily permission to session
-        -->
-        <provider
-            android:authorities="com.rssll971.drawingapp.fileprovider"
-            android:name="androidx.core.content.FileProvider"
-            android:exported="false"
-            android:grantUriPermissions="true"
-            >
-            <!-- Reference to our path in xml-->
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_path"
-                />
-
-        </provider>
     </application>
-
 </manifest>

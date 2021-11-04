@@ -5,11 +5,9 @@ import android.content.res.Resources
 import android.graphics.*
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.util.TypedValue
 import android.view.MotionEvent
 import com.dinuscxj.gesture.MultiTouchGestureDetector
-import com.rssll971.drawingapp.ui.main.MainActivity
 import com.rssll971.drawingapp.utils.CustomPath
 
 class DrawPresenter: DrawContract.Presenter {
@@ -23,18 +21,17 @@ class DrawPresenter: DrawContract.Presenter {
     private var mCanvasBitmap: Bitmap? = null
     //styles of drawing path
     private var mDrawPaint: Paint? = null
-    private var myCanvasPaint: Paint? = null
+    private var mCanvasPaint: Paint? = null
 
     //thickness of brush
-    private var myBrushSize: Float = 0.toFloat()
+    private var mBrushSize: Float = 0.toFloat()
     //color of drawing (by default)
     private var color = Color.BLACK
 
     //canvas - холст
     private var canvas: Canvas? = null
     //all created paths
-    var myPaths = ArrayList<CustomPath>()
-
+    private var mPaths = ArrayList<CustomPath>()
 
     //multi-touch
     private var mScaleFactor = 1f
@@ -44,7 +41,7 @@ class DrawPresenter: DrawContract.Presenter {
         this.view = view
     }
 
-    override fun setContext(context: Context) {
+    override fun setTouchDetector(context: Context) {
         multiTouchDetector = MultiTouchGestureDetector(context, MultiTouchListener())
     }
 
@@ -56,7 +53,7 @@ class DrawPresenter: DrawContract.Presenter {
         //object of paint
         mDrawPaint = Paint()
         //styles of drawing implemented inner class
-        mDrawPath = CustomPath(color, myBrushSize)
+        mDrawPath = CustomPath(color, mBrushSize)
         //color
         mDrawPath!!.color = color
         //type of drawing is line
@@ -64,12 +61,9 @@ class DrawPresenter: DrawContract.Presenter {
         //style of line ends
         mDrawPaint!!.strokeJoin = Paint.Join.ROUND
         mDrawPaint!!.strokeCap = Paint.Cap.ROUND
-
         //copy graphic bit from one part to another
-        myCanvasPaint = Paint(Paint.DITHER_FLAG)
+        mCanvasPaint = Paint(Paint.DITHER_FLAG)
     }
-
-
 
     override fun onViewSizeChanged(width: Int, height: Int) {
         if (width == 0 || height == 0){
@@ -88,18 +82,13 @@ class DrawPresenter: DrawContract.Presenter {
         }
     }
 
-
-
-
-
     override fun onDrawRequest(canvas: Canvas?) {
         //implement our canvasBitmap, starting on top-left using our canvasPaint
-        canvas?.drawBitmap(mCanvasBitmap!!, 0f, 0f, myCanvasPaint)
-
+        canvas?.drawBitmap(mCanvasBitmap!!, 0f, 0f, mCanvasPaint)
         /**
          * Next loop make visible all previous lines
          */
-        for (path in myPaths){
+        for (path in mPaths){
             //thickness
             mDrawPaint!!.strokeWidth = path.brushThickness
             //color
@@ -107,7 +96,6 @@ class DrawPresenter: DrawContract.Presenter {
             //draw
             canvas?.drawPath(path, mDrawPaint!!)
         }
-
         /**
          * Next lines set current values for line and draw it
          */
@@ -128,7 +116,6 @@ class DrawPresenter: DrawContract.Presenter {
         }
     }
 
-
     private inner class MultiTouchListener :
         MultiTouchGestureDetector.SimpleOnMultiTouchGestureListener() {
         override fun onScale(detector: MultiTouchGestureDetector?) {
@@ -147,6 +134,7 @@ class DrawPresenter: DrawContract.Presenter {
             view?.moveView(mX, mY)
         }
     }
+
     private fun drawEventDetector(event: MotionEvent?) {
         /** Next statement is crutch for conflict described upper*/
         //store position onTouch
@@ -159,7 +147,7 @@ class DrawPresenter: DrawContract.Presenter {
             MotionEvent.ACTION_DOWN ->{
                 //setup path
                 mDrawPath!!.color = color
-                mDrawPath!!.brushThickness = myBrushSize
+                mDrawPath!!.brushThickness = mBrushSize
 
                 //delete any path
                 mDrawPath!!.reset()
@@ -185,9 +173,9 @@ class DrawPresenter: DrawContract.Presenter {
             //press gesture
             MotionEvent.ACTION_UP ->{
                 //add created path in array
-                myPaths.add(mDrawPath!!)
+                mPaths.add(mDrawPath!!)
                 //end of line
-                mDrawPath = CustomPath(color, myBrushSize)
+                mDrawPath = CustomPath(color, mBrushSize)
             }
         }
         view?.invalidateCanvas()
@@ -199,13 +187,16 @@ class DrawPresenter: DrawContract.Presenter {
     fun setBrushSize(newSize: Float){
         //adapting size for any screen
         if (newSize <= 50)
-        myBrushSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, newSize, Resources.getSystem().displayMetrics)
+        mBrushSize = TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP,
+            newSize,
+            Resources.getSystem().displayMetrics)
         //change size of brush
-        mDrawPaint!!.strokeWidth = myBrushSize
+        mDrawPaint!!.strokeWidth = mBrushSize
     }
 
     override fun getBrushSize(): Int {
-        return myBrushSize.toInt()
+        return mBrushSize.toInt()
     }
 
     /**
@@ -213,15 +204,15 @@ class DrawPresenter: DrawContract.Presenter {
      */
     //Remove last one
     fun removeLastLine(){
-        if (myPaths.size != 0) {
-            myPaths.removeAt(myPaths.size - 1)
+        if (mPaths.size != 0) {
+            mPaths.removeAt(mPaths.size - 1)
             view?.invalidateCanvas()
         }
     }
     //Remove all lines
     fun removeAllLines(){
-        if (myPaths.size != 0) {
-            myPaths.clear()
+        if (mPaths.size != 0) {
+            mPaths.clear()
             view?.invalidateCanvas()
         }
     }
@@ -248,12 +239,12 @@ class DrawPresenter: DrawContract.Presenter {
     }
 
     override fun setPathList(pathList: ArrayList<CustomPath>) {
-        myPaths = pathList
+        mPaths = pathList
         view?.invalidateCanvas()
     }
 
     override fun getPathList(): ArrayList<CustomPath> {
-        return myPaths
+        return mPaths
     }
 
 }

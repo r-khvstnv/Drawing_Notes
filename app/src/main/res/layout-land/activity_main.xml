@@ -140,7 +140,7 @@
         ads:adSize="BANNER"
         ads:adUnitId="@string/banner_id_Ads"
         ads:layout_constraintBottom_toBottomOf="parent"
-        ads:layout_constraintRight_toRightOf="parent"/>
+        ads:layout_constraintRight_toRightOf="parent" />
 
     <!-- Layout with primary functionality -->
     <LinearLayout
@@ -154,8 +154,21 @@
         android:gravity="center_vertical"
         android:orientation="vertical"
         app:layout_constraintBottom_toTopOf="@id/adView_banner"
-        app:layout_constraintTop_toBottomOf="@id/ll_menu"
-        app:layout_constraintRight_toRightOf="parent">
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/ll_menu">
+
+        <ImageButton
+            android:id="@+id/btn_no_ads"
+            android:layout_width="@dimen/dim_option_btn_size"
+            android:layout_height="@dimen/dim_option_btn_size"
+            android:layout_marginHorizontal="@dimen/dim_option_btn_margin_horizontal"
+            android:layout_marginVertical="@dimen/dim_option_btn_margin_vertical"
+            android:background="@drawable/ib_option_ripple_white"
+            android:elevation="4dp"
+            android:padding="5dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_no_ads"
+            android:visibility="visible" />
 
         <ImageButton
             android:id="@+id/btn_fit"
@@ -189,10 +202,10 @@
             android:layout_marginVertical="@dimen/dim_option_btn_margin_vertical"
             android:background="@drawable/ib_option_ripple_white"
             android:elevation="4dp"
-            android:tag="@string/st_brush_size"
             android:padding="5dp"
             android:scaleType="fitCenter"
-            android:src="@drawable/ic_pencil" />
+            android:src="@drawable/ic_pencil"
+            android:tag="@string/st_brush_size" />
 
         <ImageButton
             android:id="@+id/btn_palette"
@@ -218,10 +231,10 @@
         android:orientation="horizontal"
         android:paddingHorizontal="8dp"
         android:paddingVertical="10dp"
-        tools:visibility="visible"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@id/ll_primary_options"
-        app:layout_constraintRight_toLeftOf="@id/ll_primary_options">
+        app:layout_constraintRight_toLeftOf="@id/ll_primary_options"
+        tools:visibility="visible">
 
         <SeekBar
             android:id="@+id/sb_brush_size"
@@ -269,9 +282,9 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="10dp"
             android:gravity="center"
-            tools:visibility="visible"
+            android:orientation="horizontal"
             android:visibility="gone"
-            android:orientation="horizontal">
+            tools:visibility="visible">
 
             <ImageButton
                 android:id="@+id/btn_info"
@@ -283,8 +296,7 @@
                 android:elevation="@dimen/dim_option_btn_elevation"
                 android:padding="5dp"
                 android:scaleType="fitCenter"
-                android:src="@drawable/ic_info"
-                android:visibility="visible" />
+                android:src="@drawable/ic_info" />
 
             <ImageButton
                 android:id="@+id/btn_gallery"
@@ -297,8 +309,7 @@
                 android:padding="5dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_gallery"
-                android:tag="@string/st_gallery"
-                android:visibility="visible" />
+                android:tag="@string/st_gallery" />
 
             <ImageButton
                 android:id="@+id/btn_share"
@@ -311,8 +322,7 @@
                 android:padding="5dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_share"
-                android:tag="@string/st__share"
-                android:visibility="visible" />
+                android:tag="@string/st__share" />
 
             <ImageButton
                 android:id="@+id/btn_trash"
@@ -324,8 +334,7 @@
                 android:elevation="@dimen/dim_option_btn_elevation"
                 android:padding="5dp"
                 android:scaleType="fitCenter"
-                android:src="@drawable/ic_trash"
-                android:visibility="visible" />
+                android:src="@drawable/ic_trash" />
         </LinearLayout>
 
         <ImageButton
@@ -337,8 +346,8 @@
             android:background="@drawable/ib_option_ripple_white"
             android:elevation="4dp"
             android:padding="5dp"
-            android:tag="@string/st_extra_options"
             android:scaleType="fitCenter"
-            android:src="@drawable/ic_menu" />
+            android:src="@drawable/ic_menu"
+            android:tag="@string/st_extra_options" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

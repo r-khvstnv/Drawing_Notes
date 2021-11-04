@@ -8,7 +8,7 @@ import com.rssll971.drawingapp.utils.CustomPath
 
 interface DrawContract {
     interface Presenter: BaseContract.Presenter<DrawView>{
-        fun setContext(context: Context)
+        fun setTouchDetector(context: Context)
         fun setupDrawingOptions()
         fun onViewSizeChanged(width: Int, height: Int)
         fun onDrawRequest(canvas: Canvas?)
