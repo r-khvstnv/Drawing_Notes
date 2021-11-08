@@ -8,31 +8,30 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
-import android.net.Uri
 import android.os.Build
 import android.os.Environment
-import android.os.FileUtils
 import android.provider.MediaStore
+import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.graphics.PathUtils
 import androidx.core.view.isVisible
+import com.android.billingclient.api.*
 import com.rssll971.drawingapp.R
 import kotlinx.coroutines.*
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStream
-import java.net.URI
 import java.util.*
-import kotlin.io.path.Path
+import kotlin.collections.ArrayList
 
 class MainPresenter: MainContract.Presenter {
     private var view: MainContract.MainView? = null
     private var context: Context? = null
-    private var job = Job()
-    private var scopeForSaving = CoroutineScope(job + Dispatchers.IO)
+    private var jobImageSaving = CoroutineScope(Job() + Dispatchers.IO)
+    private lateinit var billingClient: BillingClient
 
     override fun attach(view: MainContract.MainView) {
         this.view = view
@@ -42,7 +41,7 @@ class MainPresenter: MainContract.Presenter {
     }
     override fun detach() {
         this.view = null
-        scopeForSaving.cancel()
+        jobImageSaving.cancel()
     }
 
     override fun setViewVisibility(v: View, tag: String) {
@@ -89,8 +88,9 @@ class MainPresenter: MainContract.Presenter {
         return bitmap
     }
 
+
     fun onSaveBitmapClick(bitmap: Bitmap){
-        scopeForSaving.launch { saveBitmapToStorage(bitmap = bitmap) }
+        jobImageSaving.launch { saveBitmapToStorage(bitmap = bitmap) }
     }
     private suspend fun saveBitmapToStorage(bitmap: Bitmap){
         var resultPath: String? = null
@@ -133,5 +133,123 @@ class MainPresenter: MainContract.Presenter {
         }.onFailure {
             it.printStackTrace()
         }
+    }
+
+    override fun initBillingClient(){
+        billingClient = BillingClient.newBuilder(context!!)
+            .setListener(purchasesUpdatedListener)
+            .enablePendingPurchases()
+            .build()
+
+        startBillingConnection()
+    }
+
+    private val purchasesUpdatedListener =
+        PurchasesUpdatedListener { billingResult, purchases ->
+            if (billingResult.responseCode == BillingClient.BillingResponseCode.OK
+                && purchases != null){
+                for (purchase in purchases){
+                    handlePurchase(purchase = purchase)
+                }
+
+            } else if (billingResult.responseCode == BillingClient.BillingResponseCode.USER_CANCELED){
+                view?.showErrorSnackBar()
+                Log.v("Ads", "Cancelled")
+            } else if (billingResult.responseCode == BillingClient.BillingResponseCode.ITEM_ALREADY_OWNED){
+                view?.disableAllAds()
+                Toast.makeText(context, "Already owned", Toast.LENGTH_SHORT).show()
+            } else{
+                view?.showErrorSnackBar()
+            }
+        }
+
+    fun startBillingConnection(){
+        billingClient.startConnection(object : BillingClientStateListener {
+            override fun onBillingSetupFinished(billingResult: BillingResult) {
+                if (billingResult.responseCode == BillingClient.BillingResponseCode.OK){
+                    querySkuDetails()
+                    queryActivePurchases()
+                }
+            }
+            override fun onBillingServiceDisconnected() {
+                startBillingConnection()
+            }
+        })
+    }
+
+    fun querySkuDetails(){
+        val skuList = ArrayList<String>()
+        skuList.add(context?.getString(R.string.no_ads_id)!!)
+        val params = SkuDetailsParams.newBuilder()
+        params.setSkusList(skuList).setType(BillingClient.SkuType.INAPP)
+
+        billingClient.querySkuDetailsAsync(params.build()){billingResult, skuDetailsList ->
+            if (billingResult.responseCode == BillingClient.BillingResponseCode.OK
+                && !skuDetailsList.isNullOrEmpty()){
+                for (sku in skuDetailsList){
+                    view?.updateSku(sku)
+                }
+            }
+        }
+    }
+
+    fun queryActivePurchases(){
+        billingClient
+            .queryPurchasesAsync(BillingClient.SkuType.INAPP){ billingResult, purchases ->
+                if(billingResult.responseCode == BillingClient.BillingResponseCode.OK){
+                    if (purchases.isNotEmpty()){
+                        for (purchase in purchases){
+                            Log.i("BILL", purchase.toString())
+                            if (purchase.purchaseState == Purchase.PurchaseState.PURCHASED)
+                                view?.disableAllAds()
+                        }
+                    } else{
+                        Log.v("AdsStatus", "Enabled by qap1")
+                        view?.enableAds()
+                        Log.v("AdsStatus", "Enabled by qap1")
+                    }
+                } else{
+                    Log.v("AdsStatus", "Enabled by qap2")
+                    view?.enableAds()
+                }
+        }
+    }
+
+    private fun handlePurchase(purchase: Purchase){
+        if(purchase.purchaseState == Purchase.PurchaseState.PURCHASED){
+            if (!purchase.isAcknowledged){
+                val acknowledgePurchaseParams = AcknowledgePurchaseParams.newBuilder().setPurchaseToken(purchase.purchaseToken).build()
+                billingClient.acknowledgePurchase(acknowledgePurchaseParams){
+                    view?.disableAllAds()
+                }
+            }
+        }
+    }
+
+    override fun requestNoAdsPurchase(activity: Activity, skuDetails: SkuDetails) {
+        val flowParams = BillingFlowParams.newBuilder().setSkuDetails(skuDetails).build()
+        billingClient.launchBillingFlow(activity, flowParams).responseCode
+    }
+
+    override fun checkNoAdsPurchaseStatus(activity: Activity, context: Context) {
+        val keyId = context.getString(R.string.no_ads_id)
+        val shp = activity.getPreferences(Context.MODE_PRIVATE)
+        Log.v("AdsStatus", "Enabled by cnaps")
+        if (shp.contains(keyId)){
+            //check status based on local data
+            if (!shp.getBoolean(keyId, true)){
+                //on noPurchase status, ads will be initialized, but no shown
+                view?.initAds()
+                Log.v("AdsStatus", "init by cnaps")
+            }
+        } else{
+            val editor = shp.edit()
+            editor.putBoolean(keyId, false)
+            editor.apply()
+            view?.initAds()
+        }
+
+        //ads will be shown based on remote data
+        initBillingClient()
     }
 }

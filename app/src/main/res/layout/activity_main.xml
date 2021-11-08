@@ -8,17 +8,24 @@
     tools:context=".ui.main.MainActivity"
     tools:ignore="ContentDescription">
     <!-- Ads -->
-    <com.google.android.gms.ads.AdView xmlns:ads="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/adView_banner"
+    <LinearLayout
+        android:id="@+id/ads_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:elevation="5dp"
-        ads:adSize="SMART_BANNER"
-        ads:adUnitId="@string/banner_id_Ads"
-        ads:layout_constraintLeft_toLeftOf="parent"
-        ads:layout_constraintRight_toRightOf="parent"
-        ads:layout_constraintTop_toTopOf="parent" />
-
+        android:orientation="vertical"
+        android:visibility="gone"
+        tools:visibility="visible"
+        android:elevation="10dp"
+        >
+        <com.google.android.gms.ads.AdView xmlns:ads="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/adView_banner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:elevation="10dp"
+            ads:adSize="SMART_BANNER"
+            ads:adUnitId="@string/banner_id_Ads"
+            />
+    </LinearLayout>
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -168,7 +175,8 @@
                 android:padding="5dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_no_ads"
-                android:visibility="visible" />
+                android:visibility="gone"
+                 />
 
             <ImageButton
                 android:id="@+id/btn_fit"

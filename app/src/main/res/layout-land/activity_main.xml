@@ -129,18 +129,30 @@
         android:tag="@color/mBlue"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toRightOf="@id/btn_green"
-        app:layout_constraintRight_toLeftOf="@id/adView_banner" />
+        app:layout_constraintRight_toLeftOf="@id/ads_container" />
 
     <!-- Ads -->
-    <com.google.android.gms.ads.AdView xmlns:ads="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/adView_banner"
+    <LinearLayout
+        android:id="@+id/ads_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:elevation="5dp"
-        ads:adSize="BANNER"
-        ads:adUnitId="@string/banner_id_Ads"
-        ads:layout_constraintBottom_toBottomOf="parent"
-        ads:layout_constraintRight_toRightOf="parent" />
+        android:orientation="horizontal"
+        android:visibility="gone"
+        tools:visibility="visible"
+        android:elevation="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        >
+        <com.google.android.gms.ads.AdView
+            xmlns:ads="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/adView_banner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:elevation="5dp"
+            ads:adSize="BANNER"
+            ads:adUnitId="@string/banner_id_Ads"
+            />
+    </LinearLayout>
 
     <!-- Layout with primary functionality -->
     <LinearLayout
@@ -153,7 +165,7 @@
         android:elevation="5dp"
         android:gravity="center_vertical"
         android:orientation="vertical"
-        app:layout_constraintBottom_toTopOf="@id/adView_banner"
+        app:layout_constraintBottom_toTopOf="@id/ads_container"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/ll_menu">
 
@@ -168,7 +180,7 @@
             android:padding="5dp"
             android:scaleType="fitCenter"
             android:src="@drawable/ic_no_ads"
-            android:visibility="visible" />
+             />
 
         <ImageButton
             android:id="@+id/btn_fit"
