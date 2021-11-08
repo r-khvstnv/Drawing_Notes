@@ -39,5 +39,7 @@ interface MainContract {
         fun disableAllAds()
         fun enableAds()
         fun initAds()
+        fun showProgressDialog()
+        fun hideProgressDialog()
     }
 }

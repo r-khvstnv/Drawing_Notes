@@ -1,28 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:layout_marginTop="30dp"
     android:background="@drawable/dialog_background"
-    android:orientation="horizontal"
     android:gravity="center_vertical"
-    android:padding="30dp"
-    >
+    android:orientation="horizontal"
+    android:padding="10dp"
+    app:layout_constrainedWidth="true">
+
     <ProgressBar
-        android:id="@+id/pb_share_progress"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:progress="0"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
         android:max="100"
-        />
+        android:progress="0" />
+
     <TextView
-        android:id="@+id/tv_share_progress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:text="@string/st_wait"
-        android:textSize="24sp"
-        android:textColor="@color/mGreyDark"
+        android:layout_marginStart="10dp"
         android:gravity="center"
-        />
-
+        android:text="@string/st_wait"
+        android:textColor="@color/mGreyDark"
+        android:textSize="16sp" />
 </LinearLayout>

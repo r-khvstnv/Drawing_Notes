@@ -15,13 +15,12 @@
     <dimen name="dim_ll_current_color_size">34dp</dimen>
     <dimen name="dim_color_picker_items_margin">8dp</dimen>
 
-    <dimen name="dim_info_licences_margin_top">10dp</dimen>
-    <dimen name="dim_info_text_size">16sp</dimen>
+    <dimen name="dim_delete_dialog_title_text_size">22sp</dimen>
+    <dimen name="dim_delete_btn_height">40dp</dimen>
+    <dimen name="dim_delete_btn_text_size">16sp</dimen>
+    <dimen name="dim_delete_btn_margin">8dp</dimen>
+    <dimen name="dim_delete_btn_padding">5dp</dimen>
 
-    <dimen name="dim_btn_delete_height">50dp</dimen>
-    <dimen name="dim_delete_dialog_title_text_size">18sp</dimen>
-    <dimen name="dim_delete_dialog_options_text_size">16sp</dimen>
-    <dimen name="dim_delete_dialog_btn_margin_horizontal">8dp</dimen>
-    <dimen name="dim_delete_dialog_btn_padding">5dp</dimen>
-
+    <dimen name="dim_references_text_size_general">18sp</dimen>
+    <dimen name="dim_references_text_size_title">22sp</dimen>
 </resources>

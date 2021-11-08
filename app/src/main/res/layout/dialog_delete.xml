@@ -1,67 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/mWhite"
-    app:cardCornerRadius="@dimen/dim_general_radius">
+    app:cardCornerRadius="@dimen/dim_general_radius"
+    app:layout_constrainedWidth="true">
+
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="10dp"
-        >
+        android:padding="10dp">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dim_delete_btn_margin"
             android:text="@string/st_what_want_to_remove"
-            android:textColor="@color/mGrey"
-            android:textSize="@dimen/dim_delete_dialog_title_text_size"
-            android:layout_marginStart="@dimen/dim_delete_dialog_btn_margin_horizontal"
-            />
+            android:textColor="@color/mGreyDark"
+            android:textSize="@dimen/dim_delete_dialog_title_text_size" />
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             android:gravity="center"
-            >
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+
             <Button
                 android:id="@+id/btn_remove_lines"
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/dim_btn_delete_height"
-                android:background="@drawable/ib_option_ripple_red"
-                android:elevation="@dimen/dim_option_btn_elevation"
-                android:layout_margin="@dimen/dim_delete_dialog_btn_margin_horizontal"
-                android:paddingHorizontal="@dimen/dim_delete_dialog_btn_padding"
+                style="@style/DeleteButtonsStyle"
                 android:text="@string/st_lines"
-                android:textColor="@color/mBlack"
-                android:textSize="@dimen/dim_delete_dialog_options_text_size"
-                style="?android:attr/buttonBarButtonStyle" />
+                />
+
             <Button
                 android:id="@+id/btn_remove_background"
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/dim_btn_delete_height"
-                android:background="@drawable/ib_option_ripple_red"
-                android:elevation="@dimen/dim_option_btn_elevation"
-                android:layout_margin="@dimen/dim_delete_dialog_btn_margin_horizontal"
-                android:paddingHorizontal="@dimen/dim_delete_dialog_btn_padding"
+                style="@style/DeleteButtonsStyle"
                 android:text="@string/st_background"
-                android:textColor="@color/mBlack"
-                android:textSize="@dimen/dim_delete_dialog_options_text_size"
-                style="?android:attr/buttonBarButtonStyle" />
+                 />
+
             <Button
                 android:id="@+id/btn_remove_all"
-                android:minWidth="50dp"
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/dim_btn_delete_height"
-                android:background="@drawable/ib_option_ripple_red"
-                android:elevation="@dimen/dim_option_btn_elevation"
-                android:layout_margin="@dimen/dim_delete_dialog_btn_margin_horizontal"
-                android:paddingHorizontal="@dimen/dim_delete_dialog_btn_padding"
+                style="@style/DeleteButtonsStyle"
                 android:text="@string/st_all"
-                android:textColor="@color/mBlack"
-                android:textSize="@dimen/dim_delete_dialog_options_text_size"
-                style="?android:attr/buttonBarButtonStyle" />
+                />
         </LinearLayout>
     </LinearLayout>
 </androidx.cardview.widget.CardView>

@@ -51,6 +51,8 @@ class MainActivity : AppCompatActivity(), MainContract.MainView {
     private lateinit var firebaseAnalytics: FirebaseAnalytics
     //sku no ads
     private var skuDetails: SkuDetails? = null
+    //progress dialog
+    private lateinit var progressDialog: Dialog
 
     companion object{
         const val GALLERY_PERMISSION_REQUEST_CODE = 101
@@ -88,7 +90,7 @@ class MainActivity : AppCompatActivity(), MainContract.MainView {
 
             //extra menu
             btnExtraOptions.setOnClickListener {
-                showInterstitialAd()
+                //showInterstitialAd() todo enable
                 presenter.setViewVisibility(llExtraOptions, it.tag.toString())
             }
             btnTrash.setOnClickListener {
@@ -468,5 +470,16 @@ class MainActivity : AppCompatActivity(), MainContract.MainView {
             binding.btnNoAds.visibility = View.GONE
         }
     }
+
+    override fun showProgressDialog() {
+        progressDialog = Dialog(this)
+        progressDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        progressDialog.window?.setGravity(Gravity.TOP)
+        progressDialog.setContentView(R.layout.dialog_progress)
+        progressDialog.show()
+    }
+
+    override fun hideProgressDialog() {
+        progressDialog.dismiss()
+    }
 }
-//todo problems with ui elements on ads enabling/disabling

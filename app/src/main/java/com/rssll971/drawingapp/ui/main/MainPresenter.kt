@@ -98,6 +98,9 @@ class MainPresenter: MainContract.Presenter {
         val date = System.currentTimeMillis()
         val fileName = "DN" + date/1000
         val format = ".png"
+        withContext(Dispatchers.Main){
+            view?.showProgressDialog()
+        }
         runCatching {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
                 val resolver = context?.contentResolver
@@ -127,11 +130,19 @@ class MainPresenter: MainContract.Presenter {
             }
 
             if (!resultPath.isNullOrEmpty()){
-                if (File(resultPath!!).exists())
-                    view?.showShareOption(resultPath!!)
+                if (File(resultPath!!).exists()){
+                    withContext(Dispatchers.Main){
+                        view?.hideProgressDialog()
+                        view?.showShareOption(resultPath!!)
+                    }
+                }
             }
         }.onFailure {
             it.printStackTrace()
+            withContext(Dispatchers.Main){
+                view?.hideProgressDialog()
+                view?.showErrorSnackBar()
+            }
         }
     }
 

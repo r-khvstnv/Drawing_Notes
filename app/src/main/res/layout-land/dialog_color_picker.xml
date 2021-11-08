@@ -1,65 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:background="@drawable/dialog_background"
-    tools:ignore="ContentDescription"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal"
     android:padding="10dp"
-    >
+    tools:ignore="ContentDescription">
+
     <com.skydoves.colorpickerview.ColorPickerView
         android:id="@+id/colorPickerView"
         android:layout_width="280dp"
         android:layout_height="280dp"
         android:elevation="4dp"
-        android:orientation="vertical"
-        />
+        android:orientation="vertical" />
+
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_marginStart="10dp"
         android:layout_marginTop="50dp"
-        android:orientation="vertical"
         android:gravity="center"
-        >
+        android:orientation="vertical">
+
         <LinearLayout
             android:id="@+id/ll_current_color"
             android:layout_width="@dimen/dim_ll_current_color_size"
             android:layout_height="@dimen/dim_ll_current_color_size"
             android:layout_margin="@dimen/dim_color_picker_items_margin"
             android:background="@drawable/ib_option_white"
-            tools:backgroundTint="@color/mGrey"
             android:orientation="horizontal"
-            />
+            tools:backgroundTint="@color/mGrey" />
+
         <LinearLayout
             android:id="@+id/ll_line_color"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/dim_color_picker_items_margin"
-            android:padding="5dp"
-            android:orientation="horizontal"
-            android:gravity="center"
             android:background="@drawable/ib_option_ripple_white"
             android:elevation="5dp"
-            >
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="5dp">
+
             <ImageView
                 android:layout_width="24sp"
                 android:layout_height="24sp"
                 android:elevation="4dp"
-                android:src="@drawable/ic_pencil"
-                android:scaleType="fitCenter"
                 android:padding="5dp"
-                />
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_pencil" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/st_line_color"
                 android:textColor="@color/mBlack"
-                android:textSize="12sp"
-                />
+                android:textSize="12sp" />
         </LinearLayout>
 
         <LinearLayout
@@ -67,27 +64,26 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/dim_color_picker_items_margin"
-            android:padding="5dp"
-            android:orientation="horizontal"
-            android:gravity="center"
             android:background="@drawable/ib_option_ripple_white"
             android:elevation="5dp"
-            >
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="5dp">
+
             <ImageView
                 android:layout_width="24sp"
                 android:layout_height="24sp"
                 android:elevation="4dp"
-                android:src="@drawable/ic_solid"
-                android:scaleType="fitCenter"
                 android:padding="5dp"
-                />
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_solid" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/st_solid_color"
                 android:textColor="@color/mBlack"
-                android:textSize="12sp"
-                />
+                android:textSize="12sp" />
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

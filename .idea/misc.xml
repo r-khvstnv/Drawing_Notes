@@ -26,10 +26,14 @@
         <entry key="..\:/Programming/DrawingApp/app/src/main/res/layout-land/dialog_color_picker.xml" value="0.1671875" />
         <entry key="..\:/Programming/DrawingApp/app/src/main/res/layout-land/dialog_info.xml" value="0.19895833333333332" />
         <entry key="..\:/Programming/DrawingApp/app/src/main/res/layout/activity_main.xml" value="0.25416666666666665" />
+        <entry key="..\:/Programming/DrawingApp/app/src/main/res/layout/app_info.xml" value="0.25416666666666665" />
+        <entry key="..\:/Programming/DrawingApp/app/src/main/res/layout/dialog_background_progress.xml" value="0.25416666666666665" />
         <entry key="..\:/Programming/DrawingApp/app/src/main/res/layout/dialog_color_picker.xml" value="0.25416666666666665" />
         <entry key="..\:/Programming/DrawingApp/app/src/main/res/layout/dialog_delete.xml" value="0.25416666666666665" />
         <entry key="..\:/Programming/DrawingApp/app/src/main/res/layout/dialog_info.xml" value="0.25416666666666665" />
         <entry key="..\:/Programming/DrawingApp/app/src/main/res/layout/dialog_no_ads_purchase.xml" value="0.25416666666666665" />
+        <entry key="..\:/Programming/DrawingApp/app/src/main/res/layout/dialog_progress.xml" value="0.25416666666666665" />
+        <entry key="..\:/Programming/DrawingApp/app/src/main/res/layout/licence_references.xml" value="0.25416666666666665" />
       </map>
     </option>
   </component>
