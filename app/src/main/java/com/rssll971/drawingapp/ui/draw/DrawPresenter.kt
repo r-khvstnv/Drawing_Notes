@@ -12,28 +12,19 @@ import com.rssll971.drawingapp.utils.CustomPath
 
 class DrawPresenter: DrawContract.Presenter {
     private var view: DrawContract.DrawView? = null
-    /**
-     * BLOCK with all vars for drawing
-     */
-    //path of sth drawing
+
+    /**Draw parameters*/
     private var mDrawPath: CustomPath? = null
-    //map of current path
     private var mCanvasBitmap: Bitmap? = null
-    //styles of drawing path
     private var mDrawPaint: Paint? = null
     private var mCanvasPaint: Paint? = null
-
-    //thickness of brush
-    private var mBrushSize: Float = 0.toFloat()
-    //color of drawing (by default)
+    private var mBrushSize: Float = 1f
     private var color = Color.BLACK
-
-    //canvas - холст
     private var canvas: Canvas? = null
-    //all created paths
+    //all created user lines
     private var mPaths = ArrayList<CustomPath>()
 
-    //multi-touch
+    /**MultiTouchDetector*/
     private var mScaleFactor = 1f
     private lateinit var multiTouchDetector: MultiTouchGestureDetector
 
@@ -41,7 +32,7 @@ class DrawPresenter: DrawContract.Presenter {
         this.view = view
     }
 
-    override fun setTouchDetector(context: Context) {
+    override fun initTouchDetector(context: Context) {
         multiTouchDetector = MultiTouchGestureDetector(context, MultiTouchListener())
     }
 
@@ -50,60 +41,46 @@ class DrawPresenter: DrawContract.Presenter {
     }
 
     override fun setupDrawingOptions() {
-        //object of paint
         mDrawPaint = Paint()
-        //styles of drawing implemented inner class
         mDrawPath = CustomPath(color, mBrushSize)
-        //color
         mDrawPath!!.color = color
-        //type of drawing is line
         mDrawPaint!!.style = Paint.Style.STROKE
-        //style of line ends
         mDrawPaint!!.strokeJoin = Paint.Join.ROUND
         mDrawPaint!!.strokeCap = Paint.Cap.ROUND
-        //copy graphic bit from one part to another
         mCanvasPaint = Paint(Paint.DITHER_FLAG)
     }
 
     override fun onViewSizeChanged(width: Int, height: Int) {
         if (width == 0 || height == 0){
+            /**If new size was calculated wrong,
+             * canvas will be updated with some delay */
             Handler(Looper.getMainLooper()).postDelayed({
-                //create bitmap with current width and height, using this config of colors
+                //update bitmap with current width and height
                 mCanvasBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
-                //create canvas with our bitmap
                 canvas = Canvas(mCanvasBitmap!!)
             }, 1000)
         }
         else{
-            //create bitmap with current width and height, using this config of colors
+            //update bitmap with current width and height
             mCanvasBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
-            //create canvas with our bitmap
             canvas = Canvas(mCanvasBitmap!!)
         }
     }
 
     override fun onDrawRequest(canvas: Canvas?) {
-        //implement our canvasBitmap, starting on top-left using our canvasPaint
         canvas?.drawBitmap(mCanvasBitmap!!, 0f, 0f, mCanvasPaint)
-        /**
-         * Next loop make visible all previous lines
-         */
+        //make visible all previous lines
         for (path in mPaths){
-            //thickness
             mDrawPaint!!.strokeWidth = path.brushThickness
-            //color
             mDrawPaint!!.color = path.color
-            //draw
+
             canvas?.drawPath(path, mDrawPaint!!)
         }
-        /**
-         * Next lines set current values for line and draw it
-         */
-        //thickness
+
+        //set current values for line
         mDrawPaint!!.strokeWidth = mDrawPath!!.brushThickness
-        //color
         mDrawPaint!!.color = mDrawPath!!.color
-        //draw path
+
         canvas?.drawPath(mDrawPath!!, mDrawPaint!!)
     }
 
@@ -116,15 +93,16 @@ class DrawPresenter: DrawContract.Presenter {
         }
     }
 
+    /**MultiTouchListener*/
     private inner class MultiTouchListener :
         MultiTouchGestureDetector.SimpleOnMultiTouchGestureListener() {
         override fun onScale(detector: MultiTouchGestureDetector?) {
             super.onScale(detector)
             mScaleFactor *= detector?.scale ?: 1f
+            /**Min factor should be 1.
+             * Otherwise View starts jumping, while user move it or hold fingers on same place*/
             mScaleFactor = 1f.coerceAtLeast(mScaleFactor.coerceAtMost(5f))
             view?.scaleView(mScaleFactor)
-
-
         }
 
         override fun onMove(detector: MultiTouchGestureDetector?) {
@@ -136,20 +114,15 @@ class DrawPresenter: DrawContract.Presenter {
     }
 
     private fun drawEventDetector(event: MotionEvent?) {
-        /** Next statement is crutch for conflict described upper*/
         //store position onTouch
         val touchX = event?.x
         val touchY = event?.y
 
-        //what should will be executed onTouch
         when(event?.action){
-            //press on the screen
             MotionEvent.ACTION_DOWN ->{
-                //setup path
                 mDrawPath!!.color = color
                 mDrawPath!!.brushThickness = mBrushSize
 
-                //delete any path
                 mDrawPath!!.reset()
 
                 //start drawing by positions
@@ -159,8 +132,6 @@ class DrawPresenter: DrawContract.Presenter {
                     }
                 }
             }
-
-            //drag over the screen
             MotionEvent.ACTION_MOVE ->{
                 //draw line
                 if (touchX != null) {
@@ -170,28 +141,23 @@ class DrawPresenter: DrawContract.Presenter {
                 }
             }
 
-            //press gesture
             MotionEvent.ACTION_UP ->{
                 //add created path in array
                 mPaths.add(mDrawPath!!)
-                //end of line
+                //update values for upcoming line
                 mDrawPath = CustomPath(color, mBrushSize)
             }
         }
         view?.invalidateCanvas()
     }
 
-    /**
-     * Next method change brush size proportionally for any screen
-     */
-    fun setBrushSize(newSize: Float){
-        //adapting size for any screen
+    override fun setBrushSize(newSize: Float){
         if (newSize <= 50)
         mBrushSize = TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_DIP,
             newSize,
             Resources.getSystem().displayMetrics)
-        //change size of brush
+
         mDrawPaint!!.strokeWidth = mBrushSize
     }
 
@@ -199,38 +165,28 @@ class DrawPresenter: DrawContract.Presenter {
         return mBrushSize.toInt()
     }
 
-    /**
-     * Next two methods remove lines
-     */
-    //Remove last one
-    fun removeLastLine(){
+    override fun removeLastLine(){
         if (mPaths.size != 0) {
             mPaths.removeAt(mPaths.size - 1)
             view?.invalidateCanvas()
         }
     }
-    //Remove all lines
-    fun removeAllLines(){
+
+    override fun removeAllLines(){
         if (mPaths.size != 0) {
             mPaths.clear()
             view?.invalidateCanvas()
         }
     }
 
-    /**
-     * Next method change color to selected by user
-     */
     override fun setBrushColorFromInt(mColor: Int) {
-        //parse needed color
         color = mColor
-        //change color
         mDrawPaint!!.color = color
     }
 
     override fun setBrushColorFromString(mColor: String) {
         //parse needed color
         color = Color.parseColor(mColor)
-        //change color
         mDrawPaint!!.color = color
     }
 
@@ -246,5 +202,4 @@ class DrawPresenter: DrawContract.Presenter {
     override fun getPathList(): ArrayList<CustomPath> {
         return mPaths
     }
-
 }

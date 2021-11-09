@@ -19,13 +19,14 @@ import android.widget.SeekBar
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts.*
 import androidx.core.content.ContextCompat
-import androidx.core.view.isVisible
 import com.android.billingclient.api.*
 import com.google.android.gms.ads.*
 import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.ktx.analytics
+import com.google.firebase.ktx.Firebase
 import com.rssll971.drawingapp.R
 import com.rssll971.drawingapp.databinding.ActivityMainBinding
 import com.rssll971.drawingapp.databinding.DialogColorPickerBinding
@@ -35,33 +36,26 @@ import com.rssll971.drawingapp.di.ActivityModule
 import com.rssll971.drawingapp.di.DaggerActivityComponent
 import com.rssll971.drawingapp.utils.CustomPath
 import com.rssll971.drawingapp.utils.GalleryContract
+import com.rssll971.drawingapp.utils.MyConstants
 import com.skydoves.colorpickerview.listeners.ColorListener
 import java.lang.Exception
 import javax.inject.Inject
-
+//todo background color(different layouts curr)
 
 class MainActivity : AppCompatActivity(), MainContract.MainView {
     @Inject lateinit var presenter: MainPresenter
     private lateinit var binding: ActivityMainBinding
 
-    //ADS
-    //interstitial
     private var mInterstitialAd: InterstitialAd? = null
-    //firebase
-    private lateinit var firebaseAnalytics: FirebaseAnalytics
     //sku no ads
     private var skuDetails: SkuDetails? = null
+
+    //firebase
+    private lateinit var firebaseAnalytics: FirebaseAnalytics
+
     //progress dialog
     private lateinit var progressDialog: Dialog
 
-    companion object{
-        const val GALLERY_PERMISSION_REQUEST_CODE = 101
-        const val CONTAINER_WIDTH_KEY = "containerWidth"
-        const val CONTAINER_HEIGHT_KEY = "containerHeight"
-        const val PATH_LIST_KEY = "pathList"
-    }
-
-    /** ACTIVITY STARTS**/
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -69,13 +63,11 @@ class MainActivity : AppCompatActivity(), MainContract.MainView {
         setContentView(view)
         injector()
         presenter.attach(this)
-        presenter.getContext(this)
         /** Firebase*/
-        //firebaseAnalytics = Firebase.analytics todo enable
-        //crutch when systemUI doesn't disappear
-
+        firebaseAnalytics = Firebase.analytics
 
         initBrushSizeListener()
+
         presenter.checkNoAdsPurchaseStatus(this, this)
 
         //Handler(Looper.getMainLooper()).postDelayed({onWindowFocusChanged(true)}, 1000)
@@ -85,13 +77,17 @@ class MainActivity : AppCompatActivity(), MainContract.MainView {
             btnNoAds.setOnClickListener { showNoAdsDialog() }
             btnFit.setOnClickListener { fitFrameView() }
             btnUndo.setOnClickListener { binding.drawingView.presenter.removeLastLine() }
-            btnBrushSize.setOnClickListener { presenter.setViewVisibility(llBrushSizeWindow, it.tag.toString()) }
+            btnBrushSize.setOnClickListener {
+                presenter.setViewVisibility(
+                    this@MainActivity, llBrushSizeWindow, it.tag.toString())
+            }
             btnPalette.setOnClickListener { showColorPickerDialog() }
 
             //extra menu
             btnExtraOptions.setOnClickListener {
-                //showInterstitialAd() todo enable
-                presenter.setViewVisibility(llExtraOptions, it.tag.toString())
+                showInterstitialAd()
+                presenter.setViewVisibility(
+                    this@MainActivity, llExtraOptions, it.tag.toString())
             }
             btnTrash.setOnClickListener {
                 changeExtraOptionsVisibility(View.GONE)
@@ -99,11 +95,13 @@ class MainActivity : AppCompatActivity(), MainContract.MainView {
             }
             btnShare.setOnClickListener {
                 changeExtraOptionsVisibility(View.GONE)
-                presenter.onSaveBitmapClick(presenter.getBitmapFromView(binding.flContainer))
+                presenter.onSaveBitmapClick(
+                    this@MainActivity,
+                    presenter.getBitmapFromView(binding.flContainer))
             }
             btnGallery.setOnClickListener {
                 changeExtraOptionsVisibility(View.GONE)
-                presenter.checkStoragePermission()
+                presenter.checkStoragePermission(this@MainActivity)
             }
             btnInfo.setOnClickListener {
                 changeExtraOptionsVisibility(View.GONE)
@@ -112,47 +110,14 @@ class MainActivity : AppCompatActivity(), MainContract.MainView {
         }
     }
 
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        val list = binding.drawingView.presenter.getPathList()
-        outState.putParcelableArrayList(PATH_LIST_KEY, list)
-        if (list.isNotEmpty()){
-            val width = binding.flContainer.width
-            val height = binding.flContainer.height
-            outState.putInt(CONTAINER_WIDTH_KEY, width)
-            outState.putInt(CONTAINER_HEIGHT_KEY, height)
-        }
-
-    }
-
-    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        super.onRestoreInstanceState(savedInstanceState)
-        val list = savedInstanceState.getParcelableArrayList<CustomPath>(PATH_LIST_KEY)!!
-        if (list.isNotEmpty()){
-            val width = savedInstanceState.getInt(CONTAINER_WIDTH_KEY)
-            val height = savedInstanceState.getInt(CONTAINER_HEIGHT_KEY)
-            binding.flContainer.layoutParams = ViewGroup.LayoutParams(width, height)
-
-        }
-
-        binding.drawingView.presenter.setPathList(list)
-    }
-
-    override fun onDestroy() {
-        presenter.detach()
-        super.onDestroy()
-    }
-
     private fun injector(){
         val injectorMainComponent =
             DaggerActivityComponent.builder()
                 .activityModule(ActivityModule(this)).build()
         injectorMainComponent.inject(this)
     }
-    /**
-     * Next two method enable fullscreen mode and transparent navigation/status bars
-     */
+
+    /**Enable fullscreen mode and transparent navigation/status bars*/
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
         if (hasFocus) hideSystemUI()
@@ -179,9 +144,38 @@ class MainActivity : AppCompatActivity(), MainContract.MainView {
                     )
         }
     }
-    /**
-     * Next 3 methods provide all functionality relative to ads
-     * */
+
+    /**Save current width & height of frameView container and pathList */
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        val list = binding.drawingView.presenter.getPathList()
+        outState.putParcelableArrayList(MyConstants.PATH_LIST_KEY, list)
+        if (list.isNotEmpty()){
+            val width = binding.flContainer.width
+            val height = binding.flContainer.height
+            outState.putInt(MyConstants.CONTAINER_WIDTH_KEY, width)
+            outState.putInt(MyConstants.CONTAINER_HEIGHT_KEY, height)
+        }
+    }
+
+    /**Restore saved width & height of frameView container and pathList */
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        val list = savedInstanceState
+            .getParcelableArrayList<CustomPath>(MyConstants.PATH_LIST_KEY)!!
+        /**If data exist, it will be restored. Otherwise will be used default view
+         * for current state*/
+        if (list.isNotEmpty()){
+            val width = savedInstanceState.getInt(MyConstants.CONTAINER_WIDTH_KEY)
+            val height = savedInstanceState.getInt(MyConstants.CONTAINER_HEIGHT_KEY)
+            binding.flContainer.layoutParams = ViewGroup.LayoutParams(width, height)
+        }
+
+        binding.drawingView.presenter.setPathList(list)
+    }
+
+
+    /*--- ADS*/
     override fun initAds(){
         //interstitial
         requestInterstitialAd()
@@ -233,6 +227,28 @@ class MainActivity : AppCompatActivity(), MainContract.MainView {
             mInterstitialAd!!.show(this)
     }
 
+    override fun enableAds() {
+        this.runOnUiThread {
+            binding.adsContainer.visibility = View.VISIBLE
+            binding.btnNoAds.visibility = View.VISIBLE
+        }
+    }
+
+    override fun disableAllAds() {
+        val pref = this.getPreferences(Context.MODE_PRIVATE)
+        if (!pref.getBoolean(MyConstants.IN_APP_PURCHASE_ID, false)){
+            val editor = pref.edit()
+            editor.putBoolean(MyConstants.IN_APP_PURCHASE_ID, true)
+            editor.apply()
+        }
+
+        this.runOnUiThread{
+            binding.adsContainer.visibility = View.GONE
+            binding.btnNoAds.visibility = View.GONE
+        }
+    }
+    /*--- ADS*/
+
     private fun initBrushSizeListener(){
         binding.sbBrushSize.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
@@ -265,6 +281,7 @@ class MainActivity : AppCompatActivity(), MainContract.MainView {
         val dBinding = DialogDeleteBinding.inflate(LayoutInflater.from(this))
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog.setContentView(dBinding.root)
+
         with(dBinding){
             btnRemoveLines.setOnClickListener {
                 requestLineRemoving()
@@ -280,6 +297,7 @@ class MainActivity : AppCompatActivity(), MainContract.MainView {
                 dialog.dismiss()
             }
         }
+
         dialog.show()
     }
 
@@ -292,7 +310,7 @@ class MainActivity : AppCompatActivity(), MainContract.MainView {
         binding.ivUsersImage.setBackgroundColor(ContextCompat.getColor(this, R.color.mWhite))
     }
 
-    fun colorClicked(v: View) {
+    override fun colorClicked(v: View) {
         binding.drawingView.presenter.setBrushColorFromString(v.tag.toString())
     }
 
@@ -303,6 +321,7 @@ class MainActivity : AppCompatActivity(), MainContract.MainView {
         var isChangedByUser = false
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog.setContentView(dBinding.root)
+
         with(dBinding){
             colorPickerView.setColorListener(object : ColorListener{
                 override fun onColorSelected(color: Int, fromUser: Boolean) {
@@ -322,6 +341,7 @@ class MainActivity : AppCompatActivity(), MainContract.MainView {
                 dialog.dismiss()
             }
         }
+
         dialog.show()
     }
 
@@ -333,9 +353,12 @@ class MainActivity : AppCompatActivity(), MainContract.MainView {
         val dialog = Dialog(this)
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog.setContentView(R.layout.dialog_info)
-        /*Additional way to get in purchases, if noAds was purchased, but some problems are occurred*/
+
+        /*Additional way to get in noAds Dialog,
+        if noAds was purchased, but some problems are occurred*/
         var counter = 0
         val ivIcon = dialog.findViewById<ImageView>(R.id.iv_icon)
+
         ivIcon.setOnClickListener {
             counter++
             if (counter == 5){
@@ -343,6 +366,7 @@ class MainActivity : AppCompatActivity(), MainContract.MainView {
                 Toast.makeText(this, "Button Unblocked", Toast.LENGTH_LONG).show()
             }
         }
+
         dialog.show()
     }
 
@@ -354,7 +378,7 @@ class MainActivity : AppCompatActivity(), MainContract.MainView {
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when(requestCode){
-           GALLERY_PERMISSION_REQUEST_CODE ->{
+            MyConstants.GALLERY_PERMISSION_REQUEST_CODE ->{
                changeExtraOptionsVisibility(View.GONE)
                if (grantResults.isNotEmpty() &&
                    grantResults[0] == PackageManager.PERMISSION_GRANTED){
@@ -408,8 +432,7 @@ class MainActivity : AppCompatActivity(), MainContract.MainView {
             sharingIntent.putExtra(Intent.EXTRA_STREAM, uri)
             sharingIntent.type = "image/png"
             startActivity(
-                Intent.createChooser( sharingIntent, "Share")
-            )
+                Intent.createChooser( sharingIntent, "Share"))
         }
     }
 
@@ -449,27 +472,7 @@ class MainActivity : AppCompatActivity(), MainContract.MainView {
         sb.show()
     }
 
-    override fun enableAds() {
-        this.runOnUiThread {
-            binding.adsContainer.visibility = View.VISIBLE
-            binding.btnNoAds.visibility = View.VISIBLE
-        }
-    }
 
-
-    override fun disableAllAds() {
-        val pref = this.getPreferences(Context.MODE_PRIVATE)
-        if (!pref.getBoolean(getString(R.string.no_ads_id), false)){
-            val editor = pref.edit()
-            editor.putBoolean(getString(R.string.no_ads_id), true)
-            editor.apply()
-        }
-
-        this.runOnUiThread{
-            binding.adsContainer.visibility = View.GONE
-            binding.btnNoAds.visibility = View.GONE
-        }
-    }
 
     override fun showProgressDialog() {
         progressDialog = Dialog(this)
@@ -481,5 +484,10 @@ class MainActivity : AppCompatActivity(), MainContract.MainView {
 
     override fun hideProgressDialog() {
         progressDialog.dismiss()
+    }
+
+    override fun onDestroy() {
+        presenter.detach()
+        super.onDestroy()
     }
 }

@@ -4,15 +4,13 @@ import android.graphics.Path
 import android.os.Parcel
 import android.os.Parcelable
 
-/**
- * In next class using parametrized constructor of drawing, which extend my Path
- */
+/** Class is used for lines Drawing.
+ * Using it's object, data is saved/recreated on device rotation*/
 class CustomPath(var color: Int, var brushThickness: Float) : Path(), Parcelable{
     constructor(parcel: Parcel) : this(
         parcel.readInt(),
         parcel.readFloat()
-    ) {
-    }
+    )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeInt(color)
@@ -32,5 +30,4 @@ class CustomPath(var color: Int, var brushThickness: Float) : Path(), Parcelable
             return arrayOfNulls(size)
         }
     }
-
 }

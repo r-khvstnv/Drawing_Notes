@@ -11,23 +11,19 @@ import com.rssll971.drawingapp.di.DaggerViewComponent
 import com.rssll971.drawingapp.di.ViewModule
 import javax.inject.Inject
 
-/**
- * Next Class responsible for custom drawing view
- */
+
 class DrawCustomView(context: Context, attrs: AttributeSet) :
     View(context, attrs), DrawContract.DrawView {
     @Inject
     lateinit var presenter: DrawPresenter
-    //parent layout of view
+    /**parent layout of view*/
     private var frameLayout: FrameLayout? = null
 
-    //SETUP VARIABLES
-    //init block where we initialized all of variables
+
     init {
         injector()
-        //prepare
         presenter.attach(this)
-        presenter.setTouchDetector(context = context)
+        presenter.initTouchDetector(context = context)
         presenter.setupDrawingOptions()
     }
 
@@ -48,22 +44,15 @@ class DrawCustomView(context: Context, attrs: AttributeSet) :
     override fun moveView(x: Float, y: Float) {
         frameLayout!!.x += x
         frameLayout!!.y += y
-
     }
 
-    /**
-     * Next method adapt size of custom canvas
-     */
+
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
         presenter.onViewSizeChanged(w, h)
     }
 
-    /**
-     * Main role of next method is create new users line
-     *
-     * More deeply below
-     */
+
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
         presenter.onDrawRequest(canvas = canvas)

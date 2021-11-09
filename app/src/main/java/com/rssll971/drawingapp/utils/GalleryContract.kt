@@ -7,6 +7,7 @@ import android.net.Uri
 import android.provider.MediaStore
 import androidx.activity.result.contract.ActivityResultContract
 
+/** Used for handling actions with gallery, after permission has been checked*/
 class GalleryContract: ActivityResultContract<String, Uri?>() {
     override fun createIntent(context: Context, input: String?): Intent {
         return Intent(
