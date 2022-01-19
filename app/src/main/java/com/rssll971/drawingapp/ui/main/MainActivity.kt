@@ -4,7 +4,6 @@ package com.rssll971.drawingapp.ui.main
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.media.MediaScannerConnection
@@ -19,6 +18,7 @@ import android.widget.SeekBar
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts.*
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import com.android.billingclient.api.*
 import com.google.android.gms.ads.*
 import com.google.android.gms.ads.interstitial.InterstitialAd
@@ -38,6 +38,7 @@ import com.rssll971.drawingapp.utils.CustomPath
 import com.rssll971.drawingapp.utils.GalleryContract
 import com.rssll971.drawingapp.utils.MyConstants
 import com.skydoves.colorpickerview.listeners.ColorListener
+import kotlinx.coroutines.launch
 import java.lang.Exception
 import javax.inject.Inject
 //todo background color(different layouts curr)
@@ -68,7 +69,7 @@ class MainActivity : AppCompatActivity(), MainContract.MainView {
 
         initBrushSizeListener()
 
-        presenter.checkNoAdsPurchaseStatus(this, this)
+        presenter.shouldShowAdsRationale(this, this)
 
         //Handler(Looper.getMainLooper()).postDelayed({onWindowFocusChanged(true)}, 1000)
 
@@ -95,9 +96,12 @@ class MainActivity : AppCompatActivity(), MainContract.MainView {
             }
             btnShare.setOnClickListener {
                 changeExtraOptionsVisibility(View.GONE)
-                presenter.onSaveBitmapClick(
-                    this@MainActivity,
-                    presenter.getBitmapFromView(binding.flContainer))
+                lifecycleScope.launch {
+                    presenter.saveBitmapToStorage(
+                        this@MainActivity,
+                        presenter.getBitmapFromView(binding.flContainer)
+                    )
+                }
             }
             btnGallery.setOnClickListener {
                 changeExtraOptionsVisibility(View.GONE)
@@ -377,17 +381,10 @@ class MainActivity : AppCompatActivity(), MainContract.MainView {
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        when(requestCode){
-            MyConstants.GALLERY_PERMISSION_REQUEST_CODE ->{
-               changeExtraOptionsVisibility(View.GONE)
-               if (grantResults.isNotEmpty() &&
-                   grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                   showGalleryForImage()
-               } else{
-                   showSnackBarPermissionRequest()
-               }
-           }
-       }
+        presenter.onPermissionsResult(
+            requestCode = requestCode,
+            permissions = permissions,
+            grantResults = grantResults)
     }
 
     override fun showSnackBarPermissionRequest() {
@@ -426,11 +423,14 @@ class MainActivity : AppCompatActivity(), MainContract.MainView {
     override fun showShareOption(path: String) {
         MediaScannerConnection.scanFile(
             this@MainActivity,
-            arrayOf(path), null){ _, uri ->
+            arrayOf(path), null){
+                _, uri ->
+
             val sharingIntent = Intent()
             sharingIntent.action = Intent.ACTION_SEND
             sharingIntent.putExtra(Intent.EXTRA_STREAM, uri)
             sharingIntent.type = "image/png"
+
             startActivity(
                 Intent.createChooser( sharingIntent, "Share"))
         }
@@ -480,6 +480,7 @@ class MainActivity : AppCompatActivity(), MainContract.MainView {
         progressDialog.window?.setGravity(Gravity.TOP)
         progressDialog.setContentView(R.layout.dialog_progress)
         progressDialog.show()
+        lifecycleScope
     }
 
     override fun hideProgressDialog() {

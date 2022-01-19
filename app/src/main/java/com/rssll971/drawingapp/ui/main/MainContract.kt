@@ -22,13 +22,19 @@ interface MainContract {
          * Responsible only to Gallery*/
         fun checkStoragePermission(context: Context)
 
+        /**Handle events corresponding to permissions result
+         *  and next actions based on it*/
+        fun onPermissionsResult(requestCode: Int,
+                                permissions: Array<out String>,
+                                grantResults: IntArray)
+
         /**Create bitmap from container FrameView.
          * Implements sandwich*/
         fun getBitmapFromView(v: View): Bitmap
 
         /**Save bitmap in Picture folder using Coroutine.
          * On success call showShareOption(...)*/
-        fun onSaveBitmapClick(context: Context, bitmap: Bitmap)
+        suspend fun saveBitmapToStorage(context: Context, bitmap: Bitmap)
 
         /**Init every time while app starts, but ONLY in checkNoAdsPurchaseStatus(...)*/
         fun initBillingClient(context: Context)
@@ -40,7 +46,7 @@ interface MainContract {
         /**Check noAds purchase Status from sharedPreferences.
          * If shp doesn't exist, will create it and after will init initBillingClient(...)
          * NOTE: Status on positive can be changed ONLY in disableAllAds()*/
-        fun checkNoAdsPurchaseStatus(activity: Activity, context: Context)
+        fun shouldShowAdsRationale(activity: Activity, context: Context)
     }
     interface MainView: BaseContract.View{
 

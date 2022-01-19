@@ -26,10 +26,10 @@ import java.io.FileOutputStream
 import java.io.OutputStream
 import java.util.*
 import kotlin.collections.ArrayList
+import androidx.lifecycle.lifecycleScope
 
 class MainPresenter: MainContract.Presenter {
     private var view: MainContract.MainView? = null
-    private var jobImageSaving = CoroutineScope(Job() + Dispatchers.IO)
     private lateinit var billingClient: BillingClient
 
     override fun attach(view: MainContract.MainView) {
@@ -38,7 +38,6 @@ class MainPresenter: MainContract.Presenter {
 
     override fun detach() {
         this.view = null
-        jobImageSaving.cancel()
     }
 
     override fun setViewVisibility(context: Context, v: View, tag: String) {
@@ -72,6 +71,23 @@ class MainPresenter: MainContract.Presenter {
         }
     }
 
+    override fun onPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        when(requestCode){
+            MyConstants.GALLERY_PERMISSION_REQUEST_CODE ->{
+                if (grantResults.isNotEmpty() &&
+                    grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    view?.showGalleryForImage()
+                } else{
+                    view?.showSnackBarPermissionRequest()
+                }
+            }
+        }
+    }
+
     override fun getBitmapFromView(v: View): Bitmap {
         val bitmap = Bitmap.createBitmap(v.width, v.height, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
@@ -86,11 +102,8 @@ class MainPresenter: MainContract.Presenter {
         return bitmap
     }
 
-    override fun onSaveBitmapClick(context: Context, bitmap: Bitmap) {
-        jobImageSaving.launch { saveBitmapToStorage(context = context, bitmap = bitmap) }
-    }
     @Suppress("DEPRECATION")
-    private suspend fun saveBitmapToStorage(context: Context, bitmap: Bitmap){
+    override suspend fun saveBitmapToStorage(context: Context, bitmap: Bitmap){
         var resultPath: String?
         val directory = Environment.DIRECTORY_PICTURES
         val date = System.currentTimeMillis()
@@ -101,55 +114,59 @@ class MainPresenter: MainContract.Presenter {
             view?.showProgressDialog()
         }
 
-        runCatching {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
-                val resolver = context.contentResolver
-                val contentValues = ContentValues()
+        withContext(Dispatchers.IO){
+            runCatching {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
+                    val resolver = context.contentResolver
+                    val contentValues = ContentValues()
 
-                contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, fileName + format)
-                contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "image/png")
-                contentValues.put(MediaStore.MediaColumns.DATE_ADDED, date)
-                contentValues.put(MediaStore.MediaColumns.DATE_MODIFIED, date)
-                contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, directory)
+                    contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, fileName + format)
+                    contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "image/png")
+                    contentValues.put(MediaStore.MediaColumns.DATE_ADDED, date)
+                    contentValues.put(MediaStore.MediaColumns.DATE_MODIFIED, date)
+                    contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, directory)
 
-                val imageUri = resolver?.insert(
-                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)!!
-                val openOutputStream = resolver.openOutputStream(Objects.requireNonNull(imageUri))
-                bitmap.compress(Bitmap.CompressFormat.PNG, 100, openOutputStream)
-                Objects.requireNonNull<OutputStream>(openOutputStream)
+                    val imageUri = resolver?.insert(
+                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)!!
 
-                resultPath = File(
-                    Environment.getExternalStoragePublicDirectory(directory),
-                    fileName + format).absolutePath
-            } else{
-                val bytes = ByteArrayOutputStream()
-                bitmap.compress(Bitmap.CompressFormat.PNG, 100, bytes)
+                    val openOutputStream = resolver.openOutputStream(Objects.requireNonNull(imageUri))
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, openOutputStream)
 
-                val file = File(
-                    Environment.getExternalStoragePublicDirectory(directory),
-                    fileName + format)
+                    Objects.requireNonNull<OutputStream>(openOutputStream)
 
-                val fileOutputStream = FileOutputStream(file)
-                fileOutputStream.write(bytes.toByteArray())
-                fileOutputStream.close()
+                    resultPath = File(
+                        Environment.getExternalStoragePublicDirectory(directory),
+                        fileName + format).absolutePath
+                } else{
+                    val bytes = ByteArrayOutputStream()
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, bytes)
 
-                resultPath = file.absolutePath
-            }
+                    val file = File(
+                        Environment.getExternalStoragePublicDirectory(directory),
+                        fileName + format)
 
-            if (!resultPath.isNullOrEmpty()){
-                if (File(resultPath!!).exists()){
-                    withContext(Dispatchers.Main){
-                        view?.hideProgressDialog()
-                        view?.showShareOption(resultPath!!)
+                    val fileOutputStream = FileOutputStream(file)
+                    fileOutputStream.write(bytes.toByteArray())
+                    fileOutputStream.close()
+
+                    resultPath = file.absolutePath
+                }
+
+                if (!resultPath.isNullOrEmpty()){
+                    if (File(resultPath!!).exists()){
+                        withContext(Dispatchers.Main){
+                            view?.hideProgressDialog()
+                            view?.showShareOption(resultPath!!)
+                        }
                     }
                 }
-            }
-        }.onFailure {
-            it.printStackTrace()
+            }.onFailure {
+                it.printStackTrace()
 
-            withContext(Dispatchers.Main){
-                view?.hideProgressDialog()
-                view?.showErrorSnackBar()
+                withContext(Dispatchers.Main){
+                    view?.hideProgressDialog()
+                    view?.showErrorSnackBar()
+                }
             }
         }
     }
@@ -261,13 +278,14 @@ class MainPresenter: MainContract.Presenter {
         billingClient.launchBillingFlow(activity, flowParams).responseCode
     }
 
-    override fun checkNoAdsPurchaseStatus(activity: Activity, context: Context) {
+    override fun shouldShowAdsRationale(activity: Activity, context: Context) {
         val shp = activity.getPreferences(Context.MODE_PRIVATE)
         if (shp.contains(IN_APP_PURCHASE_ID)){
             //check status based on local data
             if (!shp.getBoolean(IN_APP_PURCHASE_ID, true)){
                 //on noPurchase status, ads will be initialized, but no shown
-                view?.initAds()
+                //TODO erase comment
+                //view?.initAds()
             }
         } else{
             val editor = shp.edit()
