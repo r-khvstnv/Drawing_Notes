@@ -34,4 +34,8 @@
     <string name="st_buy">Buy</string>
     <string name="st_no_ads">No Ads</string>
     <string name="st_goes_wrong">Something goes wrong. Please, try again later</string>
+
+    <string name="st_workspace">The working area is…</string>
+    <string name="st_full_workspace">Not limited by the edges of the image</string>
+    <string name="st_limited_workspace">Limited by the edges of the image</string>
 </resources>

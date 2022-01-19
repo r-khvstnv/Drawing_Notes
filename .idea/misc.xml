@@ -23,6 +23,8 @@
         <entry key="..\:/Programming/DrawingApp/app/src/main/res/drawable/ic_solid.xml" value="0.2703125" />
         <entry key="..\:/Programming/DrawingApp/app/src/main/res/drawable/ic_trash.xml" value="0.2703125" />
         <entry key="..\:/Programming/DrawingApp/app/src/main/res/drawable/ic_undo.xml" value="0.2703125" />
+        <entry key="..\:/Programming/DrawingApp/app/src/main/res/drawable/ic_workspace_full.xml" value="0.26614583333333336" />
+        <entry key="..\:/Programming/DrawingApp/app/src/main/res/drawable/ic_workspace_limited.xml" value="0.26614583333333336" />
         <entry key="..\:/Programming/DrawingApp/app/src/main/res/layout-land/activity_main.xml" value="0.20729166666666668" />
         <entry key="..\:/Programming/DrawingApp/app/src/main/res/layout-land/dialog_color_picker.xml" value="0.1671875" />
         <entry key="..\:/Programming/DrawingApp/app/src/main/res/layout-land/dialog_info.xml" value="0.19895833333333332" />
@@ -34,6 +36,10 @@
         <entry key="..\:/Programming/DrawingApp/app/src/main/res/layout/dialog_info.xml" value="0.25416666666666665" />
         <entry key="..\:/Programming/DrawingApp/app/src/main/res/layout/dialog_no_ads_purchase.xml" value="0.25416666666666665" />
         <entry key="..\:/Programming/DrawingApp/app/src/main/res/layout/dialog_progress.xml" value="0.25416666666666665" />
+        <entry key="..\:/Programming/DrawingApp/app/src/main/res/layout/dialog_work_area.xml" value="0.25" />
+        <entry key="..\:/Programming/DrawingApp/app/src/main/res/layout/dialog_workspace.xml" value="0.264" />
+        <entry key="..\:/Programming/DrawingApp/app/src/main/res/layout/layout_app_info.xml" value="0.25" />
+        <entry key="..\:/Programming/DrawingApp/app/src/main/res/layout/layout_licence_references.xml" value="0.25" />
         <entry key="..\:/Programming/DrawingApp/app/src/main/res/layout/licence_references.xml" value="0.25416666666666665" />
       </map>
     </option>

@@ -28,10 +28,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
 import com.rssll971.drawingapp.R
-import com.rssll971.drawingapp.databinding.ActivityMainBinding
-import com.rssll971.drawingapp.databinding.DialogColorPickerBinding
-import com.rssll971.drawingapp.databinding.DialogDeleteBinding
-import com.rssll971.drawingapp.databinding.DialogNoAdsPurchaseBinding
+import com.rssll971.drawingapp.databinding.*
 import com.rssll971.drawingapp.di.ActivityModule
 import com.rssll971.drawingapp.di.DaggerActivityComponent
 import com.rssll971.drawingapp.utils.CustomPath
@@ -408,12 +405,7 @@ class MainActivity : AppCompatActivity(), MainContract.MainView {
     }
 
     private val galleryLauncher = registerForActivityResult(GalleryContract()){ uri: Uri? ->
-        try {
-            if (uri != null)
-                binding.ivUsersImage.setImageURI(uri)
-        } catch (e: Exception){
-            e.printStackTrace()
-        }
+        presenter.onGalleryLauncherResult(uri = uri)
     }
 
     override fun showGalleryForImage() {
@@ -449,6 +441,7 @@ class MainActivity : AppCompatActivity(), MainContract.MainView {
             with(dBinding){
                 //tvNoAdsTitle.text = skuDetails!!.title
                 tvNoAdsDescription.text = skuDetails!!.description
+                btnBuy.text = skuDetails!!.price
 
                 btnBuy.setOnClickListener {
                     presenter.requestNoAdsPurchase(
@@ -485,6 +478,10 @@ class MainActivity : AppCompatActivity(), MainContract.MainView {
 
     override fun hideProgressDialog() {
         progressDialog.dismiss()
+    }
+
+    override fun setUserImage(uri: Uri) {
+        binding.ivUsersImage.setImageURI(uri)
     }
 
     override fun onDestroy() {

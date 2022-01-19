@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/MyCardViewStyle"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:ignore="ContentDescription">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="320dp"
+        android:layout_height="wrap_content"
+        android:minWidth="320dp">
+
+        <TextView
+            android:id="@+id/tmp_workspace"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="@string/st_workspace"
+            android:textColor="@color/mGreyDark"
+            android:textSize="22sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <LinearLayout
+            android:id="@+id/ll_full_workspace"
+            android:layout_width="@dimen/dim_workspace_layouts_width"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/dim_workspace_layouts_margin"
+            android:background="@drawable/ib_option_ripple_white"
+            android:elevation="4dp"
+            android:orientation="vertical"
+            android:padding="@dimen/dim_workspace_layouts_padding"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/ll_limited_workspace"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tmp_workspace">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_workspace_full" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:text="@string/st_full_workspace"
+                android:textColor="@color/mGreyDark"
+                android:textSize="@dimen/dim_workspace_text_size" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_limited_workspace"
+            android:layout_width="@dimen/dim_workspace_layouts_width"
+            android:layout_height="0dp"
+            android:layout_marginHorizontal="@dimen/dim_workspace_layouts_margin"
+            android:background="@drawable/ib_option_ripple_white"
+            android:elevation="4dp"
+            android:gravity="bottom"
+            android:orientation="vertical"
+            android:padding="@dimen/dim_workspace_layouts_padding"
+            app:layout_constraintBottom_toBottomOf="@id/ll_full_workspace"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/ll_full_workspace"
+            app:layout_constraintTop_toTopOf="@id/ll_full_workspace">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_workspace_limited" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:text="@string/st_limited_workspace"
+                android:textColor="@color/mGreyDark"
+                android:textSize="@dimen/dim_workspace_text_size" />
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>

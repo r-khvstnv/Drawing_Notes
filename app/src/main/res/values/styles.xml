@@ -52,4 +52,10 @@
         <item name="android:padding">5dp</item>
         <item name="android:scaleType">fitCenter</item>
     </style>
+
+    <style name="MyCardViewStyle" parent="Widget.MaterialComponents.CardView">
+        <item name="cardBackgroundColor">@color/mWhite</item>
+        <item name="cardCornerRadius">@dimen/dim_general_radius</item>
+        <item name="layout_constrainedWidth">true</item>
+    </style>
 </resources>

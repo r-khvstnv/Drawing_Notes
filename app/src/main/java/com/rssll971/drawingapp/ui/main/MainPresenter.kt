@@ -8,6 +8,7 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
+import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
@@ -27,6 +28,7 @@ import java.io.OutputStream
 import java.util.*
 import kotlin.collections.ArrayList
 import androidx.lifecycle.lifecycleScope
+import java.lang.Exception
 
 class MainPresenter: MainContract.Presenter {
     private var view: MainContract.MainView? = null
@@ -296,5 +298,15 @@ class MainPresenter: MainContract.Presenter {
 
         //ads will be shown based on remote data
         initBillingClient(context = context)
+    }
+
+    override fun onGalleryLauncherResult(uri: Uri?) {
+        try {
+            if (uri != null){
+                view?.setUserImage(uri = uri)
+            }
+        } catch (e: Exception){
+            e.printStackTrace()
+        }
     }
 }

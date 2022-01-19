@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.net.Uri
 import android.nfc.Tag
 import android.view.View
 import com.android.billingclient.api.SkuDetails
@@ -47,6 +48,9 @@ interface MainContract {
          * If shp doesn't exist, will create it and after will init initBillingClient(...)
          * NOTE: Status on positive can be changed ONLY in disableAllAds()*/
         fun shouldShowAdsRationale(activity: Activity, context: Context)
+
+        /**Handle events after gallery intent was closed*/
+        fun onGalleryLauncherResult(uri: Uri?)
     }
     interface MainView: BaseContract.View{
 
@@ -114,5 +118,8 @@ interface MainContract {
         fun showSnackBarPermissionRequest()
         fun showAppSettings()
         fun showErrorSnackBar()
+
+        /**Place user image using uri*/
+        fun setUserImage(uri: Uri)
     }
 }

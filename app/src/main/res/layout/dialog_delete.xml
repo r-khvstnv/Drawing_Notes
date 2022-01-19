@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/MyCardViewStyle"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:background="@color/mWhite"
-    app:cardCornerRadius="@dimen/dim_general_radius"
-    app:layout_constrainedWidth="true">
+    android:layout_height="wrap_content">
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -17,6 +15,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/dim_delete_btn_margin"
+            android:maxLines="1"
             android:text="@string/st_what_want_to_remove"
             android:textColor="@color/mGreyDark"
             android:textSize="@dimen/dim_delete_dialog_title_text_size" />
@@ -24,27 +23,24 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
             android:layout_marginTop="10dp"
+            android:gravity="center"
             android:orientation="horizontal">
 
             <Button
                 android:id="@+id/btn_remove_lines"
                 style="@style/DeleteButtonsStyle"
-                android:text="@string/st_lines"
-                />
+                android:text="@string/st_lines" />
 
             <Button
                 android:id="@+id/btn_remove_background"
                 style="@style/DeleteButtonsStyle"
-                android:text="@string/st_background"
-                 />
+                android:text="@string/st_background" />
 
             <Button
                 android:id="@+id/btn_remove_all"
                 style="@style/DeleteButtonsStyle"
-                android:text="@string/st_all"
-                />
+                android:text="@string/st_all" />
         </LinearLayout>
     </LinearLayout>
 </androidx.cardview.widget.CardView>
