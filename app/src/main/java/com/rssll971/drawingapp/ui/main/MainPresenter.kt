@@ -286,8 +286,7 @@ class MainPresenter: MainContract.Presenter {
             //check status based on local data
             if (!shp.getBoolean(IN_APP_PURCHASE_ID, true)){
                 //on noPurchase status, ads will be initialized, but no shown
-                //TODO erase comment
-                //view?.initAds()
+                view?.initAds()
             }
         } else{
             val editor = shp.edit()

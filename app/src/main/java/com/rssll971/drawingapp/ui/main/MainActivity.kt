@@ -38,7 +38,6 @@ import com.skydoves.colorpickerview.listeners.ColorListener
 import kotlinx.coroutines.launch
 import java.lang.Exception
 import javax.inject.Inject
-//todo background color(different layouts curr)
 
 class MainActivity : AppCompatActivity(), MainContract.MainView {
     @Inject lateinit var presenter: MainPresenter
