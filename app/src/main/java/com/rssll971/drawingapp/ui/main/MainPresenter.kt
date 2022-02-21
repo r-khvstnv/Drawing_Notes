@@ -27,7 +27,6 @@ import java.io.FileOutputStream
 import java.io.OutputStream
 import java.util.*
 import kotlin.collections.ArrayList
-import androidx.lifecycle.lifecycleScope
 import java.lang.Exception
 
 class MainPresenter: MainContract.Presenter {
