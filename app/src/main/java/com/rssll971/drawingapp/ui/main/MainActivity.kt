@@ -1,3 +1,11 @@
+/************************************************
+ * Created by Ruslan Khvastunov                 *
+ * r.khvastunov@gmail.com                       *
+ * Copyright (c) 2022                           *
+ * All rights reserved.                         *
+ *                                              *
+ ************************************************/
+
 package com.rssll971.drawingapp.ui.main
 
 
@@ -8,21 +16,23 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.media.MediaScannerConnection
 import android.net.Uri
-import android.os.*
+import android.os.Bundle
 import android.provider.Settings
-import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
-import android.view.*
+import android.view.Gravity
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts.*
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.lifecycleScope
-import com.android.billingclient.api.*
+import com.android.billingclient.api.SkuDetails
 import com.google.android.gms.ads.*
 import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
@@ -31,7 +41,10 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
 import com.rssll971.drawingapp.R
-import com.rssll971.drawingapp.databinding.*
+import com.rssll971.drawingapp.databinding.ActivityMainBinding
+import com.rssll971.drawingapp.databinding.DialogColorPickerBinding
+import com.rssll971.drawingapp.databinding.DialogDeleteBinding
+import com.rssll971.drawingapp.databinding.DialogNoAdsPurchaseBinding
 import com.rssll971.drawingapp.di.ActivityModule
 import com.rssll971.drawingapp.di.DaggerActivityComponent
 import com.rssll971.drawingapp.utils.CustomPath
@@ -39,7 +52,6 @@ import com.rssll971.drawingapp.utils.GalleryContract
 import com.rssll971.drawingapp.utils.MyConstants
 import com.skydoves.colorpickerview.listeners.ColorListener
 import kotlinx.coroutines.launch
-import java.lang.Exception
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity(), MainContract.MainView {
