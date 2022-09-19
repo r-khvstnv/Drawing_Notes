@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Created by Ruslan Khvastunov
   ~ r.khvastunov@gmail.com
   ~ Copyright (c) 2022
@@ -12,6 +11,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="?android:colorBackground"
     android:orientation="vertical"
     tools:context=".ui.main.MainActivity"
     tools:ignore="ContentDescription">
@@ -20,7 +20,7 @@
         android:id="@+id/ads_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:elevation="10dp"
+        android:elevation="@dimen/ads_container_elevation"
         android:orientation="vertical"
         android:visibility="gone"
         tools:visibility="visible">
@@ -29,10 +29,10 @@
             android:id="@+id/adView_banner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:elevation="10dp"
             ads:adSize="SMART_BANNER"
             ads:adUnitId="@string/banner_id_Ads" />
     </LinearLayout>
+
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -40,12 +40,9 @@
         <!-- Layout with user image and drawing view -->
         <FrameLayout
             android:id="@+id/fl_container"
+            style="@style/ContainerFrameStyle"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginTop="2dp"
-            android:layout_marginBottom="10dp"
-            android:background="@color/mWhite"
-            android:elevation="2dp"
             app:layout_constraintBottom_toTopOf="@id/btn_black"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
@@ -64,211 +61,196 @@
                 android:background="@android:color/transparent" />
         </FrameLayout>
 
+
         <!-- Color buttons -->
-        <Button
+        <com.google.android.material.card.MaterialCardView
             android:id="@+id/btn_black"
-            style="@style/ColorButtonStyle"
-            android:layout_marginBottom="10dp"
+            style="@style/ColorCardStyle"
+            android:layout_marginBottom="@dimen/card_with_color_margin_bottom"
             android:backgroundTint="@color/mBlack"
             android:tag="@color/mBlack"
-            app:layout_constraintBottom_toTopOf="@id/ll_primary_options"
+            app:layout_constraintBottom_toTopOf="@id/_primary_options_card"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toLeftOf="@id/btn_grey" />
 
-        <Button
+        <com.google.android.material.card.MaterialCardView
             android:id="@+id/btn_grey"
-            style="@style/ColorButtonStyle"
+            style="@style/ColorCardStyle"
             android:backgroundTint="@color/mGrey"
             android:tag="@color/mGrey"
             app:layout_constraintBottom_toBottomOf="@id/btn_black"
             app:layout_constraintLeft_toRightOf="@id/btn_black"
             app:layout_constraintRight_toLeftOf="@id/btn_white" />
 
-        <Button
+        <com.google.android.material.card.MaterialCardView
             android:id="@+id/btn_white"
-            style="@style/ColorButtonStyle"
+            style="@style/ColorCardStyle"
             android:backgroundTint="@color/mWhite"
             android:tag="@color/mWhite"
             app:layout_constraintBottom_toBottomOf="@id/btn_black"
             app:layout_constraintLeft_toRightOf="@id/btn_grey"
             app:layout_constraintRight_toLeftOf="@id/btn_red" />
 
-        <Button
+        <com.google.android.material.card.MaterialCardView
             android:id="@+id/btn_red"
-            style="@style/ColorButtonStyle"
+            style="@style/ColorCardStyle"
             android:backgroundTint="@color/mRed"
             android:tag="@color/mRed"
             app:layout_constraintBottom_toBottomOf="@id/btn_black"
             app:layout_constraintLeft_toRightOf="@id/btn_white"
             app:layout_constraintRight_toLeftOf="@id/btn_orange" />
 
-        <Button
+        <com.google.android.material.card.MaterialCardView
             android:id="@+id/btn_orange"
-            style="@style/ColorButtonStyle"
+            style="@style/ColorCardStyle"
             android:backgroundTint="@color/mOrange"
             android:tag="@color/mOrange"
             app:layout_constraintBottom_toBottomOf="@id/btn_black"
             app:layout_constraintLeft_toRightOf="@id/btn_red"
             app:layout_constraintRight_toLeftOf="@id/btn_green" />
 
-        <Button
+        <com.google.android.material.card.MaterialCardView
             android:id="@+id/btn_green"
-            style="@style/ColorButtonStyle"
+            style="@style/ColorCardStyle"
             android:backgroundTint="@color/mGreen"
             android:tag="@color/mGreen"
             app:layout_constraintBottom_toBottomOf="@id/btn_black"
             app:layout_constraintLeft_toRightOf="@id/btn_orange"
             app:layout_constraintRight_toLeftOf="@id/btn_blue" />
 
-        <Button
+        <com.google.android.material.card.MaterialCardView
             android:id="@+id/btn_blue"
-            style="@style/ColorButtonStyle"
+            style="@style/ColorCardStyle"
             android:backgroundTint="@color/mBlue"
             android:tag="@color/mBlue"
             app:layout_constraintBottom_toBottomOf="@id/btn_black"
             app:layout_constraintLeft_toRightOf="@id/btn_green"
             app:layout_constraintRight_toRightOf="parent" />
 
+
         <!-- Layout with primary functionality -->
-        <LinearLayout
-            android:id="@+id/ll_primary_options"
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/_primary_options_card"
+            style="@style/OptionsCardStyle.Primary"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="10dp"
-            android:layout_marginBottom="10dp"
-            android:background="@drawable/option_list_background"
-            android:elevation="5dp"
-            android:gravity="center_horizontal"
-            android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toLeftOf="@id/ll_menu">
+            app:layout_constraintRight_toLeftOf="@id/_secondary_options_card">
 
-            <ImageButton
-                android:id="@+id/btn_no_ads"
-                style="@style/OptionImageButtonStyle"
-                android:layout_marginHorizontal="@dimen/dim_option_btn_margin_horizontal"
-                android:layout_marginVertical="@dimen/dim_option_btn_margin_vertical"
-                android:src="@drawable/ic_no_ads"
-                android:visibility="gone"
-                tools:visibility="visible" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal">
 
-            <ImageButton
-                android:id="@+id/btn_fit"
-                style="@style/OptionImageButtonStyle"
-                android:layout_marginHorizontal="@dimen/dim_option_btn_margin_horizontal"
-                android:layout_marginVertical="@dimen/dim_option_btn_margin_vertical"
-                android:src="@drawable/ic_fit" />
+                <ImageButton
+                    android:id="@+id/btn_no_ads"
+                    style="@style/OptionImageButtonStyle.MonoIconImpl"
+                    android:src="@drawable/ic_no_ads"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
 
-            <ImageButton
-                android:id="@+id/btn_undo"
-                style="@style/OptionImageButtonStyle"
-                android:layout_marginHorizontal="@dimen/dim_option_btn_margin_horizontal"
-                android:layout_marginVertical="@dimen/dim_option_btn_margin_vertical"
-                android:src="@drawable/ic_undo" />
+                <ImageButton
+                    android:id="@+id/btn_fit"
+                    style="@style/OptionImageButtonStyle.MonoIconImpl"
+                    android:src="@drawable/ic_fit" />
 
-            <ImageButton
-                android:id="@+id/btn_brush_size"
-                style="@style/OptionImageButtonStyle"
-                android:layout_marginHorizontal="@dimen/dim_option_btn_margin_horizontal"
-                android:layout_marginVertical="@dimen/dim_option_btn_margin_vertical"
-                android:src="@drawable/ic_pencil"
-                android:tag="@string/st_brush_size" />
+                <ImageButton
+                    android:id="@+id/btn_undo"
+                    style="@style/OptionImageButtonStyle.MonoIconImpl"
+                    android:src="@drawable/ic_undo" />
 
-            <ImageButton
-                android:id="@+id/btn_palette"
-                style="@style/OptionImageButtonStyle"
-                android:layout_marginHorizontal="@dimen/dim_option_btn_margin_horizontal"
-                android:layout_marginVertical="@dimen/dim_option_btn_margin_vertical"
-                android:src="@drawable/ic_palette" />
+                <ImageButton
+                    android:id="@+id/btn_brush_size"
+                    style="@style/OptionImageButtonStyle.MonoIconImpl"
+                    android:src="@drawable/ic_pencil"
+                    android:tag="@string/st_brush_size" />
 
-        </LinearLayout>
+                <ImageButton
+                    android:id="@+id/btn_palette"
+                    style="@style/OptionImageButtonStyle"
+                    android:src="@drawable/ic_palette" />
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
 
 
         <!-- Brush size changer -->
-        <LinearLayout
+        <com.google.android.material.card.MaterialCardView
             android:id="@+id/ll_brush_size_window"
+            style="@style/BrushSizeCardStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="50dp"
-            android:background="@drawable/option_list_background"
-            android:elevation="10dp"
-            android:orientation="horizontal"
-            android:paddingHorizontal="8dp"
-            android:paddingVertical="10dp"
             android:visibility="gone"
-            app:layout_constraintBottom_toTopOf="@id/ll_primary_options"
-            app:layout_constraintRight_toRightOf="@id/ll_primary_options"
+            app:layout_constraintBottom_toTopOf="@id/_primary_options_card"
+            app:layout_constraintRight_toRightOf="@id/_primary_options_card"
             tools:visibility="visible">
 
             <SeekBar
                 android:id="@+id/sb_brush_size"
                 style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="180dp"
+                android:layout_width="@dimen/brush_size_container_width"
                 android:layout_height="wrap_content"
+                android:layout_margin="@dimen/brush_size_container_padding"
                 android:max="50" />
-        </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
 
         <!-- Layout with extra menu -->
-        <LinearLayout
-            android:id="@+id/ll_menu"
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/_secondary_options_card"
+            style="@style/OptionsCardStyle.Secondary"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="10dp"
-            android:layout_marginBottom="10dp"
-            android:background="@drawable/option_list_background"
-            android:elevation="5dp"
-            android:gravity="center_vertical"
-            android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintRight_toRightOf="parent">
 
             <LinearLayout
-                android:id="@+id/ll_extra_options"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:visibility="gone"
-                tools:visibility="visible">
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:id="@+id/ll_extra_options"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:visibility="gone"
+                    tools:visibility="visible">
+
+                    <ImageButton
+                        android:id="@+id/btn_info"
+                        style="@style/OptionImageButtonStyle.MonoIconImpl"
+                        android:src="@drawable/ic_info" />
+
+                    <ImageButton
+                        android:id="@+id/btn_gallery"
+                        style="@style/OptionImageButtonStyle.MonoIconImpl"
+                        android:src="@drawable/ic_gallery" />
+
+                    <ImageButton
+                        android:id="@+id/btn_share"
+                        style="@style/OptionImageButtonStyle.MonoIconImpl"
+                        android:src="@drawable/ic_share" />
+
+                    <ImageButton
+                        android:id="@+id/btn_trash"
+                        style="@style/OptionImageButtonStyle.MonoIconImpl"
+                        android:src="@drawable/ic_trash" />
+                </LinearLayout>
 
                 <ImageButton
-                    android:id="@+id/btn_info"
-                    style="@style/OptionImageButtonStyle"
-                    android:layout_marginHorizontal="@dimen/dim_extra_options_margin_vertical"
-                    android:layout_marginVertical="@dimen/dim_option_btn_margin_vertical"
-                    android:src="@drawable/ic_info" />
-
-                <ImageButton
-                    android:id="@+id/btn_gallery"
-                    style="@style/OptionImageButtonStyle"
-                    android:layout_marginHorizontal="@dimen/dim_extra_options_margin_vertical"
-                    android:layout_marginVertical="@dimen/dim_option_btn_margin_vertical"
-                    android:src="@drawable/ic_gallery" />
-
-                <ImageButton
-                    android:id="@+id/btn_share"
-                    style="@style/OptionImageButtonStyle"
-                    android:layout_marginHorizontal="@dimen/dim_extra_options_margin_vertical"
-                    android:layout_marginVertical="@dimen/dim_option_btn_margin_vertical"
-                    android:src="@drawable/ic_share" />
-
-                <ImageButton
-                    android:id="@+id/btn_trash"
-                    style="@style/OptionImageButtonStyle"
-                    android:layout_marginHorizontal="@dimen/dim_extra_options_margin_vertical"
-                    android:layout_marginVertical="@dimen/dim_option_btn_margin_vertical"
-                    android:src="@drawable/ic_trash" />
+                    android:id="@+id/btn_extra_options"
+                    style="@style/OptionImageButtonStyle.MonoIconImpl"
+                    android:src="@drawable/ic_menu"
+                    android:tag="@string/st_extra_options" />
             </LinearLayout>
 
-            <ImageButton
-                android:id="@+id/btn_extra_options"
-                style="@style/OptionImageButtonStyle"
-                android:layout_marginHorizontal="@dimen/dim_extra_options_margin_vertical"
-                android:layout_marginVertical="@dimen/dim_option_btn_margin_vertical"
-                android:src="@drawable/ic_menu"
-                android:tag="@string/st_extra_options" />
-        </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </LinearLayout>

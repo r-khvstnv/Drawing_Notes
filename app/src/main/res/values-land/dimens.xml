@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Created by Ruslan Khvastunov
+  ~ r.khvastunov@gmail.com
+  ~ Copyright (c) 2022
+  ~ All rights reserved.
+  ~
+  -->
+
+<resources>
+    <dimen name="frame_container_margin_start">0dp</dimen>
+    <dimen name="frame_container_margin_top">0dp</dimen>
+    <dimen name="frame_container_margin_end">10dp</dimen>
+    <dimen name="frame_container_margin_bottom">10dp</dimen>
+
+    <dimen name="option_ibtn_margin_horizontal">6dp</dimen>
+    <dimen name="option_ibtn_margin_vertical">8dp</dimen>
+
+    <dimen name="primary_options_card_margin_start">0dp</dimen>
+    <dimen name="primary_options_card_margin_top">0dp</dimen>
+    <dimen name="primary_options_card_margin_end">10dp</dimen>
+    <dimen name="primary_options_card_margin_bottom">10dp</dimen>
+
+    <dimen name="secondary_options_card_margin_start">0dp</dimen>
+    <dimen name="secondary_options_card_margin_top">10dp</dimen>
+    <dimen name="secondary_options_card_margin_end">10dp</dimen>
+    <dimen name="secondary_options_card_margin_bottom">0dp</dimen>
+
+    <dimen name="brush_size_container_margin_end">30dp</dimen>
+    <dimen name="brush_size_container_margin_bottom">0dp</dimen>
+</resources>

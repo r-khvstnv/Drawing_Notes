@@ -24,38 +24,99 @@
         <item name="android:layout_marginStart">36dp</item>
     </style>
 
-    <style name="DeleteButtonsStyle" parent="Widget.AppCompat.Button">
+    <style name="DeleteButtonsStyle" parent="Widget.Material3.Button">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">@dimen/dim_delete_btn_height</item>
         <item name="android:layout_margin">@dimen/dim_delete_btn_margin</item>
         <item name="android:elevation">@dimen/dim_option_btn_elevation</item>
-        <item name="android:background">@drawable/ib_option_ripple_red</item>
+        <item name="android:background">@drawable/shape_rectangle_with_round_corners</item>
+        <item name="android:backgroundTint">?attr/colorError</item>
         <item name="android:paddingStart">@dimen/dim_delete_btn_padding</item>
         <item name="android:paddingEnd">@dimen/dim_delete_btn_padding</item>
-        <item name="android:textColor">@color/mBlack</item>
+        <item name="android:textColor">?attr/colorOnError</item>
         <item name="android:textSize">@dimen/dim_delete_btn_text_size</item>
     </style>
 
     <style name="ColorButtonStyle" parent="Widget.AppCompat.Button">
-        <item name="android:layout_width">@dimen/dim_btn_color_size</item>
-        <item name="android:layout_height">@dimen/dim_btn_color_size</item>
+        <item name="android:layout_width">@dimen/card_with_color_size</item>
+        <item name="android:layout_height">@dimen/card_with_color_size</item>
         <item name="android:background">@drawable/btn_colors_background</item>
         <item name="android:elevation">5dp</item>
         <item name="android:onClick">colorClicked</item>
     </style>
 
-    <style name="OptionImageButtonStyle" parent="Widget.AppCompat.ImageButton">
-        <item name="android:layout_width">@dimen/dim_option_btn_size</item>
-        <item name="android:layout_height">@dimen/dim_option_btn_size</item>
-        <item name="android:background">@drawable/ib_option_ripple_white</item>
-        <item name="android:elevation">4dp</item>
-        <item name="android:padding">5dp</item>
-        <item name="android:scaleType">fitCenter</item>
-    </style>
+
 
     <style name="MyCardViewStyle" parent="Widget.MaterialComponents.CardView">
         <item name="cardBackgroundColor">@color/mWhite</item>
-        <item name="cardCornerRadius">@dimen/dim_general_radius</item>
+        <item name="cardCornerRadius">@dimen/m_default_radius</item>
         <item name="layout_constrainedWidth">true</item>
+    </style>
+
+
+
+
+    <style name="ContainerFrameStyle">
+        <item name="android:layout_marginStart">@dimen/frame_container_margin_start</item>
+        <item name="android:layout_marginTop">@dimen/frame_container_margin_top</item>
+        <item name="android:layout_marginEnd">@dimen/frame_container_margin_end</item>
+        <item name="android:layout_marginBottom">@dimen/frame_container_margin_bottom</item>
+        <item name="android:background">@color/mWhite</item>
+        <item name="android:elevation">@dimen/frame_container_elevation</item>
+    </style>
+
+    <style name="ColorCardStyle" parent="Widget.Material3.CardView.Elevated">
+        <item name="android:layout_width">@dimen/card_with_color_size</item>
+        <item name="android:layout_height">@dimen/card_with_color_size</item>
+        <item name="android:onClick">colorClicked</item>
+        <item name="cardCornerRadius">@dimen/card_with_color_radius</item>
+        <item name="cardElevation">@dimen/card_with_color_elevation</item>
+    </style>
+
+    <style name="OptionsCardStyle" parent="Widget.Material3.CardView.Elevated">
+        <item name="cardElevation">@dimen/options_card_general_elevation</item>
+        <item name="cardCornerRadius">@dimen/options_card_general_radius</item>
+        <item name="android:background">?android:colorBackground</item>
+    </style>
+
+    <style name="OptionsCardStyle.Primary" parent="OptionsCardStyle">
+        <item name="android:layout_marginStart">@dimen/primary_options_card_margin_start</item>
+        <item name="android:layout_marginTop">@dimen/primary_options_card_margin_top</item>
+        <item name="android:layout_marginEnd">@dimen/primary_options_card_margin_end</item>
+        <item name="android:layout_marginBottom">@dimen/primary_options_card_margin_bottom</item>
+    </style>
+
+    <style name="OptionsCardStyle.Secondary" parent="OptionsCardStyle">
+        <item name="android:layout_marginStart">@dimen/secondary_options_card_margin_start</item>
+        <item name="android:layout_marginTop">@dimen/secondary_options_card_margin_top</item>
+        <item name="android:layout_marginEnd">@dimen/secondary_options_card_margin_end</item>
+        <item name="android:layout_marginBottom">@dimen/secondary_options_card_margin_bottom</item>
+    </style>
+
+    <style name="OptionImageButtonStyle" parent="Widget.AppCompat.ImageButton">
+        <item name="android:layout_width">@dimen/option_ibtn_size</item>
+        <item name="android:layout_height">@dimen/option_ibtn_size</item>
+        <item name="android:background">@drawable/shape_rectangle_with_round_corners</item>
+        <item name="android:backgroundTint">?android:colorBackground</item>
+        <item name="android:elevation">4dp</item>
+        <item name="android:padding">5dp</item>
+        <item name="android:scaleType">fitCenter</item>
+        <item name="android:layout_marginStart">@dimen/option_ibtn_margin_horizontal</item>
+        <item name="android:layout_marginTop">@dimen/option_ibtn_margin_vertical</item>
+        <item name="android:layout_marginEnd">@dimen/option_ibtn_margin_horizontal</item>
+        <item name="android:layout_marginBottom">@dimen/option_ibtn_margin_vertical</item>
+    </style>
+
+    <style name="OptionImageButtonStyle.MonoIconImpl" parent="OptionImageButtonStyle">
+        <item name="android:tint">?attr/colorSecondary</item>
+    </style>
+
+    <style name="BrushSizeCardStyle" parent="Widget.Material3.CardView.Elevated">
+        <item name="cardElevation">@dimen/brush_size_container_elevation</item>
+        <item name="cardCornerRadius">@dimen/m_default_radius</item>
+        <item name="android:background">?android:colorBackground</item>
+        <item name="android:layout_marginEnd">@dimen/brush_size_container_margin_end</item>
+        <item name="android:layout_marginBottom">@dimen/brush_size_container_margin_bottom</item>
+        <item name="android:padding">@dimen/brush_size_container_padding</item>
     </style>
 </resources>
