@@ -1,61 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <style name="ReferencesStyleTitle" parent="Widget.AppCompat.TextView">
-        <item name="android:textColor">@color/mGreyDark</item>
-        <item name="android:textSize">@dimen/dim_references_text_size_title</item>
-        <item name="android:textAlignment">textStart</item>
-        <item name="android:textStyle">bold</item>
-    </style>
-
-    <style name="ReferencesStyleGeneral" parent="Widget.AppCompat.TextView">
-        <item name="android:textColor">@color/mGreyDark</item>
-        <item name="android:textSize">@dimen/dim_references_text_size_general</item>
-        <item name="android:textAlignment">textStart</item>
-        <item name="android:layout_marginStart">20dp</item>
-        <item name="android:layout_marginTop">10dp</item>
-        <item name="android:textStyle">bold</item>
-    </style>
-
-    <style name="ReferencesStyleDescription" parent="Widget.AppCompat.TextView">
-        <item name="android:textColor">@color/mGreyDark</item>
-        <item name="android:textSize">@dimen/dim_references_text_size_general</item>
-        <item name="android:textAlignment">textStart</item>
-        <item name="android:layout_marginStart">36dp</item>
-    </style>
-
-    <style name="DeleteButtonsStyle" parent="Widget.Material3.Button">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">@dimen/dim_delete_btn_height</item>
-        <item name="android:layout_margin">@dimen/dim_delete_btn_margin</item>
-        <item name="android:elevation">@dimen/dim_option_btn_elevation</item>
-        <item name="android:background">@drawable/shape_rectangle_with_round_corners</item>
-        <item name="android:backgroundTint">?attr/colorError</item>
-        <item name="android:paddingStart">@dimen/dim_delete_btn_padding</item>
-        <item name="android:paddingEnd">@dimen/dim_delete_btn_padding</item>
-        <item name="android:textColor">?attr/colorOnError</item>
-        <item name="android:textSize">@dimen/dim_delete_btn_text_size</item>
-    </style>
-
-    <style name="ColorButtonStyle" parent="Widget.AppCompat.Button">
-        <item name="android:layout_width">@dimen/card_with_color_size</item>
-        <item name="android:layout_height">@dimen/card_with_color_size</item>
-        <item name="android:background">@drawable/btn_colors_background</item>
-        <item name="android:elevation">5dp</item>
-        <item name="android:onClick">colorClicked</item>
-    </style>
-
-
-
-    <style name="MyCardViewStyle" parent="Widget.MaterialComponents.CardView">
-        <item name="cardBackgroundColor">@color/mWhite</item>
-        <item name="cardCornerRadius">@dimen/m_default_radius</item>
-        <item name="layout_constrainedWidth">true</item>
-    </style>
-
-
-
-
+    <!--Main container style-->
     <style name="ContainerFrameStyle">
         <item name="android:layout_marginStart">@dimen/frame_container_margin_start</item>
         <item name="android:layout_marginTop">@dimen/frame_container_margin_top</item>
@@ -65,6 +10,7 @@
         <item name="android:elevation">@dimen/frame_container_elevation</item>
     </style>
 
+    <!--Style for cards which represent available colors-->
     <style name="ColorCardStyle" parent="Widget.Material3.CardView.Elevated">
         <item name="android:layout_width">@dimen/card_with_color_size</item>
         <item name="android:layout_height">@dimen/card_with_color_size</item>
@@ -73,25 +19,29 @@
         <item name="cardElevation">@dimen/card_with_color_elevation</item>
     </style>
 
-    <style name="OptionsCardStyle" parent="Widget.Material3.CardView.Elevated">
+
+    <!--Default card style-->
+    <style name="MCardStyle" parent="Widget.Material3.CardView.Elevated">
         <item name="cardElevation">@dimen/options_card_general_elevation</item>
-        <item name="cardCornerRadius">@dimen/options_card_general_radius</item>
+        <item name="cardCornerRadius">@dimen/m_default_radius</item>
         <item name="android:background">?android:colorBackground</item>
     </style>
 
-    <style name="OptionsCardStyle.Primary" parent="OptionsCardStyle">
+
+    <style name="OptionsCardStyle.Primary" parent="MCardStyle">
         <item name="android:layout_marginStart">@dimen/primary_options_card_margin_start</item>
         <item name="android:layout_marginTop">@dimen/primary_options_card_margin_top</item>
         <item name="android:layout_marginEnd">@dimen/primary_options_card_margin_end</item>
         <item name="android:layout_marginBottom">@dimen/primary_options_card_margin_bottom</item>
     </style>
 
-    <style name="OptionsCardStyle.Secondary" parent="OptionsCardStyle">
+    <style name="OptionsCardStyle.Secondary" parent="MCardStyle">
         <item name="android:layout_marginStart">@dimen/secondary_options_card_margin_start</item>
         <item name="android:layout_marginTop">@dimen/secondary_options_card_margin_top</item>
         <item name="android:layout_marginEnd">@dimen/secondary_options_card_margin_end</item>
         <item name="android:layout_marginBottom">@dimen/secondary_options_card_margin_bottom</item>
     </style>
+
 
     <style name="OptionImageButtonStyle" parent="Widget.AppCompat.ImageButton">
         <item name="android:layout_width">@dimen/option_ibtn_size</item>
@@ -111,12 +61,25 @@
         <item name="android:tint">?attr/colorSecondary</item>
     </style>
 
-    <style name="BrushSizeCardStyle" parent="Widget.Material3.CardView.Elevated">
-        <item name="cardElevation">@dimen/brush_size_container_elevation</item>
-        <item name="cardCornerRadius">@dimen/m_default_radius</item>
-        <item name="android:background">?android:colorBackground</item>
+
+    <style name="BrushSizeCardStyle" parent="MCardStyle">
         <item name="android:layout_marginEnd">@dimen/brush_size_container_margin_end</item>
         <item name="android:layout_marginBottom">@dimen/brush_size_container_margin_bottom</item>
         <item name="android:padding">@dimen/brush_size_container_padding</item>
+    </style>
+
+
+    <style name="MButton.Icon" parent="Widget.Material3.Button.TextButton.Icon">
+        <item name="android:textColor">?attr/colorOnBackground</item>
+        <item name="android:backgroundTint">?android:colorBackground</item>
+        <item name="elevation">@dimen/options_btn_elevation</item>
+        <item name="iconTint">?attr/colorOnBackground</item>
+        <item name="android:elevation">@dimen/options_btn_elevation</item>
+    </style>
+
+    <style name="MButton.Icon.Delete" parent="MButton.Icon">
+        <item name="android:textColor">?attr/colorError</item>
+        <item name="iconTint">?attr/colorError</item>
+        <item name="android:textSize">@dimen/delete_options_text_size</item>
     </style>
 </resources>

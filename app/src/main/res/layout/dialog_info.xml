@@ -10,47 +10,35 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    style="@style/MyCardViewStyle"
+    style="@style/MCardStyle"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="20dp"
+        android:gravity="center"
+        android:padding="@dimen/m_default_margin"
         app:layout_constrainedWidth="true"
         tools:ignore="ContentDescription">
-
         <ImageView
-            android:id="@+id/iv_icon"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:elevation="4dp"
-            android:scaleType="fitXY"
+            android:id="@+id/iv_app_icon"
+            android:layout_width="@dimen/app_icon_size"
+            android:layout_height="@dimen/app_icon_size"
+            android:scaleType="fitCenter"
             android:src="@mipmap/ic_launcher_pen_foreground"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toLeftOf="@id/tmp_info"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:layout_marginBottom="@dimen/app_icon_margin_bottom"
+            />
 
-        <include
-            android:id="@+id/tmp_info"
-            layout="@layout/layout_app_info"
+        <TextView
+            android:id="@+id/tv_current_version"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/iv_icon"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <include
-            android:id="@+id/tmp_ref"
-            layout="@layout/layout_licence_references"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/iv_icon" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            android:layout_marginHorizontal="10dp"
+            android:text="@string/app_version"
+            android:textColor="?attr/colorPrimary"
+            android:textSize="12sp"
+            />
+    </LinearLayout>
 </androidx.cardview.widget.CardView>

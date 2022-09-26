@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Created by Ruslan Khvastunov
   ~ r.khvastunov@gmail.com
   ~ Copyright (c) 2022
@@ -7,9 +6,9 @@
   ~
   -->
 
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    style="@style/MyCardViewStyle"
+    style="@style/MCardStyle"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
 
@@ -17,38 +16,52 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="10dp">
+        android:padding="@dimen/m_default_margin">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/dim_delete_btn_margin"
             android:maxLines="1"
-            android:text="@string/st_what_want_to_remove"
-            android:textColor="@color/mGreyDark"
-            android:textSize="@dimen/dim_delete_dialog_title_text_size" />
+            android:text="@string/title_delete"
+            android:textColor="?attr/colorPrimary"
+            android:textSize="@dimen/delete_dialog_title_text_size"
+            android:textStyle="bold" />
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:layout_marginTop="10dp"
             android:gravity="center"
-            android:orientation="horizontal">
+            android:minWidth="200dp"
+            android:orientation="vertical">
 
             <Button
-                android:id="@+id/btn_remove_lines"
-                style="@style/DeleteButtonsStyle"
-                android:text="@string/st_lines" />
+                android:id="@+id/btn_delete_lines"
+                style="@style/MButton.Icon.Delete"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/delete_options_margin_vertical"
+                android:text="@string/action_lines"
+                app:icon="@drawable/ic_pencil" />
 
             <Button
-                android:id="@+id/btn_remove_background"
-                style="@style/DeleteButtonsStyle"
-                android:text="@string/st_background" />
+                android:id="@+id/btn_delete_background"
+                style="@style/MButton.Icon.Delete"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/delete_options_margin_vertical"
+                android:text="@string/action_background"
+                app:icon="@drawable/ic_texture" />
 
             <Button
-                android:id="@+id/btn_remove_all"
-                style="@style/DeleteButtonsStyle"
-                android:text="@string/st_all" />
+                android:id="@+id/btn_delete_all"
+                style="@style/MButton.Icon.Delete"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/delete_options_margin_vertical"
+                android:text="@string/action_all"
+                app:icon="@drawable/ic_frame_rectangle" />
         </LinearLayout>
     </LinearLayout>
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>

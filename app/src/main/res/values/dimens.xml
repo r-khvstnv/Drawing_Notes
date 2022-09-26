@@ -1,49 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <dimen name="dim_option_btn_elevation">4dp</dimen>
-
-    <dimen name="dim_extra_options_margin_horizontal">10dp</dimen>
-    <dimen name="dim_extra_options_margin_vertical">8dp</dimen>
-
-
-    <dimen name="dim_delete_dialog_title_text_size">20sp</dimen>
-    <dimen name="dim_delete_btn_height">40dp</dimen>
-    <dimen name="dim_delete_btn_text_size">16sp</dimen>
-    <dimen name="dim_delete_btn_margin">8dp</dimen>
-    <dimen name="dim_delete_btn_padding">5dp</dimen>
-
-    <dimen name="dim_references_text_size_general">18sp</dimen>
-    <dimen name="dim_references_text_size_title">22sp</dimen>
-
-    <dimen name="dim_workspace_layouts_padding">10dp</dimen>
-    <dimen name="dim_workspace_layouts_width">100dp</dimen>
-    <dimen name="dim_workspace_layouts_height">10dp</dimen>
-    <dimen name="dim_workspace_layouts_margin">20dp</dimen>
-    <dimen name="dim_workspace_text_size">14sp</dimen>
-
-
-    <!--New dimens-->
+    <!--Default values -->
     <dimen name="m_default_radius">6dp</dimen>
-    <dimen name="ads_container_elevation">10dp</dimen>
+    <dimen name="m_default_margin">16dp</dimen>
     <dimen name="options_card_general_radius">6dp</dimen>
     <dimen name="options_card_general_elevation">5dp</dimen>
+    <dimen name="options_btn_elevation">4dp</dimen>
 
+
+    <!--Frame layout-->
     <dimen name="frame_container_margin_start">0dp</dimen>
     <dimen name="frame_container_margin_top">2dp</dimen>
     <dimen name="frame_container_margin_end">0dp</dimen>
     <dimen name="frame_container_margin_bottom">10dp</dimen>
     <dimen name="frame_container_elevation">1dp</dimen>
 
+
+    <!--Colored card-->
     <dimen name="card_with_color_elevation">3dp</dimen>
     <dimen name="card_with_color_radius">8dp</dimen>
     <dimen name="card_with_color_margin_bottom">8dp</dimen>
     <dimen name="card_with_color_size">28dp</dimen>
 
+
+    <!--Image buttons (Primary, Secondary)-->
     <dimen name="option_ibtn_size">36dp</dimen>
     <dimen name="option_ibtn_margin_horizontal">8dp</dimen>
     <dimen name="option_ibtn_margin_vertical">6dp</dimen>
 
+
+    <!--Container with options-->
     <dimen name="primary_options_card_margin_start">10dp</dimen>
     <dimen name="primary_options_card_margin_top">0dp</dimen>
     <dimen name="primary_options_card_margin_end">10dp</dimen>
@@ -54,16 +40,46 @@
     <dimen name="secondary_options_card_margin_end">16dp</dimen>
     <dimen name="secondary_options_card_margin_bottom">10dp</dimen>
 
+
+    <!--Container for brush size -->
     <dimen name="brush_size_container_margin_end">0dp</dimen>
     <dimen name="brush_size_container_margin_bottom">50dp</dimen>
     <dimen name="brush_size_container_padding">6dp</dimen>
     <dimen name="brush_size_container_elevation">8dp</dimen>
     <dimen name="brush_size_container_width">200dp</dimen>
 
-    <dimen name="current_color_preview_size">34dp</dimen>
-    <dimen name="color_picker_items_margin">8dp</dimen>
 
-    <dimen name="color_impl_type_padding">5dp</dimen>
-    <dimen name="color_impl_type_icon_size">24dp</dimen>
-    <dimen name="color_impl_type_text_size">12sp</dimen>
+    <!--Color picker dialog-->
+    <dimen name="current_color_preview_height">34dp</dimen>
+    <dimen name="current_color_preview_margin_vertical">20dp</dimen>
+    <dimen name="color_picker_options_margin_horizontal">8dp</dimen>
+    <dimen name="color_picker_options_margin_vertical">0dp</dimen>
+
+    <dimen name="color_picker_card_padding">10dp</dimen>
+    <dimen name="color_picker_size">280dp</dimen>
+    <dimen name="color_picker_options_layout_margin_start">0dp</dimen>
+    <dimen name="color_picker_options_layout_margin_top">10dp</dimen>
+    <dimen name="color_picker_options_layout_margin_end">0dp</dimen>
+    <dimen name="color_picker_options_layout_margin_bottom">5dp</dimen>
+
+
+    <!--Delete dialog-->
+    <dimen name="delete_dialog_title_text_size">24sp</dimen>
+    <dimen name="delete_options_margin_vertical">4dp</dimen>
+    <dimen name="delete_options_text_size">18sp</dimen>
+
+
+    <!--Ads dialog-->
+    <dimen name="ads_container_elevation">10dp</dimen>
+    <dimen name="no_ads_card_padding">10dp</dimen>
+    <dimen name="no_ads_title_size">28sp</dimen>
+    <dimen name="no_ads_text_size">16sp</dimen>
+    <dimen name="btn_buy_margin_top">50dp</dimen>
+    <dimen name="btn_buy_padding">10dp</dimen>
+    <dimen name="btn_buy_text_size">20sp</dimen>
+
+
+    <!--Info dialog-->
+    <dimen name="app_icon_size">200dp</dimen>
+    <dimen name="app_icon_margin_bottom">50dp</dimen>
 </resources>

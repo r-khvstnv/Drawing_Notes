@@ -2,7 +2,7 @@
     <string name="app_name">Drawing Notes</string>
     <string name="app_version">1.0.7</string>
     <string name="st_version">Version:</string>
-    <!-- My Ads ID-->
+    <!-- Ads ID-->
     <string name="app_add_ID">ca-app-pub-4362142146545991~3621989546</string>
     <string name="add_interstitial_ID">ca-app-pub-4362142146545991/4879230890</string>
     <string name="banner_id_Ads">ca-app-pub-4362142146545991/4140864297</string>
@@ -10,32 +10,23 @@
     <string name="test_banner_ad_id">ca-app-pub-3940256099942544/6300978111</string>
     <string name="test_interstitial_id">ca-app-pub-3940256099942544/1033173712</string>
 
-    <string name="st_extra_options">Extra Options</string>
-    <string name="st_brush_size">Brush Size</string>
 
-    <string name="st_size">Size: </string>
-    <string name="st_ok">OK</string>
-    <string name="st_cancel">Cancel</string>
-    <string name="st_back">Back</string>
-    <string name="st_wait">Please wait</string>
-    <string name="st_gallery">Gallery</string>
-    <string name="st__share">Share</string>
+    <string name="action_ok">OK</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_back">Back</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_line_color">Line color</string>
+    <string name="action_solid_color">Solid color</string>
+    <string name="action_lines">Lines</string>
+    <string name="action_background">Background</string>
+    <string name="action_all">All</string>
+    <string name="action_buy">Buy</string>
+    <string name="action_no_ads">No Ads</string>
 
-    <string name="st_permission_needed_to_be_granted">Permissions required for this feature has not been provided</string>
-    <string name="st_settings">Settings</string>
 
-    <string name="st_line_color">Line color</string>
-    <string name="st_solid_color">Solid color</string>
-    <string name="st_what_want_to_remove">What do You want to remove?</string>
-    <string name="st_lines">Lines</string>
-    <string name="st_background">Background</string>
-    <string name="st_all">All</string>
+    <string name="title_delete">Delete:</string>
 
-    <string name="st_buy">Buy</string>
-    <string name="st_no_ads">No Ads</string>
-    <string name="st_goes_wrong">Something goes wrong. Please, try again later</string>
 
-    <string name="st_workspace">The working area is…</string>
-    <string name="st_full_workspace">Not limited by the edges of the image</string>
-    <string name="st_limited_workspace">Limited by the edges of the image</string>
+    <string name="error_permission_needed_to_be_granted">Permissions required for this feature has not been provided</string>
+    <string name="error_goes_wrong">Something goes wrong. Please, try again later</string>
 </resources>

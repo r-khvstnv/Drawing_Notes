@@ -28,4 +28,12 @@
 
     <dimen name="brush_size_container_margin_end">30dp</dimen>
     <dimen name="brush_size_container_margin_bottom">0dp</dimen>
+
+    <dimen name="color_picker_options_layout_margin_start">16dp</dimen>
+    <dimen name="color_picker_options_layout_margin_top">50dp</dimen>
+    <dimen name="color_picker_options_layout_margin_end">0dp</dimen>
+    <dimen name="color_picker_options_layout_margin_bottom">0dp</dimen>
+
+    <dimen name="color_picker_options_margin_horizontal">0dp</dimen>
+    <dimen name="color_picker_options_margin_vertical">8dp</dimen>
 </resources>

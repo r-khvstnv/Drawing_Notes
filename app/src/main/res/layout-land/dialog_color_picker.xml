@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Created by Ruslan Khvastunov
   ~ r.khvastunov@gmail.com
   ~ Copyright (c) 2022
@@ -8,95 +7,59 @@
   -->
 
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    style="@style/MCardStyle"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:background="@drawable/background_white_round_edges">
+    android:minWidth="400dp"
+    android:layout_height="wrap_content">
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="10dp"
+        android:padding="@dimen/color_picker_card_padding"
         tools:ignore="ContentDescription">
 
         <com.skydoves.colorpickerview.ColorPickerView
             android:id="@+id/colorPickerView"
-            android:layout_width="280dp"
-            android:layout_height="280dp"
-            android:elevation="4dp"
+            android:layout_width="@dimen/color_picker_size"
+            android:layout_height="@dimen/color_picker_size"
             android:orientation="vertical" />
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="50dp"
+            android:layout_marginStart="@dimen/color_picker_options_layout_margin_start"
+            android:layout_marginTop="@dimen/color_picker_options_layout_margin_top"
             android:gravity="center"
             android:orientation="vertical">
 
             <LinearLayout
                 android:id="@+id/ll_current_color"
-                android:layout_width="@dimen/dim_ll_current_color_size"
-                android:layout_height="@dimen/dim_ll_current_color_size"
-                android:layout_margin="@dimen/dim_color_picker_items_margin"
-                android:background="@drawable/ib_option_white"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/current_color_preview_height"
+                android:layout_marginVertical="@dimen/color_picker_options_margin_vertical"
                 android:orientation="horizontal"
                 tools:backgroundTint="@color/mGrey" />
 
-            <LinearLayout
-                android:id="@+id/ll_line_color"
+            <Button
+                android:id="@+id/btn_line_color"
+                style="@style/MButton.Icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/dim_color_picker_items_margin"
-                android:background="@drawable/ib_option_ripple_white"
-                android:elevation="5dp"
-                android:gravity="center"
-                android:orientation="horizontal"
-                android:padding="5dp">
+                android:layout_marginVertical="@dimen/color_picker_options_margin_vertical"
+                android:text="@string/action_line_color"
+                app:icon="@drawable/ic_pencil" />
 
-                <ImageView
-                    android:layout_width="24sp"
-                    android:layout_height="24sp"
-                    android:elevation="4dp"
-                    android:padding="5dp"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/ic_pencil" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/st_line_color"
-                    android:textColor="@color/mBlack"
-                    android:textSize="12sp" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/ll_solid_color"
+            <Button
+                android:id="@+id/btn_solid_color"
+                style="@style/MButton.Icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/dim_color_picker_items_margin"
-                android:background="@drawable/ib_option_ripple_white"
-                android:elevation="5dp"
-                android:gravity="center"
-                android:orientation="horizontal"
-                android:padding="5dp">
-
-                <ImageView
-                    android:layout_width="24sp"
-                    android:layout_height="24sp"
-                    android:elevation="4dp"
-                    android:padding="5dp"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/ic_solid" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/st_solid_color"
-                    android:textColor="@color/mBlack"
-                    android:textSize="12sp" />
-            </LinearLayout>
+                android:layout_marginVertical="@dimen/color_picker_options_margin_vertical"
+                android:text="@string/action_solid_color"
+                app:icon="@drawable/ic_solid" />
         </LinearLayout>
     </LinearLayout>
 
