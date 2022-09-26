@@ -11,7 +11,7 @@ buildscript {
     repositories {
         google()
         mavenCentral()
-        maven { url 'https://jitpack.io' }
+        jcenter() //MultiTouchGD doesn't work without it
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:7.3.0'
@@ -32,7 +32,7 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-        maven { url 'https://jitpack.io' }
+        jcenter()
     }
 }
 
