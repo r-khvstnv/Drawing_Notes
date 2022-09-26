@@ -29,4 +29,7 @@
 
     <string name="error_permission_needed_to_be_granted">Permissions required for this feature has not been provided</string>
     <string name="error_goes_wrong">Something goes wrong. Please, try again later</string>
+
+    <string name="tag_brush_size">brushSizeTag</string>
+    <string name="tag_secondary_options">secondaryOptionsTag</string>
 </resources>

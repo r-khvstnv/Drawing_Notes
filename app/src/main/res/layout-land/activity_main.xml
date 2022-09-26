@@ -164,7 +164,7 @@
                 android:id="@+id/btn_brush_size"
                 style="@style/OptionImageButtonStyle.MonoIconImpl"
                 android:src="@drawable/ic_pencil"
-                android:tag="@string/st_brush_size" />
+                android:tag="@string/tag_brush_size" />
 
             <ImageButton
                 android:id="@+id/btn_palette"
@@ -246,7 +246,7 @@
                 android:id="@+id/btn_extra_options"
                 style="@style/OptionImageButtonStyle.MonoIconImpl"
                 android:src="@drawable/ic_menu"
-                android:tag="@string/st_extra_options" />
+                android:tag="@string/tag_secondary_options" />
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 </androidx.constraintlayout.widget.ConstraintLayout>
